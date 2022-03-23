@@ -1,9 +1,12 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.sushi.components.protocol.Response;
-import com.sushi.components.protocol.order.push.SushiPushOrder;
-import com.sushi.components.protocol.order.push.SushiPushOrderService;
+import com.sushi.components.client.SushiPullOrderService;
+import com.sushi.components.common.pull.SushiPullOrder;
+import com.sushi.components.common.serving.SushiServing;
+import com.sushi.components.common.push.SushiPushOrder;
+import com.sushi.components.client.SushiPushOrderService;
+import com.sushi.components.common.serving.SushiServingStatus;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,12 +51,12 @@ public class FileCopyTest extends AbstractTest {
     public void copyTwoLargeFilesConcurrently() throws InterruptedException {
         final CountDownLatch jobsLatch = new CountDownLatch(1);
 
-        final File srcFile = new File(files.get(0).getAbsolutePath());
-        final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), files.get(0).getAbsolutePath());
-        assertEquals(200, helper.run());
+//        final File srcFile = new File(files.get(0).getAbsolutePath());
+//        final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), files.get(0).getAbsolutePath());
+//        assertEquals(SushiServingStatus.OK.getStatusCode(), helper.run2());
 
-//        files.forEach(f -> runClient(f.getAbsolutePath()));
-//        jobsLatch.await();
+        files.forEach(f -> runClient(f.getAbsolutePath()));
+        jobsLatch.await();
 
     }
 
@@ -61,7 +64,7 @@ public class FileCopyTest extends AbstractTest {
         new Thread(() -> {
             final File srcFile = new File(srcPath);
             final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), srcPath);
-            helper.run();
+            helper.run2();
         }).start();
     }
 
@@ -82,26 +85,44 @@ public class FileCopyTest extends AbstractTest {
             long start = System.currentTimeMillis();
 
             SushiPushOrder sushiOrder = SushiPushOrder.newBuilder()
-                    .withHost("localhost")
-                    .withPort(9999)
-                    .withContent("file")
-                    .withOrderId(UUID.randomUUID())
-                    .withDir("/tmp/output")
-                    .withEncryption("AES")
-                    .withFileName(this.fileName)
-                    .withFileSize(size)
-                    .withSrcPath(srcPath)
+                    .host("localhost")
+                    .port(9999)
+                    .content("file")
+                    .orderId(UUID.randomUUID())
+                    .dir("/tmp/output")
+                    .encryption("AES")
+                    .fileName(this.fileName)
+                    .fileSize(size)
                     .build();
-            SushiPushOrderService sushiPushOrderService = new SushiPushOrderService();
-            Response send = sushiPushOrderService.send(sushiOrder);
+            SushiPushOrderService sushiPushOrderService = new SushiPushOrderService(srcPath);
+            SushiServing send = sushiPushOrderService.send(sushiOrder);
 
-            System.out.println(send.getResponseCode());
+            System.out.println(send.getSushiServingStatus().getStatusCode());
             long finish = System.currentTimeMillis();
             long timeElapsed = finish - start;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Bestand ").append(this.fileName).append(" van ").append(this.size / (1024 * 1024)).append("MB gekopieerd in ").append(timeElapsed / 1000).append(" seconden");
-            System.out.println(stringBuilder);
-            return send.getResponseCode();
+            System.out.println("Bestand " + this.fileName + " van " + this.size / (1024 * 1024) + "MB gekopieerd in " + timeElapsed / 1000 + " seconden");
+            return send.getSushiServingStatus().getStatusCode();
+        }
+
+        public int run2() {
+            long start = System.currentTimeMillis();
+
+            SushiPullOrder sushiOrder = SushiPullOrder.builder()
+                    .host("localhost")
+                    .port(9999)
+                    .orderId(UUID.randomUUID())
+                    .dir("/tmp/output")
+                    .encryption("AES")
+                    .fileName(this.fileName)
+                    .build();
+            SushiPullOrderService sushiPullOrderService = new SushiPullOrderService(srcPath);
+            SushiServing send = sushiPullOrderService.send(sushiOrder);
+
+            System.out.println(send.getSushiServingStatus().getStatusCode());
+            long finish = System.currentTimeMillis();
+            long timeElapsed = finish - start;
+            System.out.println("Bestand " + this.fileName + " van " + this.size / (1024 * 1024) + "MB gekopieerd in " + timeElapsed / 1000 + " seconden");
+            return send.getSushiServingStatus().getStatusCode();
         }
 
 
