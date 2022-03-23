@@ -1,13 +1,14 @@
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import com.sushi.components.protocol.Response;
 import com.sushi.components.protocol.order.push.SushiPushOrder;
 import com.sushi.components.protocol.order.push.SushiPushOrderService;
-import com.sushi.components.utils.Constants;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,9 +48,12 @@ public class FileCopyTest extends AbstractTest {
     public void copyTwoLargeFilesConcurrently() throws InterruptedException {
         final CountDownLatch jobsLatch = new CountDownLatch(1);
 
-        files.forEach(f -> runClient(f.getAbsolutePath()));
+        final File srcFile = new File(files.get(0).getAbsolutePath());
+        final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), files.get(0).getAbsolutePath());
+        assertEquals(200, helper.run());
 
-        jobsLatch.await();
+//        files.forEach(f -> runClient(f.getAbsolutePath()));
+//        jobsLatch.await();
 
     }
 
@@ -61,7 +65,7 @@ public class FileCopyTest extends AbstractTest {
         }).start();
     }
 
-    private final class TestAsyncClient implements Runnable {
+    private final class TestAsyncClient  {
 
         private final long size;
         private final String fileName;
@@ -73,8 +77,8 @@ public class FileCopyTest extends AbstractTest {
             this.srcPath = srcPath;
         }
 
-        @Override
-        public void run() {
+
+        public int run() {
             long start = System.currentTimeMillis();
 
             SushiPushOrder sushiOrder = SushiPushOrder.newBuilder()
@@ -89,31 +93,17 @@ public class FileCopyTest extends AbstractTest {
                     .withSrcPath(srcPath)
                     .build();
             SushiPushOrderService sushiPushOrderService = new SushiPushOrderService();
-            sushiPushOrderService.send(sushiOrder);
+            Response send = sushiPushOrderService.send(sushiOrder);
 
+            System.out.println(send.getResponseCode());
             long finish = System.currentTimeMillis();
             long timeElapsed = finish - start;
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Bestand ").append(this.fileName).append(" van ").append(this.size / (1024 * 1024)).append("MB gekopieerd in ").append(timeElapsed / 1000).append(" seconden");
             System.out.println(stringBuilder);
-
+            return send.getResponseCode();
         }
 
-//        private void confirmAndGo(FileSender sender, final String response) throws IOException {
-//            StringUtils.EMPTY
-//            if (!response.contains(Constants.CONFIRMATION)) {
-//                final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
-//                final long bytesRead = sender.read(buffer);
-//
-//                if (bytesRead > 0) {
-//                    confirmAndGo(sender, response + new String(buffer.array()));
-//                } else if (bytesRead < 0) {
-//                    return;
-//                }
-//            } else {
-//                sender.transfer(srcPath);
-//            }
-//        }
 
 
     }

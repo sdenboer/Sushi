@@ -1,12 +1,13 @@
 package com.sushi.components.protocol.order;
 
+import com.sushi.components.protocol.Response;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 public interface SushiOrderService<T extends SushiOrder> {
 
-    void send(T sushiOrder) throws IOException;
+    Response send(T sushiOrder) throws IOException;
 
 
     default void write(SocketChannel channel, SushiOrder sushiOrder) throws IOException {
