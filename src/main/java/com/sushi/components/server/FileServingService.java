@@ -1,11 +1,13 @@
 package com.sushi.components.server;
 
 import com.sushi.components.common.serving.SushiServing;
+import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.channels.FileChannel;
@@ -14,50 +16,52 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.atomic.AtomicLong;
+import lombok.SneakyThrows;
 
-public class FileServingService  {
+public class FileServingService {
 
-    private final AsynchronousSocketChannel socketChannel;
+  private final AsynchronousSocketChannel socketChannel;
 
-    public FileServingService(AsynchronousSocketChannel socketChannel) {
-        this.socketChannel = socketChannel;
-    }
+  public FileServingService(AsynchronousSocketChannel socketChannel) {
+    this.socketChannel = socketChannel;
+  }
 
-    public void sendServing(SushiServing serving) {
+  @SneakyThrows
+  public void sendServing(SushiServing serving) {
 
-        try (FileChannel fileChannel = FileChannel.open(Paths.get("/tmp/output/input2"), StandardOpenOption.READ)) {
-            File tf = Paths.get("").toFile();
-            long length = tf.length();
-            final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
-            AtomicLong atomicLong = new AtomicLong(0L);
-            long position = fileChannel.read(buffer, 0L);
+    final ByteBuffer buffer = ByteBuffer.wrap(serving.toRequest().getBytes(StandardCharsets.UTF_8));
 
-            this.socketChannel.write(buffer, fileChannel, new CompletionHandler<>() {
-                @Override
-                public void completed(Integer result, FileChannel attachment) {
-                    if (result > 0) {
-                        buffer.flip();
-                        try {
-                            atomicLong.addAndGet(fileChannel.read(buffer, position));
-                            if (atomicLong.get() == length) {
-                                System.out.println("DONE");
-                            } else {
-                                socketChannel.write(buffer, fileChannel, this);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+    FileChannel fileChannel = FileChannel.open(Paths.get("/tmp/input/test.txt"), StandardOpenOption.READ);
+    final long[] l = {0, 0};
 
-                @Override
-                public void failed(Throwable exc, FileChannel attachment) {
+    socketChannel.write(buffer, fileChannel, new CompletionHandler<>() {
 
-                }
-            });
+      @Override
+      public void completed(Integer result, FileChannel attachment) {
+        final ByteBuffer fileBuffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
+        System.out.println("Sending 1: " + result);
+        try {
+          if (result > 0) {
+            int read = attachment.read(fileBuffer);
+            l[0] += read;
+            l[1] += result;
+            fileBuffer.flip();
+            socketChannel.write(fileBuffer, attachment, this);
+          } else {
+            System.out.println("DONE +" + attachment.size() + " " + l[0] + " " + l[1] + " " + result);
+            fileChannel.close();
+            socketChannel.close();
+          }
         } catch (IOException e) {
-            e.printStackTrace();
+          e.printStackTrace();
         }
+      }
 
-    }
+      @Override
+      public void failed(Throwable exc, FileChannel attachment) {
+
+      }
+
+    });
+  }
 }

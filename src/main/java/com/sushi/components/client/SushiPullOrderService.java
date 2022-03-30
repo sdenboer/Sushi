@@ -8,8 +8,11 @@ import com.sushi.components.utils.Constants;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class SushiPullOrderService extends SushiFileOrderService implements SushiOrderService<SushiPullOrder, SushiPullServing> {
 
@@ -23,7 +26,11 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
         try (SocketChannel socketChannel = SocketChannel.open(hostAddress)) {
 
             write(socketChannel, sushiOrder);
-//            String test = readResponse(fileChannel, socketChannel);
+            String test = readResponse(socketChannel);
+            System.out.println(test);
+            receiveFile(socketChannel);
+
+            System.out.println("test");
             return new SushiPullServing(SushiServingStatus.OK);
         } catch (IOException ioe) {
             System.out.println("TODO");
@@ -31,11 +38,31 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
         throw new RuntimeException("");
     }
 
-    private void receiveFile(FileChannel fileChannel, SocketChannel socketChannel) throws IOException {
+    private void receiveFile(SocketChannel socketChannel) throws IOException {
+
+//        FileWriter fileWriter = new FileWriter("/tmp/input/", "file", 251484);
+//        fileWriter.getFileChannel().transferFrom(socketChannel,0,  251484);
+        FileChannel open = FileChannel.open(Paths.get("/tmp/output/test.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         long position = 0L;
-        long size = fileChannel.size();
-        while (position < size) {
-            position += fileChannel.transferFrom(socketChannel, Constants.TRANSFER_MAX_SIZE, position);
+        while (position < 2060) {
+            position += open.transferFrom(socketChannel, position, Constants.TRANSFER_MAX_SIZE);
         }
+        System.out.println(position);
+        open.close();
+
+    }
+
+    private String readResponse(SocketChannel socketChannel) throws IOException {
+        StringBuilder response = new StringBuilder();
+        while (!response.toString().contains("status")) {
+            System.out.println(response);
+            final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
+            final long bytesRead = socketChannel.read(buffer);
+            if (bytesRead > 0) {
+                response.append(new String(buffer.array()));
+            }
+        }
+        System.out.println("BYE");
+        return response.toString();
     }
 }

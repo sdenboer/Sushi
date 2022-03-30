@@ -42,4 +42,7 @@ public class FileWriter {
         this.fileChannel.close();
     }
 
+    public FileChannel getFileChannel() {
+        return fileChannel;
+    }
 }

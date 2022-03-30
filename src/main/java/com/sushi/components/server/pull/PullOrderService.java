@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.nio.channels.SocketChannel;
 
 public class PullOrderService extends OrderService<SushiPullOrder> {
 
@@ -30,17 +31,16 @@ public class PullOrderService extends OrderService<SushiPullOrder> {
     private void read(final AsynchronousSocketChannel channel, SushiPullOrder sushiPullOrder) {
 
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
+        buffer.flip();
+
         channel.read(buffer, sushiPullOrder, new CompletionHandler<>() {
             @Override
             public void completed(final Integer result, final SushiPullOrder completedFileWriter) {
 
                 if (result >= 0) {
-                    if (result > 0) {
-                        SushiPullServing serving = new SushiPullServing(SushiServingStatus.OK);
-                        new FileServingService(channel).sendServing(serving);
+                    SushiPullServing serving = new SushiPullServing(SushiServingStatus.OK);
+                    new FileServingService(channel).sendServing(serving);
 
-
-                    }
 //                    if (completedFileWriter.done()) {
 //                        SushiPushServing txt = new SushiPushServing(SushiServingStatus.OK, "txt");
 //                        sendTextResponse(txt);
@@ -49,7 +49,7 @@ public class PullOrderService extends OrderService<SushiPullOrder> {
 //                        channel.read(buffer, completedFileWriter, this);
 //                    }
                 } else {
-                    ChannelUtils.close(channel);
+                    channel.read(buffer, completedFileWriter, this);
                 }
             }
 

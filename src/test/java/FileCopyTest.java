@@ -36,10 +36,10 @@ public class FileCopyTest extends AbstractTest {
                     .forEach(f -> {
                         try {
                             File tf = new File(TARGET + "/" + f.getName());
-                            Files.deleteIfExists(tf.toPath());
+//                            Files.deleteIfExists(tf.toPath());
                             targetFiles.add(tf);
                             files.add(f);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     });
@@ -51,12 +51,12 @@ public class FileCopyTest extends AbstractTest {
     public void copyTwoLargeFilesConcurrently() throws InterruptedException {
         final CountDownLatch jobsLatch = new CountDownLatch(1);
 
-//        final File srcFile = new File(files.get(0).getAbsolutePath());
-//        final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), files.get(0).getAbsolutePath());
-//        assertEquals(SushiServingStatus.OK.getStatusCode(), helper.run2());
-
-        files.forEach(f -> runClient(f.getAbsolutePath()));
-        jobsLatch.await();
+        final File srcFile = new File(files.get(0).getAbsolutePath());
+        final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), files.get(0).getAbsolutePath());
+        assertEquals(SushiServingStatus.OK.getStatusCode(), helper.run2());
+//
+//        files.forEach(f -> runClient(f.getAbsolutePath()));
+//        jobsLatch.await();
 
     }
 

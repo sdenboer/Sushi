@@ -2,10 +2,12 @@ package com.sushi.components.common;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 
 public interface SushiMessage<T extends SushiWrapper> {
+    @NonNull
     Set<T> optionalSushiWrappers();
-
+    @NonNull
     Set<T> mandatorySushiWrappers();
 
     default String toRequest() {
