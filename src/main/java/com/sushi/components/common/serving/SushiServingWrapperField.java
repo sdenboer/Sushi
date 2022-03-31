@@ -6,6 +6,8 @@ public enum SushiServingWrapperField  {
 
     STATUS("status"),
     CONTENT("content"),
+    ENCRYPTION("encryption"),
+    ORDER_ID("orderId"),
     FILE_SIZE("file-size");
 
     private final String value;

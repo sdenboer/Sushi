@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.UUID;
 
 public class PushOrderService extends OrderService<SushiPushOrder> {
 
@@ -53,7 +54,7 @@ public class PushOrderService extends OrderService<SushiPushOrder> {
                         writeToFile(channel, buffer, completedFileWriter);
                     }
                     if (completedFileWriter.done()) {
-                        SushiPushServing txt = new SushiPushServing(SushiServingStatus.OK, "txt");
+                        SushiPushServing txt = new SushiPushServing(SushiServingStatus.OK, UUID.randomUUID(), "txt");
                         sendTextResponse(txt);
                     } else {
                         buffer.clear();

@@ -4,6 +4,7 @@ import com.sushi.components.common.serving.SushiServing;
 import com.sushi.components.common.serving.SushiServingStatus;
 import com.sushi.components.common.serving.SushiServingWrapper;
 import com.sushi.components.common.serving.SushiServingWrapperField;
+import java.util.UUID;
 import lombok.Builder;
 
 import java.util.Map;
@@ -15,8 +16,8 @@ public class SushiPushServing extends SushiServing {
     private final String content;
 
     @Builder
-    public SushiPushServing(SushiServingStatus sushiServingStatus, String content) {
-        super(sushiServingStatus);
+    public SushiPushServing(SushiServingStatus sushiServingStatus, UUID orderId, String content) {
+        super(sushiServingStatus, orderId);
         this.content = content;
     }
 

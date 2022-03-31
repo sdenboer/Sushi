@@ -1,9 +1,7 @@
 package com.sushi.components.client;
 
-import com.sushi.components.common.file.FileWriter;
 import com.sushi.components.common.pull.SushiPullOrder;
 import com.sushi.components.common.pull.SushiPullServing;
-import com.sushi.components.common.serving.SushiServingStatus;
 import com.sushi.components.utils.Constants;
 
 import java.io.IOException;
@@ -27,24 +25,24 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
 
             write(socketChannel, sushiOrder);
             String test = readResponse(socketChannel);
-            System.out.println(test);
-            receiveFile(socketChannel);
+            SushiPullServing sushiPullServing = SushiPullServing.fromRequest(test);
+            System.out.println(sushiPullServing.toRequest());
+            receiveFile(socketChannel, sushiPullServing);
 
-            System.out.println("test");
-            return new SushiPullServing(SushiServingStatus.OK);
+            return null;
+//            return new SushiPullServing(SushiServingStatus.OK);
         } catch (IOException ioe) {
             System.out.println("TODO");
         }
         throw new RuntimeException("");
     }
 
-    private void receiveFile(SocketChannel socketChannel) throws IOException {
+    private void receiveFile(SocketChannel socketChannel, SushiPullServing sushiPullServing) throws IOException {
 
-//        FileWriter fileWriter = new FileWriter("/tmp/input/", "file", 251484);
-//        fileWriter.getFileChannel().transferFrom(socketChannel,0,  251484);
         FileChannel open = FileChannel.open(Paths.get("/tmp/output/test.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         long position = 0L;
-        while (position < 2060) {
+        while (position < sushiPullServing.getFileSize()) {
+            System.out.println(position);
             position += open.transferFrom(socketChannel, position, Constants.TRANSFER_MAX_SIZE);
         }
         System.out.println(position);
@@ -54,6 +52,7 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
 
     private String readResponse(SocketChannel socketChannel) throws IOException {
         StringBuilder response = new StringBuilder();
+
         while (!response.toString().contains("status")) {
             System.out.println(response);
             final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
