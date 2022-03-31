@@ -4,10 +4,8 @@ import com.sushi.components.common.serving.SushiServing;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.channels.FileChannel;
@@ -26,7 +24,7 @@ public class FileServingService {
   }
 
   @SneakyThrows
-  public void sendServing(SushiServing serving) {
+  public void sendServing(SushiServing serving, Path path) {
 
     final ByteBuffer buffer = ByteBuffer.wrap(serving.toRequest().getBytes(StandardCharsets.UTF_8));
     socketChannel.write(buffer, null, new CompletionHandler<Integer, Void>() {
@@ -35,14 +33,11 @@ public class FileServingService {
         if (result >= 0) {
           if (result > 0) {
             try {
-              writeFile();
+              writeFile(serving, path);
             } catch (IOException e) {
               e.printStackTrace();
             }
-          } else {
-//            socketChannel.write(buffer, null, this);
           }
-
         } else {
           ChannelUtils.close(socketChannel);
         }
@@ -55,34 +50,35 @@ public class FileServingService {
     });
   }
 
-  private void writeFile() throws IOException {
-    final long[] l = {0, 0};
-
+  private void writeFile(SushiServing serving, Path path) throws IOException {
 
     final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
-    FileChannel fileChannel = FileChannel.open(Paths.get("/tmp/input/test.txt"), StandardOpenOption.READ);
+    FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);
     fileChannel.read(buffer);
     buffer.flip();
-
-
-//    while (fileChannel.position() != fileChannel.size()) {
-//      int read = fileChannel.read(buffer);
-//      l[0] += read;
 
     socketChannel.write(buffer, fileChannel, new CompletionHandler<>() {
       @Override
       public void completed(Integer result, FileChannel attachment) {
-        if (result > 0) {
-
-          l[1] += result;
-          buffer.clear();
-          try {
-            attachment.read(buffer);
-            buffer.flip();
-            socketChannel.write(buffer, attachment, this);
-          } catch (IOException e) {
-            e.printStackTrace();
+        if (result >= 0) {
+          if (result > 0) {
+            buffer.clear();
+            try {
+              attachment.read(buffer);
+              buffer.flip();
+              socketChannel.write(buffer, attachment, this);
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+          } else {
+            try {
+              attachment.close();
+              ChannelUtils.close(socketChannel);
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
           }
+
         } else {
           ChannelUtils.close(socketChannel);
         }

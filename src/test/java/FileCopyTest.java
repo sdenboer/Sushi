@@ -89,7 +89,7 @@ public class FileCopyTest extends AbstractTest {
                     .port(9999)
                     .content("file")
                     .orderId(UUID.randomUUID())
-                    .dir("/tmp/output")
+                    .dir("/tmp/input")
                     .encryption("AES")
                     .fileName(this.fileName)
                     .fileSize(size)
@@ -111,7 +111,7 @@ public class FileCopyTest extends AbstractTest {
                     .host("localhost")
                     .port(9999)
                     .orderId(UUID.randomUUID())
-                    .dir("/tmp/output")
+                    .dir("/tmp/input")
                     .encryption("AES")
                     .fileName(this.fileName)
                     .build();

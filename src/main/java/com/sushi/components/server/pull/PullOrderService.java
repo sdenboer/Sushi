@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class PullOrderService extends OrderService<SushiPullOrder> {
@@ -34,20 +35,21 @@ public class PullOrderService extends OrderService<SushiPullOrder> {
 
     channel.read(buffer, sushiPullOrder, new CompletionHandler<>() {
       @Override
-      public void completed(final Integer result, final SushiPullOrder completedFileWriter) {
+      public void completed(final Integer result, final SushiPullOrder sushiPullOrder) {
 
         if (result >= 0) {
 
           try {
-            long size1 = Files.size(Paths.get("/tmp/input/test.txt"));
-            SushiPullServing serving = new SushiPullServing(SushiServingStatus.OK, sushiPullOrder.getOrderId(), "aes", "file", size1);
-            new FileServingService(channel).sendServing(serving);
+            Path path = Paths.get(sushiPullOrder.getDir(), sushiPullOrder.getFileName());
+            long size = Files.size(path);
+            SushiPullServing serving = new SushiPullServing(SushiServingStatus.OK, sushiPullOrder.getOrderId(), "aes", "file", size);
+            new FileServingService(channel).sendServing(serving, path);
           } catch (IOException e) {
             e.printStackTrace();
           }
 
         } else {
-          channel.read(buffer, completedFileWriter, this);
+          channel.read(buffer, sushiPullOrder, this);
         }
       }
 

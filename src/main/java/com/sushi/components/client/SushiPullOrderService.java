@@ -27,7 +27,7 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
             String test = readResponse(socketChannel);
             SushiPullServing sushiPullServing = SushiPullServing.fromRequest(test);
             System.out.println(sushiPullServing.toRequest());
-            receiveFile(socketChannel, sushiPullServing);
+            receiveFile(socketChannel, sushiPullServing, sushiOrder);
 
             return null;
 //            return new SushiPullServing(SushiServingStatus.OK);
@@ -37,9 +37,9 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
         throw new RuntimeException("");
     }
 
-    private void receiveFile(SocketChannel socketChannel, SushiPullServing sushiPullServing) throws IOException {
+    private void receiveFile(SocketChannel socketChannel, SushiPullServing sushiPullServing, SushiPullOrder sushiOrder) throws IOException {
 
-        FileChannel open = FileChannel.open(Paths.get("/tmp/output/test.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+        FileChannel open = FileChannel.open(Paths.get("/tmp/output", sushiOrder.getFileName()), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         long position = 0L;
         while (position < sushiPullServing.getFileSize()) {
             System.out.println(position);
