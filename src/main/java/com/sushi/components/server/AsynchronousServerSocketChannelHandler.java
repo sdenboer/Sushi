@@ -1,5 +1,7 @@
 package com.sushi.components.server;
 
+import com.sushi.components.common.error.GlobalExceptionHandler;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousChannelGroup;
@@ -33,6 +35,9 @@ public class AsynchronousServerSocketChannelHandler {
 
                 OrderController orderController = new OrderController(channel);
                 orderController.handleOrder();
+
+                GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler(channel);
+                Thread.setDefaultUncaughtExceptionHandler(globalExceptionHandler);
             }
 
             public void failed(final Throwable exc, final Void attachment) {

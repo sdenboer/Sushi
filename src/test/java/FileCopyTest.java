@@ -31,7 +31,7 @@ public class FileCopyTest extends AbstractTest {
     @Before
     @Override
     public void setUp() throws IOException {
-        try (Stream<Path> paths = Files.walk(Paths.get("/tmp/input"))) {
+        try (Stream<Path> paths = Files.walk(Paths.get("/home/pl00cc/tmp/input"))) {
             paths.filter(Files::isRegularFile).map(Path::toFile)
                     .forEach(f -> {
                         try {
@@ -89,7 +89,7 @@ public class FileCopyTest extends AbstractTest {
                     .port(9999)
                     .content("file")
                     .orderId(UUID.randomUUID())
-                    .dir("/tmp/input")
+                    .dir("/home/pl00cc/tmp/input")
                     .encryption("AES")
                     .fileName(this.fileName)
                     .fileSize(size)
@@ -111,7 +111,7 @@ public class FileCopyTest extends AbstractTest {
                     .host("localhost")
                     .port(9999)
                     .orderId(UUID.randomUUID())
-                    .dir("/tmp/input")
+                    .dir("/home/pl00cc/tmp/input")
                     .encryption("AES")
                     .fileName(this.fileName)
                     .build();

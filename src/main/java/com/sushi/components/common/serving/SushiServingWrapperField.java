@@ -2,7 +2,7 @@ package com.sushi.components.common.serving;
 
 import java.util.Arrays;
 
-public enum SushiServingWrapperField  {
+public enum SushiServingWrapperField {
 
     STATUS("status"),
     CONTENT("content"),

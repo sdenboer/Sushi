@@ -12,6 +12,8 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import static com.sushi.components.common.serving.SushiServingStatus.OK;
+
 public class SushiPullOrderService extends SushiFileOrderService implements SushiOrderService<SushiPullOrder, SushiPullServing> {
 
     public SushiPullOrderService(String srcPath) {
@@ -26,11 +28,11 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
             write(socketChannel, sushiOrder);
             String test = readResponse(socketChannel);
             SushiPullServing sushiPullServing = SushiPullServing.fromRequest(test);
-            System.out.println(sushiPullServing.toRequest());
-            receiveFile(socketChannel, sushiPullServing, sushiOrder);
+            if (sushiPullServing.getSushiServingStatus().equals(OK)) {
+                receiveFile(socketChannel, sushiPullServing, sushiOrder);
+            }
 
-            return null;
-//            return new SushiPullServing(SushiServingStatus.OK);
+            return sushiPullServing;
         } catch (IOException ioe) {
             System.out.println("TODO");
         }
@@ -39,29 +41,25 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
 
     private void receiveFile(SocketChannel socketChannel, SushiPullServing sushiPullServing, SushiPullOrder sushiOrder) throws IOException {
 
-        FileChannel open = FileChannel.open(Paths.get("/tmp/output", sushiOrder.getFileName()), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-        long position = 0L;
-        while (position < sushiPullServing.getFileSize()) {
-            System.out.println(position);
-            position += open.transferFrom(socketChannel, position, Constants.TRANSFER_MAX_SIZE);
+        try (FileChannel fileChannel = FileChannel.open(Paths.get("/home/pl00cc/tmp/output", sushiOrder.getFileName()), StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
+            long position = 0L;
+            while (position < sushiPullServing.getFileSize()) {
+                position += fileChannel.transferFrom(socketChannel, position, Constants.TRANSFER_MAX_SIZE);
+            }
+            System.out.println(position == sushiPullServing.getFileSize());
         }
-        System.out.println(position);
-        open.close();
-
     }
 
     private String readResponse(SocketChannel socketChannel) throws IOException {
         StringBuilder response = new StringBuilder();
 
         while (!response.toString().contains("status")) {
-            System.out.println(response);
             final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
             final long bytesRead = socketChannel.read(buffer);
             if (bytesRead > 0) {
                 response.append(new String(buffer.array()));
             }
         }
-        System.out.println("BYE");
         return response.toString();
     }
 }
