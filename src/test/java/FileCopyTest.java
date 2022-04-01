@@ -113,7 +113,7 @@ public class FileCopyTest extends AbstractTest {
                     .orderId(UUID.randomUUID())
                     .dir("/home/pl00cc/tmp/input")
                     .encryption("AES")
-                    .fileName("test.tar.gz")
+                    .fileName("xaa")
                     .build();
             SushiPullOrderService sushiPullOrderService = new SushiPullOrderService(srcPath);
             SushiServing send = sushiPullOrderService.send(sushiOrder);

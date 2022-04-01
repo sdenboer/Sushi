@@ -58,33 +58,6 @@ public class FileSender {
                     ChannelUtils.close(socketChannel);
                 }
             });
-
-//        FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ) {
-//            fileChannel.read(buffer);
-//            buffer.flip();
-//
-//            socketChannel.write(buffer, fileChannel, new CompletionHandler<>() {
-//                @Override
-//                public void completed(Integer result, FileChannel attachment) {
-//                    if (result <= 0) {
-//                        ChannelUtils.close(socketChannel);
-//                    } else {
-//                        buffer.clear();
-//                        try {
-//                            attachment.read(buffer);
-//                            buffer.flip();
-//                            socketChannel.write(buffer, attachment, this);
-//                        } catch (IOException e) {
-//                            ChannelUtils.close(socketChannel);
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void failed(Throwable exc, FileChannel attachment) {
-//                    ChannelUtils.close(socketChannel);
-//                }
-//            });
         } catch (IOException e) {
             ChannelUtils.close(socketChannel);
         }
