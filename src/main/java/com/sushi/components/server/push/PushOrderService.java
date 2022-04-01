@@ -5,6 +5,7 @@ import com.sushi.components.common.push.SushiPushOrder;
 import com.sushi.components.common.push.SushiPushServing;
 import com.sushi.components.common.serving.SushiServingStatus;
 import com.sushi.components.server.OrderService;
+import com.sushi.components.server.ServingService;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
 
@@ -14,19 +15,15 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.UUID;
 
-public class PushOrderService extends OrderService<SushiPushOrder> {
-
-    public PushOrderService(AsynchronousSocketChannel channel) {
-        super(channel);
-    }
+public class PushOrderService implements OrderService<SushiPushOrder> {
 
     @Override
-    public void handle(SushiPushOrder order) {
+    public void handle(AsynchronousSocketChannel socketChannel, SushiPushOrder order) {
         try {
             FileWriter fileWriter = new FileWriter(order.getDir(), order.getFileName(), order.getFileSize());
-            read(channel, fileWriter);
+            read(socketChannel, fileWriter);
         } catch (IOException e) {
-            ChannelUtils.close(channel);
+            ChannelUtils.close(socketChannel);
             throw new RuntimeException("unable to create fileWriter", e);
         }
     }
@@ -55,7 +52,7 @@ public class PushOrderService extends OrderService<SushiPushOrder> {
                     }
                     if (completedFileWriter.done()) {
                         SushiPushServing txt = new SushiPushServing(SushiServingStatus.OK, UUID.randomUUID(), "txt");
-                        sendTextResponse(txt);
+                        new ServingService(channel, txt).send();
                     } else {
                         buffer.clear();
                         channel.read(buffer, completedFileWriter, this);

@@ -1,4 +1,4 @@
-package com.sushi.components.common.error;
+package com.sushi.components.common.error.exceptions;
 
 import com.sushi.components.common.serving.SushiServingStatus;
 

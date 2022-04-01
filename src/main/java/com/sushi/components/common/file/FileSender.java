@@ -2,6 +2,8 @@ package com.sushi.components.common.file;
 
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -13,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileSender {
 
     public static void transferFile(SocketChannel socketChannel, String path) throws IOException {
@@ -25,7 +28,7 @@ public class FileSender {
         }
     }
 
-    public static void transferFile(AsynchronousSocketChannel socketChannel, Path path) throws IOException {
+    public static void transferFile(AsynchronousSocketChannel socketChannel, Path path) {
 
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
         try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ)) {
@@ -44,7 +47,7 @@ public class FileSender {
                             buffer.flip();
                             socketChannel.write(buffer, attachment, this);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            ChannelUtils.close(socketChannel);
                         }
                     }
                 }
@@ -54,6 +57,8 @@ public class FileSender {
                     ChannelUtils.close(socketChannel);
                 }
             });
+        } catch (IOException e) {
+            ChannelUtils.close(socketChannel);
         }
 
 

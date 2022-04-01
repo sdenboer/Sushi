@@ -1,7 +1,7 @@
 package com.sushi.components.common.error;
 
-import com.sushi.components.common.serving.SushiServingStatus;
-import com.sushi.components.server.TextServingResponse;
+import com.sushi.components.common.error.exceptions.SushiException;
+import com.sushi.components.server.ServingService;
 
 import java.nio.channels.AsynchronousSocketChannel;
 
@@ -17,8 +17,9 @@ public class GlobalExceptionHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         if (e instanceof SushiException status) {
-            ErrorServing errorServing = new ErrorServing(status.getStatus(), status.getOrderId());
-            new TextServingResponse(socketChannel).sendServing(errorServing);
+            ErrorServing serving = new ErrorServing(status.getStatus(), status.getOrderId());
+            ServingService servingService = new ServingService(socketChannel, serving);
+            servingService.send();
         }
         e.printStackTrace();
 

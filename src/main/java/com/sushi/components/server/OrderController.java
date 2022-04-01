@@ -1,5 +1,7 @@
 package com.sushi.components.server;
 
+import com.sushi.components.common.error.exceptions.NotImplementedException;
+import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.order.SushiOrder;
 import com.sushi.components.common.order.SushiOrderMethod;
 import com.sushi.components.common.order.SushiOrderWrapperField;
@@ -7,12 +9,13 @@ import com.sushi.components.common.pull.SushiPullOrder;
 import com.sushi.components.common.push.SushiPushOrder;
 import com.sushi.components.server.pull.PullOrderService;
 import com.sushi.components.server.push.PushOrderService;
-import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.Map;
+import java.util.UUID;
 
 public class OrderController {
 
@@ -24,24 +27,26 @@ public class OrderController {
 
     public void handleOrder() {
 
-        final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
+        ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
+
         channel.read(buffer, new StringBuffer(), new CompletionHandler<>() {
+
             @Override
             public void completed(final Integer result, final StringBuffer attachment) {
                 if (result < 0) {
-                    ChannelUtils.close(channel);
+                    throw new ServerErrorException(getOrderIdFromOrder(attachment));
                 } else if (result > 0) {
                     attachment.append(new String(buffer.array()).trim());
 
                     String message = attachment.toString();
 
-                    SushiOrderMethod method = SushiOrderMethod.fromString(
-                            SushiOrder.mapToHeaders(message).get(SushiOrderWrapperField.METHOD));
+                    Map<SushiOrderWrapperField, String> sushiOrderHeaders = SushiOrder.mapToHeaders(message);
+                    SushiOrderMethod method = SushiOrderMethod.fromString(sushiOrderHeaders.get(SushiOrderWrapperField.METHOD));
 
                     switch (method) {
-                        case PUSH -> new PushOrderService(channel).handle(SushiPushOrder.fromRequest(message));
-                        case PULL -> new PullOrderService(channel).handle(SushiPullOrder.fromRequest(message));
-                        default -> throw new RuntimeException("R");
+                        case PUSH -> new PushOrderService().handle(channel, SushiPushOrder.fromRequest(message));
+                        case PULL -> new PullOrderService().handle(channel, SushiPullOrder.fromRequest(message));
+                        default -> throw new NotImplementedException(getOrderIdFromOrder(attachment));
                     }
                 } else {
                     buffer.clear();
@@ -52,11 +57,16 @@ public class OrderController {
 
             @Override
             public void failed(final Throwable exc, final StringBuffer attachment) {
-                ChannelUtils.close(channel);
-                throw new RuntimeException("unable to read meta data", exc);
+                throw new ServerErrorException(getOrderIdFromOrder(attachment));
             }
 
         });
+    }
+
+    private UUID getOrderIdFromOrder(StringBuffer order) {
+        String message = order.toString();
+        String orderId = SushiOrder.mapToHeaders(message).get(SushiOrderWrapperField.ORDER_ID);
+        return UUID.fromString(orderId);
     }
 
 }
