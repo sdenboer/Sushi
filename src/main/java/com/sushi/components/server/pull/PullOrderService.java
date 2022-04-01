@@ -1,5 +1,6 @@
 package com.sushi.components.server.pull;
 
+import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.NotFoundException;
 import com.sushi.components.common.pull.SushiPullOrder;
 import com.sushi.components.common.pull.SushiPullServing;
@@ -17,7 +18,7 @@ import java.util.UUID;
 public class PullOrderService implements OrderService<SushiPullOrder> {
 
     @Override
-    public void handle(AsynchronousSocketChannel socketChannel, SushiPullOrder sushiOrder) {
+    public void handle(AsynchronousSocketChannel socketChannel, SushiPullOrder sushiOrder, OrderContext orderContext) {
         UUID orderId = sushiOrder.getOrderId();
         try {
             Path path = Paths.get(sushiOrder.getDir(), sushiOrder.getFileName());
@@ -27,7 +28,7 @@ public class PullOrderService implements OrderService<SushiPullOrder> {
             servingService.addFile(path);
             servingService.send();
         } catch (IOException e) {
-            throw new NotFoundException(orderId);
+            throw new NotFoundException(e, orderId);
         }
     }
 

@@ -53,7 +53,7 @@ public class FileCopyTest extends AbstractTest {
 
         final File srcFile = new File(files.get(0).getAbsolutePath());
         final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), files.get(0).getAbsolutePath());
-        assertEquals(SushiServingStatus.OK.getStatusCode(), helper.run2());
+        assertEquals(SushiServingStatus.OK.getStatusCode(), helper.testPull());
 //
 //        files.forEach(f -> runClient(f.getAbsolutePath()));
 //        jobsLatch.await();
@@ -64,7 +64,7 @@ public class FileCopyTest extends AbstractTest {
         new Thread(() -> {
             final File srcFile = new File(srcPath);
             final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), srcPath);
-            helper.run2();
+//            helper.r();
         }).start();
     }
 
@@ -81,7 +81,7 @@ public class FileCopyTest extends AbstractTest {
         }
 
 
-        public int run() {
+        public int testPush() {
             long start = System.currentTimeMillis();
 
             SushiPushOrder sushiOrder = SushiPushOrder.newBuilder()
@@ -91,7 +91,7 @@ public class FileCopyTest extends AbstractTest {
                     .orderId(UUID.randomUUID())
                     .dir("/home/pl00cc/tmp/input")
                     .encryption("AES")
-                    .fileName(this.fileName)
+                    .fileName("test.tar.gz")
                     .fileSize(size)
                     .build();
             SushiPushOrderService sushiPushOrderService = new SushiPushOrderService(srcPath);
@@ -100,11 +100,11 @@ public class FileCopyTest extends AbstractTest {
             System.out.println(send.getSushiServingStatus().getStatusCode());
             long finish = System.currentTimeMillis();
             long timeElapsed = finish - start;
-            System.out.println("Bestand " + this.fileName + " van " + this.size / (1024 * 1024) + "MB gekopieerd in " + timeElapsed / 1000 + " seconden");
+            System.out.println("Bestand " + "test.tar.gz" + " van " + this.size / (1024 * 1024) + "MB gekopieerd in " + timeElapsed / 1000 + " seconden");
             return send.getSushiServingStatus().getStatusCode();
         }
 
-        public int run2() {
+        public int testPull() {
             long start = System.currentTimeMillis();
 
             SushiPullOrder sushiOrder = SushiPullOrder.builder()
@@ -113,7 +113,7 @@ public class FileCopyTest extends AbstractTest {
                     .orderId(UUID.randomUUID())
                     .dir("/home/pl00cc/tmp/input")
                     .encryption("AES")
-                    .fileName(this.fileName)
+                    .fileName("test.tar.gz")
                     .build();
             SushiPullOrderService sushiPullOrderService = new SushiPullOrderService(srcPath);
             SushiServing send = sushiPullOrderService.send(sushiOrder);
@@ -121,8 +121,7 @@ public class FileCopyTest extends AbstractTest {
             long finish = System.currentTimeMillis();
             long timeElapsed = finish - start;
             System.out.println("Bestand " + this.fileName + " van " + this.size / (1024 * 1024) + "MB gekopieerd in " + timeElapsed / 1000 + " seconden");
-//            return send.getSushiServingStatus().getStatusCode();
-            return 0;
+            return send.getSushiServingStatus().getStatusCode();
         }
 
 

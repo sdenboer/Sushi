@@ -6,7 +6,8 @@ import java.util.UUID;
 
 public class ServerErrorException extends SushiException {
 
-    public ServerErrorException(UUID orderId) {
+    public ServerErrorException(Throwable e, UUID orderId) {
         super(SushiServingStatus.SERVER_ERROR, orderId);
+        e.printStackTrace();
     }
 }

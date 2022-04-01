@@ -1,5 +1,7 @@
 package com.sushi.components.server;
 
+import com.sushi.components.common.OrderContext;
+import com.sushi.components.common.error.exceptions.InvalidRequestException;
 import com.sushi.components.common.error.exceptions.NotImplementedException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.order.SushiOrder;
@@ -34,7 +36,7 @@ public class OrderController {
             @Override
             public void completed(final Integer result, final StringBuffer attachment) {
                 if (result < 0) {
-                    throw new ServerErrorException(getOrderIdFromOrder(attachment));
+                    throw new InvalidRequestException(getOrderIdFromOrder(attachment));
                 } else if (result > 0) {
                     attachment.append(new String(buffer.array()).trim());
 
@@ -43,10 +45,12 @@ public class OrderController {
                     Map<SushiOrderWrapperField, String> sushiOrderHeaders = SushiOrder.mapToHeaders(message);
                     SushiOrderMethod method = SushiOrderMethod.fromString(sushiOrderHeaders.get(SushiOrderWrapperField.METHOD));
 
+                    OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
+
                     switch (method) {
-                        case PUSH -> new PushOrderService().handle(channel, SushiPushOrder.fromRequest(message));
-                        case PULL -> new PullOrderService().handle(channel, SushiPullOrder.fromRequest(message));
-                        default -> throw new NotImplementedException(getOrderIdFromOrder(attachment));
+                        case PUSH -> new PushOrderService().handle(channel, SushiPushOrder.fromRequest(message), orderContext);
+                        case PULL -> new PullOrderService().handle(channel, SushiPullOrder.fromRequest(message), orderContext);
+                        default -> throw new NotImplementedException(orderContext.getOrderId());
                     }
                 } else {
                     buffer.clear();
@@ -57,7 +61,7 @@ public class OrderController {
 
             @Override
             public void failed(final Throwable exc, final StringBuffer attachment) {
-                throw new ServerErrorException(getOrderIdFromOrder(attachment));
+                throw new ServerErrorException(exc, getOrderIdFromOrder(attachment));
             }
 
         });

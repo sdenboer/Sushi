@@ -5,7 +5,8 @@ import com.sushi.components.common.serving.SushiServingStatus;
 import java.util.UUID;
 
 public class NotFoundException extends SushiException {
-    public NotFoundException(UUID orderId) {
+    public NotFoundException(Exception e, UUID orderId) {
         super(SushiServingStatus.NOT_FOUND, orderId);
+        e.printStackTrace();
     }
 }

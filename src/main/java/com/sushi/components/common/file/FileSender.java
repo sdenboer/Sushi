@@ -31,7 +31,8 @@ public class FileSender {
     public static void transferFile(AsynchronousSocketChannel socketChannel, Path path) {
 
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
-        try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ)) {
+        try {
+            FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);
             fileChannel.read(buffer);
             buffer.flip();
 
@@ -39,7 +40,7 @@ public class FileSender {
                 @Override
                 public void completed(Integer result, FileChannel attachment) {
                     if (result <= 0) {
-                        ChannelUtils.close(socketChannel);
+                        ChannelUtils.close(socketChannel, fileChannel);
                     } else {
                         buffer.clear();
                         try {
@@ -47,7 +48,7 @@ public class FileSender {
                             buffer.flip();
                             socketChannel.write(buffer, attachment, this);
                         } catch (IOException e) {
-                            ChannelUtils.close(socketChannel);
+                            ChannelUtils.close(socketChannel, fileChannel);
                         }
                     }
                 }
@@ -57,6 +58,33 @@ public class FileSender {
                     ChannelUtils.close(socketChannel);
                 }
             });
+
+//        FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ) {
+//            fileChannel.read(buffer);
+//            buffer.flip();
+//
+//            socketChannel.write(buffer, fileChannel, new CompletionHandler<>() {
+//                @Override
+//                public void completed(Integer result, FileChannel attachment) {
+//                    if (result <= 0) {
+//                        ChannelUtils.close(socketChannel);
+//                    } else {
+//                        buffer.clear();
+//                        try {
+//                            attachment.read(buffer);
+//                            buffer.flip();
+//                            socketChannel.write(buffer, attachment, this);
+//                        } catch (IOException e) {
+//                            ChannelUtils.close(socketChannel);
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void failed(Throwable exc, FileChannel attachment) {
+//                    ChannelUtils.close(socketChannel);
+//                }
+//            });
         } catch (IOException e) {
             ChannelUtils.close(socketChannel);
         }

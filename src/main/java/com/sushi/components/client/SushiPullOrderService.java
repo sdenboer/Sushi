@@ -1,16 +1,12 @@
 package com.sushi.components.client;
 
+import com.sushi.components.common.file.FileWriter;
 import com.sushi.components.common.pull.SushiPullOrder;
 import com.sushi.components.common.pull.SushiPullServing;
-import com.sushi.components.utils.Constants;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 import static com.sushi.components.common.serving.SushiServingStatus.OK;
 
@@ -26,40 +22,27 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
         try (SocketChannel socketChannel = SocketChannel.open(hostAddress)) {
 
             write(socketChannel, sushiOrder);
-            String test = readResponse(socketChannel);
+            String test = readServing(socketChannel);
             SushiPullServing sushiPullServing = SushiPullServing.fromRequest(test);
             if (sushiPullServing.getSushiServingStatus().equals(OK)) {
                 receiveFile(socketChannel, sushiPullServing, sushiOrder);
             }
 
             return sushiPullServing;
-        } catch (IOException ioe) {
-            System.out.println("TODO");
-        }
-        throw new RuntimeException("");
-    }
-
-    private void receiveFile(SocketChannel socketChannel, SushiPullServing sushiPullServing, SushiPullOrder sushiOrder) throws IOException {
-
-        try (FileChannel fileChannel = FileChannel.open(Paths.get("/home/pl00cc/tmp/output", sushiOrder.getFileName()), StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
-            long position = 0L;
-            while (position < sushiPullServing.getFileSize()) {
-                position += fileChannel.transferFrom(socketChannel, position, Constants.TRANSFER_MAX_SIZE);
-            }
-            System.out.println(position == sushiPullServing.getFileSize());
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot connect to socket");
         }
     }
 
-    private String readResponse(SocketChannel socketChannel) throws IOException {
-        StringBuilder response = new StringBuilder();
+    private void receiveFile(SocketChannel socketChannel, SushiPullServing sushiPullServing, SushiPullOrder sushiOrder) {
 
-        while (!response.toString().contains("status")) {
-            final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
-            final long bytesRead = socketChannel.read(buffer);
-            if (bytesRead > 0) {
-                response.append(new String(buffer.array()));
-            }
+        try {
+            FileWriter fileWriter = new FileWriter("/home/pl00cc/tmp/output", sushiOrder.getFileName(), sushiPullServing.getFileSize());
+            fileWriter.write(socketChannel);
+            System.out.println(fileWriter.getPosition().get() == sushiPullServing.getFileSize());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return response.toString();
     }
+
 }
