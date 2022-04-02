@@ -83,18 +83,25 @@ public class FileCopyTest extends AbstractTest {
 
         public int testPush() {
             long start = System.currentTimeMillis();
-
+            long size = 0;
+            Path sourcePath = Paths.get("/home/pl00cc/tmp/input", "test.tar.gz");
+            try {
+                size = Files.size(sourcePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(size);
             SushiPushOrder sushiOrder = SushiPushOrder.newBuilder()
                     .host("localhost")
                     .port(9999)
                     .content("file")
                     .orderId(UUID.randomUUID())
-                    .dir("/home/pl00cc/tmp/input")
+                    .dir("/home/pl00cc/tmp/output")
                     .encryption("AES")
                     .fileName("test.tar.gz")
                     .fileSize(size)
                     .build();
-            SushiPushOrderService sushiPushOrderService = new SushiPushOrderService(srcPath);
+            SushiPushOrderService sushiPushOrderService = new SushiPushOrderService(sourcePath.toString());
             SushiServing send = sushiPushOrderService.send(sushiOrder);
 
             System.out.println(send.getSushiServingStatus().getStatusCode());

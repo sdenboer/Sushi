@@ -23,6 +23,7 @@ public class FileSender {
         try (FileChannel fileChannel = FileChannel.open(Paths.get(path), StandardOpenOption.READ)) {
             long position = 0L;
             long size = fileChannel.size();
+
             while (position < size) {
                 position += fileChannel.transferTo(position, Constants.TRANSFER_MAX_SIZE, socketChannel);
             }
@@ -36,16 +37,13 @@ public class FileSender {
 
         try {
             FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);
-            long size = fileChannel.size();
             fileChannel.read(buffer);
             buffer.flip();
 
             socketChannel.write(buffer, fileChannel, new CompletionHandler<>() {
                 @Override
                 public void completed(Integer result, FileChannel completionFileChannel) {
-                    long newPosition = position.addAndGet(result);
                     if (result <= 0) {
-                        System.out.println("Server done copying. Written " + newPosition + " of " + size + " bytes to the stream");
                         ChannelUtils.close(completionFileChannel, socketChannel);
                     } else {
                         buffer.compact();

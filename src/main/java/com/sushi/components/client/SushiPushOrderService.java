@@ -24,9 +24,9 @@ public class SushiPushOrderService extends SushiFileOrderService implements Sush
             String response = readServing(socketChannel);
             return SushiPushServing.fromRequest(response);
         } catch (IOException ioe) {
-            System.out.println("TODO");
+            ioe.printStackTrace();
         }
-        throw new RuntimeException("");
+        return null;
     }
 
 }

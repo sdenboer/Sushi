@@ -20,7 +20,7 @@ public class AsynchronousServerSocketChannelHandler {
 
     public AsynchronousServerSocketChannelHandler() {
         try {
-            this.group = AsynchronousChannelGroup.withThreadPool(Executors.newFixedThreadPool(20));
+            this.group = AsynchronousChannelGroup.withThreadPool(Executors.newFixedThreadPool(2));
             this.channel = AsynchronousServerSocketChannel.open(this.group).bind(new InetSocketAddress(PORT));
         } catch (IOException e) {
             throw new IllegalStateException("unable to start FileReceiver", e);
