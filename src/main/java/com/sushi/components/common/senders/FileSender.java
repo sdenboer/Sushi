@@ -1,5 +1,6 @@
 package com.sushi.components.common.senders;
 
+import com.sushi.components.common.OnComplete;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
 
@@ -29,7 +30,7 @@ public class FileSender implements Sender<Path> {
     }
 
     @Override
-    public void send(AsynchronousSocketChannel socketChannel, Path path) {
+    public void send(AsynchronousSocketChannel socketChannel, Path path, OnComplete onComplete) {
 
         ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
 

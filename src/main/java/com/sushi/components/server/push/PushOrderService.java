@@ -7,8 +7,8 @@ import com.sushi.components.common.file_transfer.FileWriter;
 import com.sushi.components.common.message.order.SushiPushOrder;
 import com.sushi.components.common.message.serving.SushiPushServing;
 import com.sushi.components.common.message.serving.SushiServingStatus;
+import com.sushi.components.common.senders.SushiMessageSender;
 import com.sushi.components.server.OrderService;
-import com.sushi.components.server.ServingService;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
 
@@ -44,7 +44,7 @@ public class PushOrderService implements OrderService<SushiPushOrder> {
                     }
                     if (attachedFileWriter.done()) {
                         SushiPushServing serving = new SushiPushServing(SushiServingStatus.OK, UUID.randomUUID(), "txt");
-                        new ServingService(socketChannel, serving).send();
+                        new SushiMessageSender().send(socketChannel, serving);
                         ChannelUtils.close(attachedFileWriter.getFileChannel());
                     } else {
                         buffer.clear();

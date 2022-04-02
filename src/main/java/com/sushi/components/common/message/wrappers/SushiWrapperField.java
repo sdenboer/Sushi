@@ -9,7 +9,7 @@ public enum SushiWrapperField {
     ORDER_ID("order-id"),
     FILE("file"),
     DIR("dir"),
-    FILE_SIZE("file-size"),
+    CONTENT_LENGTH("content-length"),
     ENCRYPTION("encryption"),
     CONTENT("content"),
     STATUS("status");

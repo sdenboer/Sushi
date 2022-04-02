@@ -4,15 +4,13 @@ import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.InvalidRequestException;
 import com.sushi.components.common.error.exceptions.NotImplementedException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.mappers.SushiFileOrderMapper;
-import com.sushi.components.common.mappers.SushiMessageMapper;
-import com.sushi.components.common.mappers.SushiPullOrderMapper;
-import com.sushi.components.common.mappers.SushiPushOrderMapper;
+import com.sushi.components.common.mappers.*;
 import com.sushi.components.common.message.order.SushiOrderMethod;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import com.sushi.components.server.file.FileOrderService;
 import com.sushi.components.server.pull.PullOrderService;
 import com.sushi.components.server.push.PushOrderService;
+import com.sushi.components.server.remove.RemoveOrderService;
 import com.sushi.components.utils.Constants;
 
 import java.nio.ByteBuffer;
@@ -54,6 +52,7 @@ public class OrderController {
                         case PUSH -> new PushOrderService().handle(channel, new SushiPushOrderMapper().from(message), orderContext);
                         case PULL -> new PullOrderService().handle(channel, new SushiPullOrderMapper().from(message), orderContext);
                         case FILE -> new FileOrderService().handle(channel, new SushiFileOrderMapper().from(message), orderContext);
+                        case REMOVE -> new RemoveOrderService().handle(channel, new SushiRemoveOrderMapper().from(message), orderContext);
                         default -> throw new NotImplementedException(orderContext.getOrderId());
                     }
                 } else {

@@ -32,7 +32,7 @@ public class SushiPullServing extends SushiServing implements HasPayload<FilePay
         return Map.of(
                 SushiWrapperField.ENCRYPTION, encryption,
                 SushiWrapperField.CONTENT, content,
-                SushiWrapperField.FILE_SIZE, Objects.toString(fileSize, null)
+                SushiWrapperField.CONTENT_LENGTH, Objects.toString(fileSize, null)
         );
     }
 

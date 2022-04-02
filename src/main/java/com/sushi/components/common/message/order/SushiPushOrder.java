@@ -40,7 +40,7 @@ public class SushiPushOrder extends SushiOrder implements HasPayload<FilePayload
                 SushiWrapperField.FILE, fileName,
                 SushiWrapperField.ENCRYPTION, encryption,
                 SushiWrapperField.CONTENT, content,
-                SushiWrapperField.FILE_SIZE, String.valueOf(fileSize)
+                SushiWrapperField.CONTENT_LENGTH, String.valueOf(fileSize)
         );
     }
 

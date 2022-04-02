@@ -8,9 +8,8 @@ import com.sushi.components.common.message.wrappers.HasSushiWrappers;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.SocketChannel;
 
-public class SushiMessageSender implements Sender<SushiMessage> {
+public class SushiMessageSender {
 
-    @Override
     public void send(SocketChannel socketChannel, SushiMessage message) {
         if (message instanceof HasSushiWrappers sushiWrappers) {
             new TextSender().send(socketChannel, sushiWrappers.toRequest());
@@ -20,15 +19,13 @@ public class SushiMessageSender implements Sender<SushiMessage> {
         }
     }
 
-    @Override
     public void send(AsynchronousSocketChannel socketChannel, SushiMessage message) {
-        OnComplete onComplete = (sushiMessage) -> {
-            if (sushiMessage instanceof HasPayload<?> hasPayload) {
-                new PayloadSender().send(socketChannel, hasPayload.getPayload());
-            }
-        };
         if (message instanceof HasSushiWrappers sushiWrappers) {
-            new TextSender().send(socketChannel, sushiWrappers.toRequest(), onComplete);
+            OnComplete sendPayloadOnComplete = null;
+            if (message instanceof HasPayload<?> hasPayload) {
+                sendPayloadOnComplete = () -> new PayloadSender().send(socketChannel, hasPayload.getPayload(), null);
+            }
+            new TextSender().send(socketChannel, sushiWrappers.toRequest(), sendPayloadOnComplete);
         }
 
     }

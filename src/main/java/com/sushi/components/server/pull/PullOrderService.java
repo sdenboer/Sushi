@@ -4,10 +4,10 @@ import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.NotFoundException;
 import com.sushi.components.common.message.order.SushiPullOrder;
 import com.sushi.components.common.message.serving.SushiPullServing;
-import com.sushi.components.common.message.wrappers.FilePayload;
 import com.sushi.components.common.message.serving.SushiServingStatus;
+import com.sushi.components.common.message.wrappers.FilePayload;
+import com.sushi.components.common.senders.SushiMessageSender;
 import com.sushi.components.server.OrderService;
-import com.sushi.components.server.ServingService;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -26,8 +26,7 @@ public class PullOrderService implements OrderService<SushiPullOrder> {
             long size = Files.size(path);
             FilePayload payload = new FilePayload(path);
             SushiPullServing serving = new SushiPullServing(SushiServingStatus.OK, orderId, "aes", "file", size, payload);
-            ServingService servingService = new ServingService(socketChannel, serving);
-            servingService.send();
+            new SushiMessageSender().send(socketChannel, serving);
         } catch (IOException e) {
             throw new NotFoundException(e, orderId);
         }

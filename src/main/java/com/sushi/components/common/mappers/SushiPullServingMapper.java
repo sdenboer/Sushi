@@ -15,7 +15,7 @@ public class SushiPullServingMapper implements SushiMessageMapper<SushiPullServi
     public SushiPullServing from(String request) {
         Map<SushiWrapperField, String> wrappers = SushiMessageMapper.deserialize(request);
 
-        String fileSize = wrappers.getOrDefault(FILE_SIZE, null);
+        String fileSize = wrappers.getOrDefault(CONTENT_LENGTH, null);
         return SushiPullServing.builder()
                 .sushiServingStatus(SushiServingStatus.fromString(wrappers.get(STATUS)))
                 .orderId(UUID.fromString(wrappers.get(ORDER_ID)))

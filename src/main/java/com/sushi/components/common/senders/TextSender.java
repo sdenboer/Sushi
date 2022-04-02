@@ -1,6 +1,7 @@
 package com.sushi.components.common.senders;
 
 import com.sushi.components.common.OnComplete;
+import com.sushi.components.utils.ChannelUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -32,6 +33,12 @@ public class TextSender implements Sender<String> {
                 while (payloadBuffer.hasRemaining()) {
                     socketChannel.write(payloadBuffer, attachment, this);
                 }
+                if (onComplete != null) {
+                    onComplete.onComplete();
+                } else {
+                    ChannelUtils.close(socketChannel);
+                }
+
 
             }
 

@@ -14,6 +14,8 @@ import static com.sushi.components.common.message.serving.SushiServingStatus.OK;
 
 public class SushiPullOrderService implements SushiOrderService<SushiPullOrder, SushiPullServing> {
 
+    private static final String DIR = "/home/pl00cc/tmp/output";
+
     @Override
     public SushiPullServing send(SushiPullOrder sushiOrder) {
         InetSocketAddress hostAddress = new InetSocketAddress(sushiOrder.getHost().host(), sushiOrder.getHost().port());
@@ -23,7 +25,7 @@ public class SushiPullOrderService implements SushiOrderService<SushiPullOrder, 
             String serving = receiveServing(socketChannel);
             SushiPullServing sushiPullServing = new SushiPullServingMapper().from(serving);
             if (sushiPullServing.getSushiServingStatus().equals(OK)) {
-                receiveFile(socketChannel, sushiPullServing, sushiOrder);
+                receiveFilePayload(socketChannel, sushiPullServing, sushiOrder);
             }
             return sushiPullServing;
         } catch (IOException e) {
@@ -31,10 +33,10 @@ public class SushiPullOrderService implements SushiOrderService<SushiPullOrder, 
         }
     }
 
-    private void receiveFile(SocketChannel socketChannel, SushiPullServing sushiPullServing, SushiPullOrder sushiOrder) {
+    private void receiveFilePayload(SocketChannel socketChannel, SushiPullServing sushiPullServing, SushiPullOrder sushiOrder) {
 
         try {
-            FileWriter fileWriter = new FileWriter("/home/pl00cc/tmp/output", sushiOrder.getFileName(), sushiPullServing.getFileSize());
+            FileWriter fileWriter = new FileWriter(DIR, sushiOrder.getFileName(), sushiPullServing.getFileSize());
             fileWriter.write(socketChannel);
             System.out.println("FILE IS SAME SIZE " + (fileWriter.getPosition().get() == sushiPullServing.getFileSize()));
         } catch (IOException e) {

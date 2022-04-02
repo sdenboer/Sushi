@@ -9,15 +9,14 @@ import java.util.Map;
 import java.util.UUID;
 
 @Getter
-public class SushiFileOrder extends SushiOrder {
+public class SushiRemoveOrder extends SushiOrder {
 
-    private static final SushiOrderMethod method = SushiOrderMethod.FILE;
-
+    private static final SushiOrderMethod method = SushiOrderMethod.REMOVE;
     private final String dir;
     private final String fileName;
 
     @Builder
-    public SushiFileOrder(String host, int port, UUID orderId, String dir, String fileName) {
+    public SushiRemoveOrder(String host, int port, UUID orderId, String dir, String fileName) {
         super(method, new SushiHost(host, port), orderId);
         this.dir = dir;
         this.fileName = fileName;
@@ -30,5 +29,4 @@ public class SushiFileOrder extends SushiOrder {
                 SushiWrapperField.FILE, fileName
         );
     }
-
 }
