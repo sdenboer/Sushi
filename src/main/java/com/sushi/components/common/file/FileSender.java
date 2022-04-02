@@ -14,6 +14,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.concurrent.atomic.AtomicLong;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileSender {
@@ -30,32 +31,37 @@ public class FileSender {
 
     public static void transferFile(AsynchronousSocketChannel socketChannel, Path path) {
 
-        final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
+        ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
+        AtomicLong position = new AtomicLong(0L);
+
         try {
             FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);
+            long size = fileChannel.size();
             fileChannel.read(buffer);
             buffer.flip();
 
             socketChannel.write(buffer, fileChannel, new CompletionHandler<>() {
                 @Override
-                public void completed(Integer result, FileChannel attachment) {
+                public void completed(Integer result, FileChannel completionFileChannel) {
+                    long newPosition = position.addAndGet(result);
                     if (result <= 0) {
-                        ChannelUtils.close(socketChannel, fileChannel);
+                        System.out.println("Server done copying. Written " + newPosition + " of " + size + " bytes to the stream");
+                        ChannelUtils.close(completionFileChannel, socketChannel);
                     } else {
-                        buffer.clear();
+                        buffer.compact();
                         try {
-                            attachment.read(buffer);
+                            completionFileChannel.read(buffer);
                             buffer.flip();
-                            socketChannel.write(buffer, attachment, this);
+                            socketChannel.write(buffer, completionFileChannel, this);
                         } catch (IOException e) {
-                            ChannelUtils.close(socketChannel, fileChannel);
+                            ChannelUtils.close(completionFileChannel, socketChannel);
                         }
                     }
                 }
 
                 @Override
                 public void failed(Throwable exc, FileChannel attachment) {
-                    ChannelUtils.close(socketChannel);
+                    ChannelUtils.close(attachment, socketChannel);
                 }
             });
         } catch (IOException e) {
@@ -64,6 +70,5 @@ public class FileSender {
 
 
     }
-
 
 }

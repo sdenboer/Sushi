@@ -1,5 +1,6 @@
 package com.sushi.components.common.file;
 
+import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
 
 import java.io.IOException;
@@ -38,8 +39,9 @@ public class FileWriter {
     public void write(SocketChannel socketChannel) throws IOException {
         while (!done()) {
             position.addAndGet(fileChannel.transferFrom(socketChannel, position.get(), Constants.TRANSFER_MAX_SIZE));
-
+            System.out.println(((double) this.position.get() / this.fileSize * 100));
         }
+        ChannelUtils.close(fileChannel);
     }
 
     public AtomicLong getPosition() {
@@ -47,11 +49,6 @@ public class FileWriter {
     }
 
     public boolean done() {
-        double f = ((double) this.position.get() / this.fileSize * 100);
-
-
-        BigDecimal bd = new BigDecimal(f).setScale(2, RoundingMode.HALF_UP);
-        System.out.println(bd);
         return this.position.get() == this.fileSize;
     }
 

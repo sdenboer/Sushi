@@ -39,7 +39,7 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
         try {
             FileWriter fileWriter = new FileWriter("/home/pl00cc/tmp/output", sushiOrder.getFileName(), sushiPullServing.getFileSize());
             fileWriter.write(socketChannel);
-            System.out.println(fileWriter.getPosition().get() == sushiPullServing.getFileSize());
+            System.out.println("FILE IS SAME SIZE " + (fileWriter.getPosition().get() == sushiPullServing.getFileSize()));
         } catch (IOException e) {
             e.printStackTrace();
         }
