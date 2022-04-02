@@ -1,5 +1,7 @@
 package com.sushi.components.server;
 
+import com.sushi.components.common.file.SushiFileServing;
+import com.sushi.components.common.file.SushiFileServingPayload;
 import com.sushi.components.common.file_transfer.FileSender;
 import com.sushi.components.common.pull.SushiPullServing;
 import com.sushi.components.common.pull.SushiPullServingPayload;
@@ -38,6 +40,22 @@ public class ServingService {
                     if (serving instanceof SushiPullServing) {
                         SushiPullServingPayload payload = (SushiPullServingPayload) serving.getPayload();
                         FileSender.transferFile(socketChannel,  payload.getPath());
+                    } else if (serving instanceof SushiFileServing) {
+                        SushiFileServingPayload payload = (SushiFileServingPayload) serving.getPayload();
+                        final ByteBuffer payloadBuffer = ByteBuffer.wrap(payload.toRequest().getBytes(StandardCharsets.UTF_8));
+                        socketChannel.write(payloadBuffer, null, new CompletionHandler<Integer, Void>() {
+                            @Override
+                            public void completed(Integer result, Void attachment) {
+                                while (payloadBuffer.hasRemaining()) {
+                                    socketChannel.write(payloadBuffer, attachment, this);
+                                }
+                            }
+
+                            @Override
+                            public void failed(Throwable exc, Void attachment) {
+                                exc.printStackTrace();
+                            }
+                        });
                     }
                 } else {
                     ChannelUtils.close(socketChannel);
