@@ -2,14 +2,12 @@ package com.sushi.components.server.remove;
 
 import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.NotFoundException;
-import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.message.order.SushiRemoveOrder;
 import com.sushi.components.common.message.serving.SushiRemoveServing;
 import com.sushi.components.common.message.serving.SushiServingStatus;
 import com.sushi.components.common.senders.SushiMessageSender;
 import com.sushi.components.server.OrderService;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.file.Files;
