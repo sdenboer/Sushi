@@ -1,17 +1,13 @@
 package com.sushi.components.client;
 
-import com.sushi.components.common.mappers.SushiFileServingMapper;
 import com.sushi.components.common.mappers.SushiRemoveServingMapper;
 import com.sushi.components.common.message.order.SushiRemoveOrder;
-import com.sushi.components.common.message.serving.SushiFileServing;
 import com.sushi.components.common.message.serving.SushiRemoveServing;
 import com.sushi.components.common.senders.TextSender;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
-
-import static com.sushi.components.common.message.serving.SushiServingStatus.OK;
 
 public class SushiRemoveOrderService implements SushiOrderService<SushiRemoveOrder, SushiRemoveServing> {
     @Override

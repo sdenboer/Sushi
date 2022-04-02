@@ -20,15 +20,15 @@ public enum SushiServingStatus {
         this.statusCode = statusCode;
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
     public static SushiServingStatus fromString(String text) {
         return Arrays.stream(SushiServingStatus.values())
                 .filter(value -> value.statusCode == Integer.parseInt(text))
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
 
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 }

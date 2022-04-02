@@ -13,8 +13,6 @@ import static java.util.stream.Collectors.toMap;
 
 public interface SushiMessageMapper<T extends HasSushiWrappers> {
 
-    T from(String request);
-
     static Map<SushiWrapperField, String> deserialize(String request) {
         String[] splitRequest = request.split("\n");
 
@@ -31,4 +29,6 @@ public interface SushiMessageMapper<T extends HasSushiWrappers> {
                 .map(wrapper -> wrapper.getKey().getField() + ": " + wrapper.getValue())
                 .collect(Collectors.joining("\n"));
     }
+
+    T from(String request);
 }

@@ -16,14 +16,14 @@ public enum SushiOrderMethod {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
-
     public static SushiOrderMethod fromString(String text) {
         return Arrays.stream(SushiOrderMethod.values())
                 .filter(value -> value.value.equalsIgnoreCase(text))
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
+    }
+
+    public String getValue() {
+        return value;
     }
 }

@@ -1,8 +1,8 @@
 package com.sushi.components.common.mappers;
 
 import com.sushi.components.common.message.serving.SushiPullServing;
-import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import com.sushi.components.common.message.serving.SushiServingStatus;
+import com.sushi.components.common.message.wrappers.SushiWrapperField;
 
 import java.util.Map;
 import java.util.UUID;

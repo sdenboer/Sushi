@@ -20,15 +20,15 @@ public enum SushiWrapperField {
         this.field = field;
     }
 
-    public String getField() {
-        return field;
-    }
-
     public static SushiWrapperField fromString(String text) {
         return Arrays.stream(SushiWrapperField.values())
                 .filter(value -> value.field.equalsIgnoreCase(text))
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
+    }
+
+    public String getField() {
+        return field;
     }
 
 
