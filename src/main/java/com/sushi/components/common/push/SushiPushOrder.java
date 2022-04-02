@@ -7,11 +7,8 @@ import com.sushi.components.common.order.SushiOrderWrapper;
 import com.sushi.components.common.order.SushiOrderWrapperField;
 import lombok.Builder;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import static com.sushi.components.common.order.SushiOrderWrapperField.*;
 
 public class SushiPushOrder extends SushiOrder {
 
@@ -34,9 +31,6 @@ public class SushiPushOrder extends SushiOrder {
         this.fileSize = fileSize;
     }
 
-    public static SushiPushOrderBuilder newBuilder() {
-        return new SushiPushOrderBuilder();
-    }
 
     @Override
     public Set<SushiOrderWrapper> optionalSushiWrappers() {
@@ -70,18 +64,4 @@ public class SushiPushOrder extends SushiOrder {
         return fileSize;
     }
 
-    public static SushiPushOrder fromRequest(String request) {
-        Map<SushiOrderWrapperField, String> wrappers = SushiOrder.mapToHeaders(request);
-
-        return SushiPushOrder.newBuilder()
-                .host(wrappers.get(HOST))
-                .port(Integer.parseInt(wrappers.get(PORT)))
-                .orderId(UUID.fromString(wrappers.get(ORDER_ID)))
-                .dir(wrappers.get(DIR))
-                .fileName(wrappers.get(FILE))
-                .encryption(wrappers.get(ENCRYPTION))
-                .content(wrappers.get(CONTENT))
-                .fileSize((Long.parseLong(wrappers.get(FILE_SIZE))))
-                .build();
-    }
 }

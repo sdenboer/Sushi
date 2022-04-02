@@ -1,4 +1,4 @@
-package com.sushi.components.common.file;
+package com.sushi.components.common.file_transfer;
 
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
@@ -14,7 +14,6 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.concurrent.atomic.AtomicLong;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileSender {
@@ -33,7 +32,6 @@ public class FileSender {
     public static void transferFile(AsynchronousSocketChannel socketChannel, Path path) {
 
         ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
-        AtomicLong position = new AtomicLong(0L);
 
         try {
             FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);

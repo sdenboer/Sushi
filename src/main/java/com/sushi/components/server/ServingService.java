@@ -1,7 +1,10 @@
 package com.sushi.components.server;
 
-import com.sushi.components.common.file.FileSender;
+import com.sushi.components.common.file_transfer.FileSender;
+import com.sushi.components.common.pull.SushiPullServing;
+import com.sushi.components.common.pull.SushiPullServingPayload;
 import com.sushi.components.common.serving.SushiServing;
+import com.sushi.components.common.serving.SushiServingPayload;
 import com.sushi.components.utils.ChannelUtils;
 
 import java.nio.ByteBuffer;
@@ -15,16 +18,12 @@ public class ServingService {
 
     private final AsynchronousSocketChannel socketChannel;
     private final SushiServing serving;
-    private Path path;
 
     public ServingService(AsynchronousSocketChannel socketChannel, SushiServing serving) {
         this.socketChannel = socketChannel;
         this.serving = serving;
     }
 
-    public void addFile(Path path) {
-        this.path = path;
-    }
 
     public void send() {
         final ByteBuffer buffer = ByteBuffer.wrap(serving.toRequest().getBytes(StandardCharsets.UTF_8));
@@ -35,8 +34,11 @@ public class ServingService {
                 while (buffer.hasRemaining()) {
                     socketChannel.write(buffer, attachment, this);
                 }
-                if (Objects.nonNull(path)) {
-                    FileSender.transferFile(socketChannel, path);
+                if (Objects.nonNull(serving.getPayload())) {
+                    if (serving instanceof SushiPullServing) {
+                        SushiPullServingPayload payload = (SushiPullServingPayload) serving.getPayload();
+                        FileSender.transferFile(socketChannel,  payload.getPath());
+                    }
                 } else {
                     ChannelUtils.close(socketChannel);
                 }

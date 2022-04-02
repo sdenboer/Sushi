@@ -1,29 +1,26 @@
 package com.sushi.components.client;
 
-import com.sushi.components.utils.Constants;
+import com.sushi.components.common.file.SushiFileOrder;
+import com.sushi.components.common.file.SushiFileServing;
+import com.sushi.components.common.file.mappers.SushiFileServingMapper;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
-public abstract class SushiFileOrderService {
+public class SushiFileOrderService implements SushiOrderService<SushiFileOrder, SushiFileServing> {
 
-    protected final String srcPath;
+    @Override
+    public SushiFileServing send(SushiFileOrder sushiOrder) {
+        InetSocketAddress hostAddress = new InetSocketAddress(sushiOrder.getHost().host(), sushiOrder.getHost().port());
+        try (SocketChannel socketChannel = SocketChannel.open(hostAddress)) {
 
-    protected SushiFileOrderService(String srcPath) {
-        this.srcPath = srcPath;
-    }
-
-    protected String readServing(SocketChannel socketChannel) throws IOException {
-        StringBuilder response = new StringBuilder();
-
-        while (!response.toString().contains("status")) {
-            final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
-            final long bytesRead = socketChannel.read(buffer);
-            if (bytesRead > 0) {
-                response.append(new String(buffer.array()));
-            }
+            write(socketChannel, sushiOrder);
+            String response = readServing(socketChannel);
+            return new SushiFileServingMapper().from(response);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
-        return response.toString();
+        return null;
     }
 }

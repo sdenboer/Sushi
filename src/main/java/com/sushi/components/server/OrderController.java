@@ -7,8 +7,10 @@ import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.order.SushiOrder;
 import com.sushi.components.common.order.SushiOrderMethod;
 import com.sushi.components.common.order.SushiOrderWrapperField;
-import com.sushi.components.common.pull.SushiPullOrder;
-import com.sushi.components.common.push.SushiPushOrder;
+import com.sushi.components.common.file.mappers.SushiFileOrderMapper;
+import com.sushi.components.common.pull.mappers.SushiPullOrderMapper;
+import com.sushi.components.common.push.mappers.SushiPushOrderMapper;
+import com.sushi.components.server.file.FileOrderService;
 import com.sushi.components.server.pull.PullOrderService;
 import com.sushi.components.server.push.PushOrderService;
 import com.sushi.components.utils.Constants;
@@ -48,8 +50,9 @@ public class OrderController {
                     OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
 
                     switch (method) {
-                        case PUSH -> new PushOrderService().handle(channel, SushiPushOrder.fromRequest(message), orderContext);
-                        case PULL -> new PullOrderService().handle(channel, SushiPullOrder.fromRequest(message), orderContext);
+                        case PUSH -> new PushOrderService().handle(channel, new SushiPushOrderMapper().from(message), orderContext);
+                        case PULL -> new PullOrderService().handle(channel, new SushiPullOrderMapper().from(message), orderContext);
+                        case FILE -> new FileOrderService().handle(channel, new SushiFileOrderMapper().from(message), orderContext);
                         default -> throw new NotImplementedException(orderContext.getOrderId());
                     }
                 } else {

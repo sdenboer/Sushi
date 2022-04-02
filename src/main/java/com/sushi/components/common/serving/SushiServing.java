@@ -16,10 +16,12 @@ public abstract class SushiServing implements SushiMessage<SushiServingWrapper> 
 
     private final SushiServingStatus sushiServingStatus;
     private final UUID orderId;
+    private final SushiServingPayload payload;
 
-    protected SushiServing(SushiServingStatus sushiServingStatus, UUID orderId) {
+    protected SushiServing(SushiServingStatus sushiServingStatus, UUID orderId, SushiServingPayload payload) {
         this.sushiServingStatus = sushiServingStatus;
         this.orderId = orderId;
+        this.payload = payload;
     }
 
     @Override
@@ -41,4 +43,11 @@ public abstract class SushiServing implements SushiMessage<SushiServingWrapper> 
         return sushiServingStatus;
     }
 
+    public SushiServingPayload getPayload() {
+        return payload;
+    }
+
+    public UUID getOrderId() {
+        return orderId;
+    }
 }

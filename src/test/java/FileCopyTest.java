@@ -1,7 +1,9 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.sushi.components.client.SushiFileOrderService;
 import com.sushi.components.client.SushiPullOrderService;
+import com.sushi.components.common.file.SushiFileOrder;
 import com.sushi.components.common.pull.SushiPullOrder;
 import com.sushi.components.common.serving.SushiServing;
 import com.sushi.components.common.push.SushiPushOrder;
@@ -53,7 +55,7 @@ public class FileCopyTest extends AbstractTest {
 
         final File srcFile = new File(files.get(0).getAbsolutePath());
         final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), files.get(0).getAbsolutePath());
-        assertEquals(SushiServingStatus.OK.getStatusCode(), helper.testPull());
+        assertEquals(SushiServingStatus.OK.getStatusCode(), helper.testFile());
 //
 //        files.forEach(f -> runClient(f.getAbsolutePath()));
 //        jobsLatch.await();
@@ -91,14 +93,14 @@ public class FileCopyTest extends AbstractTest {
                 e.printStackTrace();
             }
             System.out.println(size);
-            SushiPushOrder sushiOrder = SushiPushOrder.newBuilder()
+            SushiPushOrder sushiOrder = SushiPushOrder.builder()
                     .host("localhost")
                     .port(9999)
                     .content("file")
                     .orderId(UUID.randomUUID())
                     .dir("/home/pl00cc/tmp/output")
                     .encryption("AES")
-                    .fileName("test.tar.gz")
+                    .fileName("xaa")
                     .fileSize(size)
                     .build();
             SushiPushOrderService sushiPushOrderService = new SushiPushOrderService(sourcePath.toString());
@@ -129,6 +131,21 @@ public class FileCopyTest extends AbstractTest {
             long timeElapsed = finish - start;
             System.out.println("Bestand " + this.fileName + " van " + this.size / (1024 * 1024) + "MB gekopieerd in " + timeElapsed / 1000 + " seconden");
             return send.getSushiServingStatus().getStatusCode();
+        }
+
+        public int testFile() {
+
+            SushiFileOrder sushiOrder = SushiFileOrder.builder()
+                    .host("localhost")
+                    .port(9999)
+                    .orderId(UUID.randomUUID())
+                    .dir("/home/pl00cc/tmp/input")
+                    .fileName("xaa")
+                    .build();
+            SushiFileOrderService sushiPullOrderService = new SushiFileOrderService();
+            SushiServing send = sushiPullOrderService.send(sushiOrder);
+
+            return 0;
         }
 
 

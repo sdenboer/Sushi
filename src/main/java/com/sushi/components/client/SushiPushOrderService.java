@@ -1,17 +1,20 @@
 package com.sushi.components.client;
 
-import com.sushi.components.common.file.FileSender;
+import com.sushi.components.common.file_transfer.FileSender;
 import com.sushi.components.common.push.SushiPushOrder;
 import com.sushi.components.common.push.SushiPushServing;
+import com.sushi.components.common.push.mappers.SushiPushServingMapper;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
-public class SushiPushOrderService extends SushiFileOrderService implements SushiOrderService<SushiPushOrder, SushiPushServing> {
+public class SushiPushOrderService implements SushiOrderService<SushiPushOrder, SushiPushServing> {
+
+    private final String srcPath;
 
     public SushiPushOrderService(String srcPath) {
-        super(srcPath);
+        this.srcPath = srcPath;
     }
 
     @Override
@@ -22,7 +25,7 @@ public class SushiPushOrderService extends SushiFileOrderService implements Sush
             write(socketChannel, sushiOrder);
             FileSender.transferFile(socketChannel, srcPath);
             String response = readServing(socketChannel);
-            return SushiPushServing.fromRequest(response);
+            return new SushiPushServingMapper().from(response);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

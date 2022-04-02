@@ -1,8 +1,9 @@
 package com.sushi.components.client;
 
-import com.sushi.components.common.file.FileWriter;
+import com.sushi.components.common.file_transfer.FileWriter;
 import com.sushi.components.common.pull.SushiPullOrder;
 import com.sushi.components.common.pull.SushiPullServing;
+import com.sushi.components.common.pull.mappers.SushiPullServingMapper;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -10,10 +11,12 @@ import java.nio.channels.SocketChannel;
 
 import static com.sushi.components.common.serving.SushiServingStatus.OK;
 
-public class SushiPullOrderService extends SushiFileOrderService implements SushiOrderService<SushiPullOrder, SushiPullServing> {
+public class SushiPullOrderService implements SushiOrderService<SushiPullOrder, SushiPullServing> {
+
+    private final String srcPath;
 
     public SushiPullOrderService(String srcPath) {
-        super(srcPath);
+        this.srcPath = srcPath;
     }
 
     @Override
@@ -22,8 +25,8 @@ public class SushiPullOrderService extends SushiFileOrderService implements Sush
         try (SocketChannel socketChannel = SocketChannel.open(hostAddress)) {
 
             write(socketChannel, sushiOrder);
-            String test = readServing(socketChannel);
-            SushiPullServing sushiPullServing = SushiPullServing.fromRequest(test);
+            String serving = readServing(socketChannel);
+            SushiPullServing sushiPullServing = new SushiPullServingMapper().from(serving);
             if (sushiPullServing.getSushiServingStatus().equals(OK)) {
                 receiveFile(socketChannel, sushiPullServing, sushiOrder);
             }

@@ -4,6 +4,7 @@ import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.NotFoundException;
 import com.sushi.components.common.pull.SushiPullOrder;
 import com.sushi.components.common.pull.SushiPullServing;
+import com.sushi.components.common.pull.SushiPullServingPayload;
 import com.sushi.components.common.serving.SushiServingStatus;
 import com.sushi.components.server.OrderService;
 import com.sushi.components.server.ServingService;
@@ -23,9 +24,9 @@ public class PullOrderService implements OrderService<SushiPullOrder> {
         try {
             Path path = Paths.get(sushiOrder.getDir(), sushiOrder.getFileName());
             long size = Files.size(path);
-            SushiPullServing serving = new SushiPullServing(SushiServingStatus.OK, orderId, "aes", "file", size);
+            SushiPullServingPayload payload = new SushiPullServingPayload(path);
+            SushiPullServing serving = new SushiPullServing(SushiServingStatus.OK, orderId, "aes", "file", size, payload);
             ServingService servingService = new ServingService(socketChannel, serving);
-            servingService.addFile(path);
             servingService.send();
         } catch (IOException e) {
             throw new NotFoundException(e, orderId);
