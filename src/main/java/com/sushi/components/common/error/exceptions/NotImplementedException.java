@@ -1,6 +1,6 @@
 package com.sushi.components.common.error.exceptions;
 
-import com.sushi.components.common.serving.SushiServingStatus;
+import com.sushi.components.common.message.serving.SushiServingStatus;
 
 import java.util.UUID;
 

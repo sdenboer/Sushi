@@ -3,12 +3,12 @@ import static org.junit.Assert.assertTrue;
 
 import com.sushi.components.client.SushiFileOrderService;
 import com.sushi.components.client.SushiPullOrderService;
-import com.sushi.components.common.file.SushiFileOrder;
-import com.sushi.components.common.pull.SushiPullOrder;
-import com.sushi.components.common.serving.SushiServing;
-import com.sushi.components.common.push.SushiPushOrder;
+import com.sushi.components.common.message.order.SushiFileOrder;
+import com.sushi.components.common.message.order.SushiPullOrder;
+import com.sushi.components.common.message.serving.SushiServing;
+import com.sushi.components.common.message.order.SushiPushOrder;
 import com.sushi.components.client.SushiPushOrderService;
-import com.sushi.components.common.serving.SushiServingStatus;
+import com.sushi.components.common.message.serving.SushiServingStatus;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -103,7 +103,7 @@ public class FileCopyTest extends AbstractTest {
                     .fileName("xaa")
                     .fileSize(size)
                     .build();
-            SushiPushOrderService sushiPushOrderService = new SushiPushOrderService(sourcePath.toString());
+            SushiPushOrderService sushiPushOrderService = new SushiPushOrderService();
             SushiServing send = sushiPushOrderService.send(sushiOrder);
 
             System.out.println(send.getSushiServingStatus().getStatusCode());
@@ -124,7 +124,7 @@ public class FileCopyTest extends AbstractTest {
                     .encryption("AES")
                     .fileName("test.tar.gz")
                     .build();
-            SushiPullOrderService sushiPullOrderService = new SushiPullOrderService(srcPath);
+            SushiPullOrderService sushiPullOrderService = new SushiPullOrderService();
             SushiServing send = sushiPullOrderService.send(sushiOrder);
 
             long finish = System.currentTimeMillis();

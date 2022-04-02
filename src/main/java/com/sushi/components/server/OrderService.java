@@ -1,7 +1,7 @@
 package com.sushi.components.server;
 
 import com.sushi.components.common.OrderContext;
-import com.sushi.components.common.order.SushiOrder;
+import com.sushi.components.common.message.order.SushiOrder;
 
 import java.nio.channels.AsynchronousSocketChannel;
 

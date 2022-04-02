@@ -4,12 +4,12 @@ import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.InvalidRequestException;
 import com.sushi.components.common.error.exceptions.NotImplementedException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.order.SushiOrder;
-import com.sushi.components.common.order.SushiOrderMethod;
-import com.sushi.components.common.order.SushiOrderWrapperField;
-import com.sushi.components.common.file.mappers.SushiFileOrderMapper;
-import com.sushi.components.common.pull.mappers.SushiPullOrderMapper;
-import com.sushi.components.common.push.mappers.SushiPushOrderMapper;
+import com.sushi.components.common.mappers.SushiFileOrderMapper;
+import com.sushi.components.common.mappers.SushiMessageMapper;
+import com.sushi.components.common.mappers.SushiPullOrderMapper;
+import com.sushi.components.common.mappers.SushiPushOrderMapper;
+import com.sushi.components.common.message.order.SushiOrderMethod;
+import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import com.sushi.components.server.file.FileOrderService;
 import com.sushi.components.server.pull.PullOrderService;
 import com.sushi.components.server.push.PushOrderService;
@@ -44,8 +44,9 @@ public class OrderController {
 
                     String message = attachment.toString();
 
-                    Map<SushiOrderWrapperField, String> sushiOrderHeaders = SushiOrder.mapToHeaders(message);
-                    SushiOrderMethod method = SushiOrderMethod.fromString(sushiOrderHeaders.get(SushiOrderWrapperField.METHOD));
+
+                    Map<SushiWrapperField, String> sushiOrderHeaders = SushiMessageMapper.deserialize(message);
+                    SushiOrderMethod method = SushiOrderMethod.fromString(sushiOrderHeaders.get(SushiWrapperField.METHOD));
 
                     OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
 
@@ -72,7 +73,7 @@ public class OrderController {
 
     private UUID getOrderIdFromOrder(StringBuffer order) {
         String message = order.toString();
-        String orderId = SushiOrder.mapToHeaders(message).get(SushiOrderWrapperField.ORDER_ID);
+        String orderId = SushiMessageMapper.deserialize(message).get(SushiWrapperField.ORDER_ID);
         return UUID.fromString(orderId);
     }
 

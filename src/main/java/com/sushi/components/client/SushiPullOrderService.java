@@ -1,36 +1,30 @@
 package com.sushi.components.client;
 
 import com.sushi.components.common.file_transfer.FileWriter;
-import com.sushi.components.common.pull.SushiPullOrder;
-import com.sushi.components.common.pull.SushiPullServing;
-import com.sushi.components.common.pull.mappers.SushiPullServingMapper;
+import com.sushi.components.common.mappers.SushiPullServingMapper;
+import com.sushi.components.common.message.order.SushiPullOrder;
+import com.sushi.components.common.message.serving.SushiPullServing;
+import com.sushi.components.common.senders.SushiMessageSender;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
-import static com.sushi.components.common.serving.SushiServingStatus.OK;
+import static com.sushi.components.common.message.serving.SushiServingStatus.OK;
 
 public class SushiPullOrderService implements SushiOrderService<SushiPullOrder, SushiPullServing> {
-
-    private final String srcPath;
-
-    public SushiPullOrderService(String srcPath) {
-        this.srcPath = srcPath;
-    }
 
     @Override
     public SushiPullServing send(SushiPullOrder sushiOrder) {
         InetSocketAddress hostAddress = new InetSocketAddress(sushiOrder.getHost().host(), sushiOrder.getHost().port());
         try (SocketChannel socketChannel = SocketChannel.open(hostAddress)) {
 
-            write(socketChannel, sushiOrder);
-            String serving = readServing(socketChannel);
+            new SushiMessageSender().send(socketChannel, sushiOrder);
+            String serving = receiveServing(socketChannel);
             SushiPullServing sushiPullServing = new SushiPullServingMapper().from(serving);
             if (sushiPullServing.getSushiServingStatus().equals(OK)) {
                 receiveFile(socketChannel, sushiPullServing, sushiOrder);
             }
-
             return sushiPullServing;
         } catch (IOException e) {
             throw new RuntimeException("Cannot connect to socket");

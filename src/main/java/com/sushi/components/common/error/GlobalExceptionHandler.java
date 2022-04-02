@@ -1,6 +1,7 @@
 package com.sushi.components.common.error;
 
 import com.sushi.components.common.error.exceptions.SushiException;
+import com.sushi.components.common.message.serving.ErrorServing;
 import com.sushi.components.server.ServingService;
 
 import java.nio.channels.AsynchronousSocketChannel;

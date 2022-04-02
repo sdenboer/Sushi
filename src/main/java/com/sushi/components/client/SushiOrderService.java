@@ -1,7 +1,7 @@
 package com.sushi.components.client;
 
-import com.sushi.components.common.order.SushiOrder;
-import com.sushi.components.common.serving.SushiServing;
+import com.sushi.components.common.message.order.SushiOrder;
+import com.sushi.components.common.message.serving.SushiServing;
 import com.sushi.components.utils.Constants;
 
 import java.io.IOException;
@@ -12,16 +12,7 @@ public interface SushiOrderService<T extends SushiOrder, E extends SushiServing>
 
     E send(T sushiOrder);
 
-
-    default void write(SocketChannel channel, SushiOrder sushiOrder) throws IOException {
-        String request = sushiOrder.toRequest();
-        final ByteBuffer buffer = ByteBuffer.wrap(request.getBytes());
-        while (buffer.hasRemaining()) {
-            channel.write(buffer);
-        }
-    }
-
-    default String readServing(SocketChannel socketChannel) throws IOException {
+    default String receiveServing(SocketChannel socketChannel) throws IOException {
         StringBuilder response = new StringBuilder();
 
         while (!response.toString().contains("status")) {
@@ -33,5 +24,6 @@ public interface SushiOrderService<T extends SushiOrder, E extends SushiServing>
         }
         return response.toString();
     }
+
 
 }
