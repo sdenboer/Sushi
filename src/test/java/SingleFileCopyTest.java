@@ -9,13 +9,18 @@ import com.sushi.components.common.message.order.SushiRemoveOrder;
 import com.sushi.components.common.message.serving.SushiServing;
 import com.sushi.components.common.message.serving.SushiServingStatus;
 import com.sushi.components.common.message.wrappers.FilePayload;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
+import java.util.Vector;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -90,5 +95,30 @@ public class SingleFileCopyTest {
         SushiServing send = sushiPullOrderService.send(sushiOrder);
 
         assertEquals(SushiServingStatus.OK, send.getSushiServingStatus());
+    }
+
+    @Test
+    public void testChecksum() throws IOException {
+        Path path = Paths.get("/home/pl00cc/tmp/output");
+        Vector<InputStream> fileInputStreams = new Vector<>();
+
+        try (Stream<Path> stream = Files.list(path)) {
+            stream.filter(file -> !Files.isDirectory(file))
+                    .forEach(p -> {
+                        try {
+                            InputStream is = Files.newInputStream(path);
+                            fileInputStreams.add(is);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        SequenceInputStream seqStream = new SequenceInputStream(fileInputStreams.elements());
+        DigestUtils.md5Hex(seqStream);
+
     }
 }
