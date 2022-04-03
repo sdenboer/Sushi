@@ -3,7 +3,9 @@ package com.sushi.components.common.message.serving;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import lombok.Builder;
 
+import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SushiPushServing extends SushiServing {
@@ -18,9 +20,9 @@ public class SushiPushServing extends SushiServing {
 
     @Override
     public Map<SushiWrapperField, String> optionalSushiWrappers() {
-        return Map.of(
-                SushiWrapperField.CONTENT, content
-        );
+        EnumMap<SushiWrapperField, String> wrappers = new EnumMap<>(SushiWrapperField.class);
+        wrappers.put(SushiWrapperField.CONTENT, content);
+        return wrappers;
     }
 
 }

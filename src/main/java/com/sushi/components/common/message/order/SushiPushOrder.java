@@ -7,8 +7,11 @@ import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.sushi.components.common.message.wrappers.SushiWrapperField.ENCRYPTION;
 
 @Getter
 public class SushiPushOrder extends SushiOrder implements HasPayload<FilePayload> {
@@ -35,13 +38,13 @@ public class SushiPushOrder extends SushiOrder implements HasPayload<FilePayload
 
     @Override
     public Map<SushiWrapperField, String> optionalSushiWrappers() {
-        return Map.of(
-                SushiWrapperField.DIR, dir,
-                SushiWrapperField.FILE, fileName,
-                SushiWrapperField.ENCRYPTION, encryption,
-                SushiWrapperField.CONTENT, content,
-                SushiWrapperField.CONTENT_LENGTH, String.valueOf(fileSize)
-        );
+        EnumMap<SushiWrapperField, String> wrappers = new EnumMap<>(SushiWrapperField.class);
+        wrappers.put(SushiWrapperField.DIR, dir);
+        wrappers.put(SushiWrapperField.FILE, fileName);
+        wrappers.put(SushiWrapperField.ENCRYPTION, encryption);
+        wrappers.put(SushiWrapperField.CONTENT, content);
+        wrappers.put(SushiWrapperField.CONTENT_LENGTH, String.valueOf(fileSize));
+        return wrappers;
     }
 
     @Override

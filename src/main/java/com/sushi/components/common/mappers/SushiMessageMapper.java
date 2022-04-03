@@ -6,6 +6,7 @@ import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.function.Predicate.not;
@@ -28,6 +29,18 @@ public interface SushiMessageMapper<T extends HasSushiWrappers> {
                 .filter(s -> Objects.nonNull(s.getValue()))
                 .map(wrapper -> wrapper.getKey().getField() + ": " + wrapper.getValue())
                 .collect(Collectors.joining("\n"));
+    }
+
+    static String getStringWrapper(Map<SushiWrapperField, String> wrappers, SushiWrapperField field) {
+        return wrappers.getOrDefault(field, null);
+    }
+
+    static Long getLongWrapper(Map<SushiWrapperField, String> wrappers, SushiWrapperField field) {
+        return Optional.ofNullable(wrappers.get(field)).map(Long::parseLong).orElse(null);
+    }
+
+    static Integer getIntegerWrapper(Map<SushiWrapperField, String> wrappers, SushiWrapperField field) {
+        return Optional.ofNullable(wrappers.get(field)).map(Integer::parseInt).orElse(null);
     }
 
     T from(String request);

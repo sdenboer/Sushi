@@ -18,6 +18,7 @@ import java.io.SequenceInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -73,8 +74,8 @@ public class SingleFileCopyTest {
                 .host("localhost")
                 .port(9999)
                 .orderId(UUID.randomUUID())
-                .dir("/home/pl00cc/tmp/input")
-                .fileName("xaa")
+                .dir("/home/pl00cc/tmp/output")
+                .fileName("test.txt")
                 .build();
         SushiFileOrderService sushiPullOrderService = new SushiFileOrderService();
         SushiServing send = sushiPullOrderService.send(sushiOrder);
@@ -100,25 +101,35 @@ public class SingleFileCopyTest {
     @Test
     public void testChecksum() throws IOException {
         Path path = Paths.get("/home/pl00cc/tmp/output");
-        Vector<InputStream> fileInputStreams = new Vector<>();
 
-        try (Stream<Path> stream = Files.list(path)) {
-            stream.filter(file -> !Files.isDirectory(file))
-                    .forEach(p -> {
-                        try {
-                            InputStream is = Files.newInputStream(path);
-                            fileInputStreams.add(is);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
+        Vector<InputStream> inputStreams = new Vector<>();
+        collectInputStreams(path, inputStreams);
+        try (SequenceInputStream stream = new SequenceInputStream(inputStreams.elements())) {
+            String sha256Hex = DigestUtils.sha256Hex(stream);
+            System.out.println(sha256Hex);
+        }
+    }
+
+    private void collectInputStreams(Path dir,
+                                     List<InputStream> foundStreams) {
+
+        try (Stream<Path> stream = Files.list(dir)) {
+            stream.forEach(path -> {
+                boolean directory = Files.isDirectory(path);
+                if (directory) {
+                    collectInputStreams(path, foundStreams);
+                } else {
+                    try {
+                        foundStreams.add(Files.newInputStream(path));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-        SequenceInputStream seqStream = new SequenceInputStream(fileInputStreams.elements());
-        DigestUtils.md5Hex(seqStream);
-
     }
+
+
 }

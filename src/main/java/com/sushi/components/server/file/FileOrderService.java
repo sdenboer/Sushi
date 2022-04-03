@@ -1,6 +1,8 @@
 package com.sushi.components.server.file;
 
 import com.sushi.components.common.OrderContext;
+import com.sushi.components.common.error.exceptions.NotFoundException;
+import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.message.order.SushiFileOrder;
 import com.sushi.components.common.message.serving.SushiFileServing;
 import com.sushi.components.common.message.serving.SushiServingStatus;
@@ -17,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,21 +30,14 @@ public class FileOrderService implements OrderService<SushiFileOrder> {
     public void handle(AsynchronousSocketChannel socketChannel, SushiFileOrder sushiOrder, OrderContext orderContext) {
 
         Map<String, String> files = new HashMap<>();
-        try (Stream<Path> stream = Files.list(Paths.get(sushiOrder.getDir()))) {
-            stream.filter(file -> !Files.isDirectory(file))
-                    .filter(f -> f.getFileName().toString().equals(sushiOrder.getFileName()))
-                    .forEach(path -> {
-                        try (InputStream is = Files.newInputStream(path)) {
-                            String bytes = DigestUtils.sha256Hex(is);
-                            System.out.println(path + ": " + bytes);
-                            files.put(path.toString(), bytes);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (sushiOrder.getFileName() == null) {
+            Path dir = Paths.get(sushiOrder.getDir());
+            getFilesInDirectory(dir, orderContext).forEach(file -> files.put(file.toString(), getSHA265HexFromPath(file, orderContext)));
+        } else {
+            Path file = Paths.get(sushiOrder.getDir(), sushiOrder.getFileName());
+            files.put(file.toString(), getSHA265HexFromPath(file, orderContext));
         }
+
         String payload = serializePayload(files);
         int payloadSize = payload.getBytes(StandardCharsets.UTF_8).length;
         TextPayload textPayload = new TextPayload(payload);
@@ -55,6 +51,25 @@ public class FileOrderService implements OrderService<SushiFileOrder> {
                 .map(s -> s.getKey() + ": " + s.getValue())
                 .collect(Collectors.joining("\n"));
 
+    }
+
+    private String getSHA265HexFromPath(Path path, OrderContext orderContext) {
+        try (InputStream is = Files.newInputStream(path)) {
+            String bytes = DigestUtils.sha256Hex(is);
+            System.out.println(path + ": " + bytes);
+            return bytes;
+        } catch (IOException e) {
+            throw new ServerErrorException(e, orderContext.getOrderId());
+        }
+    }
+
+    private List<Path> getFilesInDirectory(Path dir, OrderContext orderContext) {
+        try (Stream<Path> paths = Files.walk(dir)) {
+            return paths.map(Path::normalize)
+                    .filter(Files::isRegularFile).toList();
+        } catch (IOException e) {
+            throw new NotFoundException(e, orderContext.getOrderId());
+        }
     }
 
 }

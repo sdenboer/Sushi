@@ -15,13 +15,13 @@ public class SushiPullServingMapper implements SushiMessageMapper<SushiPullServi
     public SushiPullServing from(String request) {
         Map<SushiWrapperField, String> wrappers = SushiMessageMapper.deserialize(request);
 
-        String fileSize = wrappers.getOrDefault(CONTENT_LENGTH, null);
         return SushiPullServing.builder()
                 .sushiServingStatus(SushiServingStatus.fromString(wrappers.get(STATUS)))
                 .orderId(UUID.fromString(wrappers.get(ORDER_ID)))
-                .encryption(wrappers.getOrDefault(ENCRYPTION, null))
-                .fileSize(fileSize == null ? null : Long.parseLong(fileSize))
-                .content(wrappers.getOrDefault(CONTENT, null))
+                //optional
+                .encryption(SushiMessageMapper.getStringWrapper(wrappers, ENCRYPTION))
+                .fileSize(SushiMessageMapper.getLongWrapper(wrappers, ENCRYPTION))
+                .content(SushiMessageMapper.getStringWrapper(wrappers, CONTENT))
                 .build();
     }
 }

@@ -6,6 +6,7 @@ import com.sushi.components.common.message.wrappers.TextPayload;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,10 +15,10 @@ public class SushiFileServing extends SushiServing implements HasPayload<TextPay
 
     private final String content;
     private final TextPayload payload;
-    private final int payloadSize;
+    private final Integer payloadSize;
 
     @Builder
-    public SushiFileServing(SushiServingStatus sushiServingStatus, UUID orderId, String content, int payloadSize, TextPayload payload) {
+    public SushiFileServing(SushiServingStatus sushiServingStatus, UUID orderId, String content, Integer payloadSize, TextPayload payload) {
         super(sushiServingStatus, orderId);
         this.payload = payload;
         this.content = content;
@@ -26,10 +27,10 @@ public class SushiFileServing extends SushiServing implements HasPayload<TextPay
 
     @Override
     public Map<SushiWrapperField, String> optionalSushiWrappers() {
-        return Map.of(
-                SushiWrapperField.CONTENT, content,
-                SushiWrapperField.CONTENT_LENGTH, String.valueOf(payloadSize)
-        );
+        EnumMap<SushiWrapperField, String> wrappers = new EnumMap<>(SushiWrapperField.class);
+        wrappers.put(SushiWrapperField.CONTENT, content);
+        wrappers.put(SushiWrapperField.CONTENT_LENGTH, String.valueOf(payloadSize));
+        return wrappers;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -29,11 +30,11 @@ public class SushiPullServing extends SushiServing implements HasPayload<FilePay
 
     @Override
     public Map<SushiWrapperField, String> optionalSushiWrappers() {
-        return Map.of(
-                SushiWrapperField.ENCRYPTION, encryption,
-                SushiWrapperField.CONTENT, content,
-                SushiWrapperField.CONTENT_LENGTH, Objects.toString(fileSize, null)
-        );
+        EnumMap<SushiWrapperField, String> wrappers = new EnumMap<>(SushiWrapperField.class);
+        wrappers.put(SushiWrapperField.CONTENT, content);
+        wrappers.put(SushiWrapperField.ENCRYPTION, encryption);
+        wrappers.put(SushiWrapperField.CONTENT_LENGTH, Objects.toString(fileSize, null));
+        return wrappers;
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,10 +27,10 @@ public class SushiFileOrder extends SushiOrder {
 
     @Override
     public Map<SushiWrapperField, String> optionalSushiWrappers() {
-        return Map.of(
-                SushiWrapperField.DIR, dir,
-                SushiWrapperField.FILE, fileName
-        );
+        EnumMap<SushiWrapperField, String> wrappers = new EnumMap<>(SushiWrapperField.class);
+        wrappers.put(SushiWrapperField.DIR, dir);
+        wrappers.put(SushiWrapperField.FILE, fileName);
+        return wrappers;
     }
 
 }

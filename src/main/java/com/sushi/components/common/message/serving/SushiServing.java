@@ -5,7 +5,9 @@ import com.sushi.components.common.message.wrappers.HasSushiWrappers;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import lombok.Getter;
 
+import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -21,10 +23,10 @@ public abstract class SushiServing implements SushiMessage, HasSushiWrappers {
 
     @Override
     public Map<SushiWrapperField, String> mandatorySushiWrappers() {
-        return Map.of(
-                SushiWrapperField.STATUS, String.valueOf(sushiServingStatus.getStatusCode()),
-                SushiWrapperField.ORDER_ID, String.valueOf(orderId)
-        );
+        EnumMap<SushiWrapperField, String> wrappers = new EnumMap<>(SushiWrapperField.class);
+        wrappers.put(SushiWrapperField.STATUS, String.valueOf(sushiServingStatus.getStatusCode()));
+        wrappers.put(SushiWrapperField.ORDER_ID, String.valueOf(orderId));
+        return wrappers;
     }
 
     public SushiServingStatus getSushiServingStatus() {

@@ -18,8 +18,9 @@ public class SushiFileServingMapper implements SushiMessageMapper<SushiFileServi
         return SushiFileServing.builder()
                 .sushiServingStatus(SushiServingStatus.fromString(wrappers.get(STATUS)))
                 .orderId(UUID.fromString(wrappers.get(ORDER_ID)))
-                .content(wrappers.get(CONTENT))
-                .payloadSize(Integer.parseInt(wrappers.get(CONTENT_LENGTH)))
+                //optional
+                .content(SushiMessageMapper.getStringWrapper(wrappers, CONTENT))
+                .payloadSize(SushiMessageMapper.getIntegerWrapper(wrappers, CONTENT_LENGTH))
                 .build();
     }
 }
