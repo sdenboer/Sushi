@@ -30,7 +30,7 @@ public class PullOrder extends Order {
     }
 
     @Override
-    public Map<WrapperField, String> optionalSushiWrappers() {
+    public Map<WrapperField, String> optionalWrappers() {
         EnumMap<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
         wrappers.put(WrapperField.DIR, dir);
         wrappers.put(WrapperField.FILE, fileName);

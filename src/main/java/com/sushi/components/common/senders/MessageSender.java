@@ -8,7 +8,7 @@ import com.sushi.components.common.message.wrappers.HasWrappers;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.SocketChannel;
 
-public class SushiMessageSender {
+public class MessageSender {
 
     public void send(SocketChannel socketChannel, Message message) {
         if (message instanceof HasWrappers sushiWrappers) {

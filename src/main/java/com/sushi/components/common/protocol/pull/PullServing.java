@@ -31,7 +31,7 @@ public class PullServing extends Serving implements HasPayload<FilePayload> {
     }
 
     @Override
-    public Map<WrapperField, String> optionalSushiWrappers() {
+    public Map<WrapperField, String> optionalWrappers() {
         EnumMap<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
         wrappers.put(WrapperField.CONTENT, content);
         wrappers.put(WrapperField.ENCRYPTION, encryption);

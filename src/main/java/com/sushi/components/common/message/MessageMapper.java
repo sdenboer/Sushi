@@ -23,8 +23,8 @@ public interface MessageMapper<T extends HasWrappers> {
                 .collect(toMap(h -> WrapperField.fromString(h[0]), h -> h[1]));
     }
 
-    static String serialize(Map<WrapperField, String> sushiServingWrappers) {
-        return sushiServingWrappers.entrySet()
+    static String serialize(Map<WrapperField, String> servingWrappers) {
+        return servingWrappers.entrySet()
                 .stream()
                 .filter(s -> Objects.nonNull(s.getValue()))
                 .map(wrapper -> wrapper.getKey().getField() + ": " + wrapper.getValue())

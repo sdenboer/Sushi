@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 public interface OrderService<T extends Order, E extends Serving> {
 
-    E send(T sushiOrder);
+    E send(T order);
 
     default String receiveServing(SocketChannel socketChannel) throws IOException {
         StringBuilder response = new StringBuilder();

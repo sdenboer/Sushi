@@ -7,7 +7,7 @@ import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.TextPayload;
 import com.sushi.components.common.protocol.file.FileOrder;
 import com.sushi.components.common.protocol.file.FileServing;
-import com.sushi.components.common.senders.SushiMessageSender;
+import com.sushi.components.common.senders.MessageSender;
 import com.sushi.components.server.OrderService;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -27,22 +27,22 @@ import java.util.stream.Stream;
 public class FileOrderService implements OrderService<FileOrder> {
 
     @Override
-    public void handle(AsynchronousSocketChannel socketChannel, FileOrder sushiOrder, OrderContext orderContext) {
+    public void handle(AsynchronousSocketChannel socketChannel, FileOrder order, OrderContext orderContext) {
 
         Map<String, String> files = new HashMap<>();
-        if (sushiOrder.getFileName() == null) {
-            Path dir = Paths.get(sushiOrder.getDir());
+        if (order.getFileName() == null) {
+            Path dir = Paths.get(order.getDir());
             getFilesInDirectory(dir, orderContext).forEach(file -> files.put(file.toString(), getSHA265HexFromPath(file, orderContext)));
         } else {
-            Path file = Paths.get(sushiOrder.getDir(), sushiOrder.getFileName());
+            Path file = Paths.get(order.getDir(), order.getFileName());
             files.put(file.toString(), getSHA265HexFromPath(file, orderContext));
         }
 
         String payload = serializePayload(files);
         int payloadSize = payload.getBytes(StandardCharsets.UTF_8).length;
         TextPayload textPayload = new TextPayload(payload);
-        FileServing serving = new FileServing(ServingStatus.OK, sushiOrder.getOrderId(), "txt", payloadSize, textPayload);
-        new SushiMessageSender().send(socketChannel, serving);
+        FileServing serving = new FileServing(ServingStatus.OK, order.getOrderId(), "txt", payloadSize, textPayload);
+        new MessageSender().send(socketChannel, serving);
     }
 
     private String serializePayload(Map<String, String> files) {

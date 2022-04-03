@@ -16,7 +16,7 @@ public class FileServingMapper implements MessageMapper<FileServing> {
         Map<WrapperField, String> wrappers = MessageMapper.deserialize(request);
 
         return FileServing.builder()
-                .sushiServingStatus(ServingStatus.fromString(wrappers.get(STATUS)))
+                .servingStatus(ServingStatus.fromString(wrappers.get(STATUS)))
                 .orderId(UUID.fromString(wrappers.get(ORDER_ID)))
                 //optional
                 .content(MessageMapper.getStringWrapper(wrappers, CONTENT))

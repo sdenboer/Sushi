@@ -7,7 +7,7 @@ import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.protocol.push.PushOrder;
 import com.sushi.components.common.protocol.push.PushServing;
-import com.sushi.components.common.senders.SushiMessageSender;
+import com.sushi.components.common.senders.MessageSender;
 import com.sushi.components.server.OrderService;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
@@ -44,7 +44,7 @@ public class PushOrderService implements OrderService<PushOrder> {
                     }
                     if (attachedFileWriter.done()) {
                         PushServing serving = new PushServing(ServingStatus.OK, UUID.randomUUID(), "txt");
-                        new SushiMessageSender().send(socketChannel, serving);
+                        new MessageSender().send(socketChannel, serving);
                         ChannelUtils.close(attachedFileWriter.getFileChannel());
                     } else {
                         buffer.clear();

@@ -1,7 +1,7 @@
-import com.sushi.components.client.FileOrderService;
-import com.sushi.components.client.PullOrderService;
-import com.sushi.components.client.PushOrderService;
-import com.sushi.components.client.RemoveOrderService;
+import com.sushi.components.client.file.FileOrderService;
+import com.sushi.components.client.pull.PullOrderService;
+import com.sushi.components.client.push.PushOrderService;
+import com.sushi.components.client.remove.RemoveOrderService;
 import com.sushi.components.common.message.serving.Serving;
 import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.FilePayload;
@@ -109,11 +109,11 @@ public class FileCopyTest extends AbstractTest {
             PushOrderService sushiPushOrderService = new PushOrderService();
             Serving send = sushiPushOrderService.send(sushiOrder);
 
-            System.out.println(send.getSushiServingStatus().getStatusCode());
+            System.out.println(send.getServingStatus().getStatusCode());
             long finish = System.currentTimeMillis();
             long timeElapsed = finish - start;
             System.out.println("Bestand " + "test.tar.gz" + " van " + size / (1024 * 1024) + "MB gekopieerd in " + timeElapsed / 1000 + " seconden");
-            return send.getSushiServingStatus().getStatusCode();
+            return send.getServingStatus().getStatusCode();
         }
 
         public int testPull() {
@@ -133,7 +133,7 @@ public class FileCopyTest extends AbstractTest {
             long finish = System.currentTimeMillis();
             long timeElapsed = finish - start;
             System.out.println("Bestand " + this.fileName + " van " + this.size / (1024 * 1024) + "MB gekopieerd in " + timeElapsed / 1000 + " seconden");
-            return send.getSushiServingStatus().getStatusCode();
+            return send.getServingStatus().getStatusCode();
         }
 
         public int testFile() {

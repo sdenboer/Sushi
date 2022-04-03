@@ -1,26 +1,24 @@
-package com.sushi.components.common.protocol.file;
+package com.sushi.components.common.protocol.status;
 
 import com.sushi.components.common.message.serving.Serving;
 import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.HasPayload;
-import com.sushi.components.common.message.wrappers.WrapperField;
 import com.sushi.components.common.message.wrappers.TextPayload;
+import com.sushi.components.common.message.wrappers.WrapperField;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Getter
-public class FileServing extends Serving implements HasPayload<TextPayload> {
+public class StatusServing extends Serving implements HasPayload<TextPayload> {
 
     private final String content;
     private final TextPayload payload;
     private final Integer payloadSize;
 
     @Builder
-    public FileServing(ServingStatus servingStatus, UUID orderId, String content, Integer payloadSize, TextPayload payload) {
+    public StatusServing(ServingStatus servingStatus, UUID orderId, String content, Integer payloadSize, TextPayload payload) {
         super(servingStatus, orderId);
         this.payload = payload;
         this.content = content;

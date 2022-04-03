@@ -21,15 +21,11 @@ public abstract class Serving implements Message, HasWrappers {
     }
 
     @Override
-    public Map<WrapperField, String> mandatorySushiWrappers() {
+    public Map<WrapperField, String> mandatoryWrappers() {
         EnumMap<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
         wrappers.put(WrapperField.STATUS, String.valueOf(servingStatus.getStatusCode()));
         wrappers.put(WrapperField.ORDER_ID, String.valueOf(orderId));
         return wrappers;
-    }
-
-    public ServingStatus getSushiServingStatus() {
-        return servingStatus;
     }
 
     public UUID getOrderId() {

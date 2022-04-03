@@ -8,10 +8,10 @@ import java.util.Map;
 public interface HasWrappers {
 
     @NonNull
-    Map<WrapperField, String> optionalSushiWrappers();
+    Map<WrapperField, String> optionalWrappers();
 
     @NonNull
-    Map<WrapperField, String> mandatorySushiWrappers();
+    Map<WrapperField, String> mandatoryWrappers();
 
     default String toRequest() {
         return """
@@ -19,8 +19,8 @@ public interface HasWrappers {
                 %s
                            
                 """.formatted(
-                MessageMapper.serialize(mandatorySushiWrappers()),
-                MessageMapper.serialize(optionalSushiWrappers())
+                MessageMapper.serialize(mandatoryWrappers()),
+                MessageMapper.serialize(optionalWrappers())
         );
     }
 }

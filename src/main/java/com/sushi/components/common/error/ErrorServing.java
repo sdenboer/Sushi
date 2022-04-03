@@ -16,7 +16,7 @@ public class ErrorServing extends Serving {
         super(servingStatus, orderId);
     }
 
-    public Map<WrapperField, String> optionalSushiWrappers() {
+    public Map<WrapperField, String> optionalWrappers() {
         return Collections.emptyMap();
     }
 

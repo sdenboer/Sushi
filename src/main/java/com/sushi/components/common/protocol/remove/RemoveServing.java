@@ -18,7 +18,7 @@ public class RemoveServing extends Serving {
     }
 
     @Override
-    public @NonNull Map<WrapperField, String> optionalSushiWrappers() {
+    public @NonNull Map<WrapperField, String> optionalWrappers() {
         return Collections.emptyMap();
     }
 }

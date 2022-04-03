@@ -1,5 +1,6 @@
-package com.sushi.components.client;
+package com.sushi.components.client.file;
 
+import com.sushi.components.client.OrderService;
 import com.sushi.components.common.protocol.file.FileOrder;
 import com.sushi.components.common.protocol.file.FileServing;
 import com.sushi.components.common.protocol.file.FileServingMapper;
@@ -14,14 +15,14 @@ import static com.sushi.components.common.message.serving.ServingStatus.OK;
 public class FileOrderService implements OrderService<FileOrder, FileServing> {
 
     @Override
-    public FileServing send(FileOrder sushiOrder) {
-        InetSocketAddress hostAddress = new InetSocketAddress(sushiOrder.getHost().host(), sushiOrder.getHost().port());
+    public FileServing send(FileOrder order) {
+        InetSocketAddress hostAddress = new InetSocketAddress(order.getHost().host(), order.getHost().port());
         try (SocketChannel socketChannel = SocketChannel.open(hostAddress)) {
 
-            new TextSender().send(socketChannel, sushiOrder.toRequest());
+            new TextSender().send(socketChannel, order.toRequest());
             String serving = receiveServing(socketChannel);
             FileServing fileServing = new FileServingMapper().from(serving);
-            if (fileServing.getSushiServingStatus().equals(OK)) {
+            if (fileServing.getServingStatus().equals(OK)) {
                 String response = receiveTextPayload(socketChannel, fileServing.getPayloadSize());
                 System.out.println(response);
             }

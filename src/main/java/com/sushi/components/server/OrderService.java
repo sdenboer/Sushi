@@ -7,6 +7,6 @@ import java.nio.channels.AsynchronousSocketChannel;
 
 public interface OrderService<T extends Order> {
 
-    void handle(AsynchronousSocketChannel socketChannel, T sushiOrder, OrderContext orderContext);
+    void handle(AsynchronousSocketChannel socketChannel, T order, OrderContext orderContext);
 
 }

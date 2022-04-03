@@ -23,7 +23,7 @@ public abstract class Order implements Message, HasWrappers {
     }
 
     @Override
-    public Map<WrapperField, String> mandatorySushiWrappers() {
+    public Map<WrapperField, String> mandatoryWrappers() {
         EnumMap<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
         wrappers.put(WrapperField.METHOD, method.getValue());
         wrappers.put(WrapperField.HOST, host.host());

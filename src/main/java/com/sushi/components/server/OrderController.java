@@ -47,8 +47,8 @@ public class OrderController {
                     String message = attachment.toString();
 
 
-                    Map<WrapperField, String> sushiOrderHeaders = MessageMapper.deserialize(message);
-                    OrderMethod method = OrderMethod.fromString(sushiOrderHeaders.get(WrapperField.METHOD));
+                    Map<WrapperField, String> orderHeaders = MessageMapper.deserialize(message);
+                    OrderMethod method = OrderMethod.fromString(orderHeaders.get(WrapperField.METHOD));
 
                     OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
 

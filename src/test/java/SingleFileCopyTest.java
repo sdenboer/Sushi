@@ -1,7 +1,7 @@
-import com.sushi.components.client.FileOrderService;
-import com.sushi.components.client.PullOrderService;
-import com.sushi.components.client.PushOrderService;
-import com.sushi.components.client.RemoveOrderService;
+import com.sushi.components.client.file.FileOrderService;
+import com.sushi.components.client.pull.PullOrderService;
+import com.sushi.components.client.push.PushOrderService;
+import com.sushi.components.client.remove.RemoveOrderService;
 import com.sushi.components.common.message.serving.Serving;
 import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.FilePayload;
@@ -47,7 +47,7 @@ public class SingleFileCopyTest {
         PushOrderService sushiPushOrderService = new PushOrderService();
         Serving send = sushiPushOrderService.send(sushiOrder);
 
-        assertEquals(ServingStatus.OK, send.getSushiServingStatus());
+        assertEquals(ServingStatus.OK, send.getServingStatus());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class SingleFileCopyTest {
         PullOrderService sushiPullOrderService = new PullOrderService();
         Serving send = sushiPullOrderService.send(sushiOrder);
 
-        assertEquals(ServingStatus.OK, send.getSushiServingStatus());
+        assertEquals(ServingStatus.OK, send.getServingStatus());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class SingleFileCopyTest {
         FileOrderService sushiPullOrderService = new FileOrderService();
         Serving send = sushiPullOrderService.send(sushiOrder);
 
-        assertEquals(ServingStatus.OK, send.getSushiServingStatus());
+        assertEquals(ServingStatus.OK, send.getServingStatus());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class SingleFileCopyTest {
         RemoveOrderService sushiPullOrderService = new RemoveOrderService();
         Serving send = sushiPullOrderService.send(sushiOrder);
 
-        assertEquals(ServingStatus.OK, send.getSushiServingStatus());
+        assertEquals(ServingStatus.OK, send.getServingStatus());
     }
 
     @Test

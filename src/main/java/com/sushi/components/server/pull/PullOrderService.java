@@ -6,7 +6,7 @@ import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.FilePayload;
 import com.sushi.components.common.protocol.pull.PullOrder;
 import com.sushi.components.common.protocol.pull.PullServing;
-import com.sushi.components.common.senders.SushiMessageSender;
+import com.sushi.components.common.senders.MessageSender;
 import com.sushi.components.server.OrderService;
 
 import java.io.IOException;
@@ -19,14 +19,14 @@ import java.util.UUID;
 public class PullOrderService implements OrderService<PullOrder> {
 
     @Override
-    public void handle(AsynchronousSocketChannel socketChannel, PullOrder sushiOrder, OrderContext orderContext) {
-        UUID orderId = sushiOrder.getOrderId();
+    public void handle(AsynchronousSocketChannel socketChannel, PullOrder order, OrderContext orderContext) {
+        UUID orderId = order.getOrderId();
         try {
-            Path path = Paths.get(sushiOrder.getDir(), sushiOrder.getFileName());
+            Path path = Paths.get(order.getDir(), order.getFileName());
             long size = Files.size(path);
             FilePayload payload = new FilePayload(path);
             PullServing serving = new PullServing(ServingStatus.OK, orderId, "aes", "file", size, payload);
-            new SushiMessageSender().send(socketChannel, serving);
+            new MessageSender().send(socketChannel, serving);
         } catch (IOException e) {
             throw new NotFoundException(e, orderId);
         }

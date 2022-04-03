@@ -20,7 +20,7 @@ public class PushServing extends Serving {
     }
 
     @Override
-    public Map<WrapperField, String> optionalSushiWrappers() {
+    public Map<WrapperField, String> optionalWrappers() {
         EnumMap<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
         wrappers.put(WrapperField.CONTENT, content);
         return wrappers;

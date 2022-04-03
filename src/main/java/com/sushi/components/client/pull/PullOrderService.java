@@ -1,10 +1,11 @@
-package com.sushi.components.client;
+package com.sushi.components.client.pull;
 
+import com.sushi.components.client.OrderService;
 import com.sushi.components.common.FileWriter;
 import com.sushi.components.common.protocol.pull.PullOrder;
 import com.sushi.components.common.protocol.pull.PullServing;
 import com.sushi.components.common.protocol.pull.PullServingMapper;
-import com.sushi.components.common.senders.SushiMessageSender;
+import com.sushi.components.common.senders.MessageSender;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -17,15 +18,15 @@ public class PullOrderService implements OrderService<PullOrder, PullServing> {
     private static final String DIR = "/home/pl00cc/tmp/output";
 
     @Override
-    public PullServing send(PullOrder sushiOrder) {
-        InetSocketAddress hostAddress = new InetSocketAddress(sushiOrder.getHost().host(), sushiOrder.getHost().port());
+    public PullServing send(PullOrder order) {
+        InetSocketAddress hostAddress = new InetSocketAddress(order.getHost().host(), order.getHost().port());
         try (SocketChannel socketChannel = SocketChannel.open(hostAddress)) {
 
-            new SushiMessageSender().send(socketChannel, sushiOrder);
+            new MessageSender().send(socketChannel, order);
             String serving = receiveServing(socketChannel);
             PullServing pullServing = new PullServingMapper().from(serving);
-            if (pullServing.getSushiServingStatus().equals(OK)) {
-                receiveFilePayload(socketChannel, pullServing, sushiOrder);
+            if (pullServing.getServingStatus().equals(OK)) {
+                receiveFilePayload(socketChannel, pullServing, order);
             }
             return pullServing;
         } catch (IOException e) {
@@ -33,10 +34,10 @@ public class PullOrderService implements OrderService<PullOrder, PullServing> {
         }
     }
 
-    private void receiveFilePayload(SocketChannel socketChannel, PullServing pullServing, PullOrder sushiOrder) {
+    private void receiveFilePayload(SocketChannel socketChannel, PullServing pullServing, PullOrder order) {
 
         try {
-            FileWriter fileWriter = new FileWriter(DIR, sushiOrder.getFileName(), pullServing.getFileSize());
+            FileWriter fileWriter = new FileWriter(DIR, order.getFileName(), pullServing.getFileSize());
             fileWriter.write(socketChannel);
             System.out.println("FILE IS SAME SIZE " + (fileWriter.getPosition().get() == pullServing.getFileSize()));
         } catch (IOException e) {
