@@ -6,7 +6,6 @@ import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.ContentType;
 import com.sushi.components.common.message.wrappers.TextPayload;
-import com.sushi.components.common.protocol.file.FileServing;
 import com.sushi.components.common.protocol.status.StatusOrder;
 import com.sushi.components.common.protocol.status.StatusServing;
 import com.sushi.components.common.senders.MessageSender;
