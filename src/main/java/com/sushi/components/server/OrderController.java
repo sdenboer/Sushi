@@ -4,13 +4,13 @@ import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.InvalidRequestException;
 import com.sushi.components.common.error.exceptions.NotImplementedException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.message.SushiMessageMapper;
-import com.sushi.components.common.message.order.SushiOrderMethod;
-import com.sushi.components.common.message.wrappers.SushiWrapperField;
-import com.sushi.components.common.protocol.file.SushiFileOrderMapper;
-import com.sushi.components.common.protocol.pull.SushiPullOrderMapper;
-import com.sushi.components.common.protocol.push.SushiPushOrderMapper;
-import com.sushi.components.common.protocol.remove.SushiRemoveOrderMapper;
+import com.sushi.components.common.message.MessageMapper;
+import com.sushi.components.common.message.order.OrderMethod;
+import com.sushi.components.common.message.wrappers.WrapperField;
+import com.sushi.components.common.protocol.file.FileOrderMapper;
+import com.sushi.components.common.protocol.pull.PullOrderMapper;
+import com.sushi.components.common.protocol.push.PushOrderMapper;
+import com.sushi.components.common.protocol.remove.RemoveOrderMapper;
 import com.sushi.components.server.file.FileOrderService;
 import com.sushi.components.server.pull.PullOrderService;
 import com.sushi.components.server.push.PushOrderService;
@@ -47,16 +47,16 @@ public class OrderController {
                     String message = attachment.toString();
 
 
-                    Map<SushiWrapperField, String> sushiOrderHeaders = SushiMessageMapper.deserialize(message);
-                    SushiOrderMethod method = SushiOrderMethod.fromString(sushiOrderHeaders.get(SushiWrapperField.METHOD));
+                    Map<WrapperField, String> sushiOrderHeaders = MessageMapper.deserialize(message);
+                    OrderMethod method = OrderMethod.fromString(sushiOrderHeaders.get(WrapperField.METHOD));
 
                     OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
 
                     switch (method) {
-                        case PUSH -> new PushOrderService().handle(channel, new SushiPushOrderMapper().from(message), orderContext);
-                        case PULL -> new PullOrderService().handle(channel, new SushiPullOrderMapper().from(message), orderContext);
-                        case FILE -> new FileOrderService().handle(channel, new SushiFileOrderMapper().from(message), orderContext);
-                        case REMOVE -> new RemoveOrderService().handle(channel, new SushiRemoveOrderMapper().from(message), orderContext);
+                        case PUSH -> new PushOrderService().handle(channel, new PushOrderMapper().from(message), orderContext);
+                        case PULL -> new PullOrderService().handle(channel, new PullOrderMapper().from(message), orderContext);
+                        case FILE -> new FileOrderService().handle(channel, new FileOrderMapper().from(message), orderContext);
+                        case REMOVE -> new RemoveOrderService().handle(channel, new RemoveOrderMapper().from(message), orderContext);
                         default -> throw new NotImplementedException(orderContext.getOrderId());
                     }
                 } else {
@@ -76,7 +76,7 @@ public class OrderController {
 
     private UUID getOrderIdFromOrder(StringBuffer order) {
         String message = order.toString();
-        String orderId = SushiMessageMapper.deserialize(message).get(SushiWrapperField.ORDER_ID);
+        String orderId = MessageMapper.deserialize(message).get(WrapperField.ORDER_ID);
         return UUID.fromString(orderId);
     }
 

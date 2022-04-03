@@ -3,10 +3,10 @@ package com.sushi.components.server.file;
 import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.NotFoundException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.message.serving.SushiServingStatus;
+import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.TextPayload;
-import com.sushi.components.common.protocol.file.SushiFileOrder;
-import com.sushi.components.common.protocol.file.SushiFileServing;
+import com.sushi.components.common.protocol.file.FileOrder;
+import com.sushi.components.common.protocol.file.FileServing;
 import com.sushi.components.common.senders.SushiMessageSender;
 import com.sushi.components.server.OrderService;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileOrderService implements OrderService<SushiFileOrder> {
+public class FileOrderService implements OrderService<FileOrder> {
 
     @Override
-    public void handle(AsynchronousSocketChannel socketChannel, SushiFileOrder sushiOrder, OrderContext orderContext) {
+    public void handle(AsynchronousSocketChannel socketChannel, FileOrder sushiOrder, OrderContext orderContext) {
 
         Map<String, String> files = new HashMap<>();
         if (sushiOrder.getFileName() == null) {
@@ -41,7 +41,7 @@ public class FileOrderService implements OrderService<SushiFileOrder> {
         String payload = serializePayload(files);
         int payloadSize = payload.getBytes(StandardCharsets.UTF_8).length;
         TextPayload textPayload = new TextPayload(payload);
-        SushiFileServing serving = new SushiFileServing(SushiServingStatus.OK, sushiOrder.getOrderId(), "txt", payloadSize, textPayload);
+        FileServing serving = new FileServing(ServingStatus.OK, sushiOrder.getOrderId(), "txt", payloadSize, textPayload);
         new SushiMessageSender().send(socketChannel, serving);
     }
 

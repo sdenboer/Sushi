@@ -1,11 +1,11 @@
 package com.sushi.components.common.error.exceptions;
 
-import com.sushi.components.common.message.serving.SushiServingStatus;
+import com.sushi.components.common.message.serving.ServingStatus;
 
 import java.util.UUID;
 
 public class NotImplementedException extends SushiException {
     public NotImplementedException(UUID orderId) {
-        super(SushiServingStatus.NOT_IMPLEMENTED, orderId);
+        super(ServingStatus.NOT_IMPLEMENTED, orderId);
     }
 }

@@ -4,9 +4,9 @@ import com.sushi.components.common.FileWriter;
 import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.InvalidRequestException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.message.serving.SushiServingStatus;
-import com.sushi.components.common.protocol.push.SushiPushOrder;
-import com.sushi.components.common.protocol.push.SushiPushServing;
+import com.sushi.components.common.message.serving.ServingStatus;
+import com.sushi.components.common.protocol.push.PushOrder;
+import com.sushi.components.common.protocol.push.PushServing;
 import com.sushi.components.common.senders.SushiMessageSender;
 import com.sushi.components.server.OrderService;
 import com.sushi.components.utils.ChannelUtils;
@@ -18,10 +18,10 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.UUID;
 
-public class PushOrderService implements OrderService<SushiPushOrder> {
+public class PushOrderService implements OrderService<PushOrder> {
 
     @Override
-    public void handle(AsynchronousSocketChannel socketChannel, SushiPushOrder order, OrderContext orderContext) {
+    public void handle(AsynchronousSocketChannel socketChannel, PushOrder order, OrderContext orderContext) {
 
         try {
             FileWriter fileWriter = new FileWriter(order.getDir(), order.getFileName(), order.getFileSize());
@@ -43,7 +43,7 @@ public class PushOrderService implements OrderService<SushiPushOrder> {
                         writeToFile(socketChannel, buffer, attachedFileWriter);
                     }
                     if (attachedFileWriter.done()) {
-                        SushiPushServing serving = new SushiPushServing(SushiServingStatus.OK, UUID.randomUUID(), "txt");
+                        PushServing serving = new PushServing(ServingStatus.OK, UUID.randomUUID(), "txt");
                         new SushiMessageSender().send(socketChannel, serving);
                         ChannelUtils.close(attachedFileWriter.getFileChannel());
                     } else {

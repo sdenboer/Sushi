@@ -1,14 +1,14 @@
-import com.sushi.components.client.SushiFileOrderService;
-import com.sushi.components.client.SushiPullOrderService;
-import com.sushi.components.client.SushiPushOrderService;
-import com.sushi.components.client.SushiRemoveOrderService;
-import com.sushi.components.common.message.serving.SushiServing;
-import com.sushi.components.common.message.serving.SushiServingStatus;
+import com.sushi.components.client.FileOrderService;
+import com.sushi.components.client.PullOrderService;
+import com.sushi.components.client.PushOrderService;
+import com.sushi.components.client.RemoveOrderService;
+import com.sushi.components.common.message.serving.Serving;
+import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.FilePayload;
-import com.sushi.components.common.protocol.file.SushiFileOrder;
-import com.sushi.components.common.protocol.pull.SushiPullOrder;
-import com.sushi.components.common.protocol.push.SushiPushOrder;
-import com.sushi.components.common.protocol.remove.SushiRemoveOrder;
+import com.sushi.components.common.protocol.file.FileOrder;
+import com.sushi.components.common.protocol.pull.PullOrder;
+import com.sushi.components.common.protocol.push.PushOrder;
+import com.sushi.components.common.protocol.remove.RemoveOrder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,7 +57,7 @@ public class FileCopyTest extends AbstractTest {
 
         final File srcFile = new File(files.get(0).getAbsolutePath());
         final TestAsyncClient helper = new TestAsyncClient(srcFile.getName(), srcFile.length(), files.get(0).getAbsolutePath());
-        assertEquals(SushiServingStatus.OK.getStatusCode(), helper.testDelete());
+        assertEquals(ServingStatus.OK.getStatusCode(), helper.testDelete());
 //
 //        files.forEach(f -> runClient(f.getAbsolutePath()));
 //        jobsLatch.await();
@@ -95,7 +95,7 @@ public class FileCopyTest extends AbstractTest {
                 e.printStackTrace();
             }
             System.out.println(size);
-            SushiPushOrder sushiOrder = SushiPushOrder.builder()
+            PushOrder sushiOrder = PushOrder.builder()
                     .host("localhost")
                     .port(9999)
                     .content("file")
@@ -106,8 +106,8 @@ public class FileCopyTest extends AbstractTest {
                     .fileSize(size)
                     .payload(new FilePayload(sourcePath))
                     .build();
-            SushiPushOrderService sushiPushOrderService = new SushiPushOrderService();
-            SushiServing send = sushiPushOrderService.send(sushiOrder);
+            PushOrderService sushiPushOrderService = new PushOrderService();
+            Serving send = sushiPushOrderService.send(sushiOrder);
 
             System.out.println(send.getSushiServingStatus().getStatusCode());
             long finish = System.currentTimeMillis();
@@ -119,7 +119,7 @@ public class FileCopyTest extends AbstractTest {
         public int testPull() {
             long start = System.currentTimeMillis();
 
-            SushiPullOrder sushiOrder = SushiPullOrder.builder()
+            PullOrder sushiOrder = PullOrder.builder()
                     .host("localhost")
                     .port(9999)
                     .orderId(UUID.randomUUID())
@@ -127,8 +127,8 @@ public class FileCopyTest extends AbstractTest {
                     .encryption("AES")
                     .fileName("test.tar.gz")
                     .build();
-            SushiPullOrderService sushiPullOrderService = new SushiPullOrderService();
-            SushiServing send = sushiPullOrderService.send(sushiOrder);
+            PullOrderService sushiPullOrderService = new PullOrderService();
+            Serving send = sushiPullOrderService.send(sushiOrder);
 
             long finish = System.currentTimeMillis();
             long timeElapsed = finish - start;
@@ -138,30 +138,30 @@ public class FileCopyTest extends AbstractTest {
 
         public int testFile() {
 
-            SushiFileOrder sushiOrder = SushiFileOrder.builder()
+            FileOrder sushiOrder = FileOrder.builder()
                     .host("localhost")
                     .port(9999)
                     .orderId(UUID.randomUUID())
                     .dir("/home/pl00cc/tmp/input")
                     .fileName("xaa")
                     .build();
-            SushiFileOrderService sushiPullOrderService = new SushiFileOrderService();
-            SushiServing send = sushiPullOrderService.send(sushiOrder);
+            FileOrderService sushiPullOrderService = new FileOrderService();
+            Serving send = sushiPullOrderService.send(sushiOrder);
 
             return 0;
         }
 
         public int testDelete() {
 
-            SushiRemoveOrder sushiOrder = SushiRemoveOrder.builder()
+            RemoveOrder sushiOrder = RemoveOrder.builder()
                     .host("localhost")
                     .port(9999)
                     .orderId(UUID.randomUUID())
                     .dir("/home/pl00cc/tmp/output")
                     .fileName("xaa")
                     .build();
-            SushiRemoveOrderService sushiPullOrderService = new SushiRemoveOrderService();
-            SushiServing send = sushiPullOrderService.send(sushiOrder);
+            RemoveOrderService sushiPullOrderService = new RemoveOrderService();
+            Serving send = sushiPullOrderService.send(sushiOrder);
 
             return 0;
         }

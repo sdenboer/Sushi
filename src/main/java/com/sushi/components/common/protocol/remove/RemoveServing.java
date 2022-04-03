@@ -1,23 +1,24 @@
-package com.sushi.components.common.error;
+package com.sushi.components.common.protocol.remove;
 
 import com.sushi.components.common.message.serving.Serving;
 import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.WrapperField;
 import lombok.Builder;
+import lombok.NonNull;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
-public class ErrorServing extends Serving {
+public class RemoveServing extends Serving {
 
     @Builder
-    public ErrorServing(ServingStatus servingStatus, UUID orderId) {
+    public RemoveServing(ServingStatus servingStatus, UUID orderId) {
         super(servingStatus, orderId);
     }
 
-    public Map<WrapperField, String> optionalSushiWrappers() {
+    @Override
+    public @NonNull Map<WrapperField, String> optionalSushiWrappers() {
         return Collections.emptyMap();
     }
-
 }

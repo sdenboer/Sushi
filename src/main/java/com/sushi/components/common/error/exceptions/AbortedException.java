@@ -1,12 +1,12 @@
 package com.sushi.components.common.error.exceptions;
 
-import com.sushi.components.common.message.serving.SushiServingStatus;
+import com.sushi.components.common.message.serving.ServingStatus;
 
 import java.util.UUID;
 
 public class AbortedException extends SushiException {
 
     public AbortedException(UUID orderId) {
-        super(SushiServingStatus.ABORTED, orderId);
+        super(ServingStatus.ABORTED, orderId);
     }
 }
