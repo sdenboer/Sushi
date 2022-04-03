@@ -26,9 +26,7 @@ import java.util.stream.Stream;
 import static com.sushi.components.utils.Constants.TMP_DIR;
 
 public class StatusOrderService implements OrderService<StatusOrder> {
-
-    public static final String DIR = "/home/pl00cc/tmp/output";
-
+    
     @Override
     public void handle(AsynchronousSocketChannel socketChannel, StatusOrder order, OrderContext orderContext) {
 
