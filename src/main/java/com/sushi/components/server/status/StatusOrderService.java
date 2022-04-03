@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 import static com.sushi.components.utils.Constants.TMP_DIR;
 
 public class StatusOrderService implements OrderService<StatusOrder> {
-    
+
     @Override
     public void handle(AsynchronousSocketChannel socketChannel, StatusOrder order, OrderContext orderContext) {
 
@@ -41,8 +41,7 @@ public class StatusOrderService implements OrderService<StatusOrder> {
         } catch (IOException e) {
             throw new ServerErrorException(e, order.getOrderId());
         }
-
-
+        
     }
 
     private Vector<InputStream> getInputStreamsOfFilesInDirectory(Path dir, OrderContext orderContext) {

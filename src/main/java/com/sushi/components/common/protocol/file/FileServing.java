@@ -3,8 +3,8 @@ package com.sushi.components.common.protocol.file;
 import com.sushi.components.common.message.serving.Serving;
 import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.HasPayload;
-import com.sushi.components.common.message.wrappers.WrapperField;
 import com.sushi.components.common.message.wrappers.TextPayload;
+import com.sushi.components.common.message.wrappers.WrapperField;
 import lombok.Builder;
 import lombok.Getter;
 
