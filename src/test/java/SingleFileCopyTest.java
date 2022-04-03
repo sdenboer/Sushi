@@ -2,13 +2,13 @@ import com.sushi.components.client.SushiFileOrderService;
 import com.sushi.components.client.SushiPullOrderService;
 import com.sushi.components.client.SushiPushOrderService;
 import com.sushi.components.client.SushiRemoveOrderService;
-import com.sushi.components.common.message.order.SushiFileOrder;
-import com.sushi.components.common.message.order.SushiPullOrder;
-import com.sushi.components.common.message.order.SushiPushOrder;
-import com.sushi.components.common.message.order.SushiRemoveOrder;
 import com.sushi.components.common.message.serving.SushiServing;
 import com.sushi.components.common.message.serving.SushiServingStatus;
 import com.sushi.components.common.message.wrappers.FilePayload;
+import com.sushi.components.common.protocol.file.SushiFileOrder;
+import com.sushi.components.common.protocol.pull.SushiPullOrder;
+import com.sushi.components.common.protocol.push.SushiPushOrder;
+import com.sushi.components.common.protocol.remove.SushiRemoveOrder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 

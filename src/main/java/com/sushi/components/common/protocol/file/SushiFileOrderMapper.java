@@ -1,6 +1,6 @@
-package com.sushi.components.common.mappers;
+package com.sushi.components.common.protocol.file;
 
-import com.sushi.components.common.message.order.SushiFileOrder;
+import com.sushi.components.common.mappers.SushiMessageMapper;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;
 
 import java.util.Map;

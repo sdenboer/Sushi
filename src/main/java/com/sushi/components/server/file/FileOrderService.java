@@ -3,10 +3,10 @@ package com.sushi.components.server.file;
 import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.NotFoundException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.message.order.SushiFileOrder;
-import com.sushi.components.common.message.serving.SushiFileServing;
 import com.sushi.components.common.message.serving.SushiServingStatus;
 import com.sushi.components.common.message.wrappers.TextPayload;
+import com.sushi.components.common.protocol.file.SushiFileOrder;
+import com.sushi.components.common.protocol.file.SushiFileServing;
 import com.sushi.components.common.senders.SushiMessageSender;
 import com.sushi.components.server.OrderService;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -55,9 +55,7 @@ public class FileOrderService implements OrderService<SushiFileOrder> {
 
     private String getSHA265HexFromPath(Path path, OrderContext orderContext) {
         try (InputStream is = Files.newInputStream(path)) {
-            String bytes = DigestUtils.sha256Hex(is);
-            System.out.println(path + ": " + bytes);
-            return bytes;
+            return DigestUtils.sha256Hex(is);
         } catch (IOException e) {
             throw new ServerErrorException(e, orderContext.getOrderId());
         }

@@ -1,4 +1,4 @@
-package com.sushi.components.common.file_transfer;
+package com.sushi.components.common;
 
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;

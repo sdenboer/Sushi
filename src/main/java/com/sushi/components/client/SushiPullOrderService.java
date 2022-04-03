@@ -1,9 +1,9 @@
 package com.sushi.components.client;
 
-import com.sushi.components.common.file_transfer.FileWriter;
-import com.sushi.components.common.mappers.SushiPullServingMapper;
-import com.sushi.components.common.message.order.SushiPullOrder;
-import com.sushi.components.common.message.serving.SushiPullServing;
+import com.sushi.components.common.FileWriter;
+import com.sushi.components.common.protocol.pull.SushiPullOrder;
+import com.sushi.components.common.protocol.pull.SushiPullServing;
+import com.sushi.components.common.protocol.pull.SushiPullServingMapper;
 import com.sushi.components.common.senders.SushiMessageSender;
 
 import java.io.IOException;

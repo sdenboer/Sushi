@@ -1,5 +1,7 @@
-package com.sushi.components.common.message.serving;
+package com.sushi.components.common.protocol.pull;
 
+import com.sushi.components.common.message.serving.SushiServing;
+import com.sushi.components.common.message.serving.SushiServingStatus;
 import com.sushi.components.common.message.wrappers.FilePayload;
 import com.sushi.components.common.message.wrappers.HasPayload;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;

@@ -1,5 +1,7 @@
-package com.sushi.components.common.message.serving;
+package com.sushi.components.common.error;
 
+import com.sushi.components.common.message.serving.SushiServing;
+import com.sushi.components.common.message.serving.SushiServingStatus;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import lombok.Builder;
 

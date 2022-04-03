@@ -1,8 +1,8 @@
 package com.sushi.components.client;
 
-import com.sushi.components.common.mappers.SushiRemoveServingMapper;
-import com.sushi.components.common.message.order.SushiRemoveOrder;
-import com.sushi.components.common.message.serving.SushiRemoveServing;
+import com.sushi.components.common.protocol.remove.SushiRemoveOrder;
+import com.sushi.components.common.protocol.remove.SushiRemoveServing;
+import com.sushi.components.common.protocol.remove.SushiRemoveServingMapper;
 import com.sushi.components.common.senders.TextSender;
 
 import java.io.IOException;

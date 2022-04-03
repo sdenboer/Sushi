@@ -1,17 +1,14 @@
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.sushi.components.client.SushiFileOrderService;
 import com.sushi.components.client.SushiPullOrderService;
-import com.sushi.components.client.SushiRemoveOrderService;
-import com.sushi.components.common.message.order.SushiFileOrder;
-import com.sushi.components.common.message.order.SushiPullOrder;
-import com.sushi.components.common.message.order.SushiRemoveOrder;
-import com.sushi.components.common.message.serving.SushiServing;
-import com.sushi.components.common.message.order.SushiPushOrder;
 import com.sushi.components.client.SushiPushOrderService;
+import com.sushi.components.client.SushiRemoveOrderService;
+import com.sushi.components.common.message.serving.SushiServing;
 import com.sushi.components.common.message.serving.SushiServingStatus;
 import com.sushi.components.common.message.wrappers.FilePayload;
+import com.sushi.components.common.protocol.file.SushiFileOrder;
+import com.sushi.components.common.protocol.pull.SushiPullOrder;
+import com.sushi.components.common.protocol.push.SushiPushOrder;
+import com.sushi.components.common.protocol.remove.SushiRemoveOrder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,6 +22,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Stream;
+
+import static org.junit.Assert.assertEquals;
 
 public class FileCopyTest extends AbstractTest {
 
@@ -73,7 +72,7 @@ public class FileCopyTest extends AbstractTest {
         }).start();
     }
 
-    private final class TestAsyncClient  {
+    private final class TestAsyncClient {
 
         private final long size;
         private final String fileName;
@@ -166,7 +165,6 @@ public class FileCopyTest extends AbstractTest {
 
             return 0;
         }
-
 
 
     }

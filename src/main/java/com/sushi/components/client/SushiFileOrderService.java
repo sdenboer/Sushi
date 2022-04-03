@@ -1,8 +1,8 @@
 package com.sushi.components.client;
 
-import com.sushi.components.common.mappers.SushiFileServingMapper;
-import com.sushi.components.common.message.order.SushiFileOrder;
-import com.sushi.components.common.message.serving.SushiFileServing;
+import com.sushi.components.common.protocol.file.SushiFileOrder;
+import com.sushi.components.common.protocol.file.SushiFileServing;
+import com.sushi.components.common.protocol.file.SushiFileServingMapper;
 import com.sushi.components.common.senders.TextSender;
 
 import java.io.IOException;

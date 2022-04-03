@@ -1,6 +1,8 @@
-package com.sushi.components.common.message.order;
+package com.sushi.components.common.protocol.remove;
 
 import com.sushi.components.common.SushiHost;
+import com.sushi.components.common.message.order.SushiOrder;
+import com.sushi.components.common.message.order.SushiOrderMethod;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import lombok.Builder;
 import lombok.Getter;
