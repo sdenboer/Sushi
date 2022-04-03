@@ -4,9 +4,11 @@ import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.NotFoundException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.message.serving.ServingStatus;
+import com.sushi.components.common.message.wrappers.ContentType;
 import com.sushi.components.common.message.wrappers.TextPayload;
 import com.sushi.components.common.protocol.file.FileServing;
 import com.sushi.components.common.protocol.status.StatusOrder;
+import com.sushi.components.common.protocol.status.StatusServing;
 import com.sushi.components.common.senders.MessageSender;
 import com.sushi.components.server.OrderService;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,12 +38,12 @@ public class StatusOrderService implements OrderService<StatusOrder> {
             String payload = DigestUtils.sha256Hex(stream);
             int payloadSize = payload.getBytes(StandardCharsets.UTF_8).length;
             TextPayload textPayload = new TextPayload(payload);
-            FileServing serving = new FileServing(ServingStatus.OK, order.getOrderId(), "txt", payloadSize, textPayload);
+            StatusServing serving = new StatusServing(ServingStatus.OK, order.getOrderId(), ContentType.TXT, payloadSize, textPayload);
             new MessageSender().send(socketChannel, serving);
         } catch (IOException e) {
             throw new ServerErrorException(e, order.getOrderId());
         }
-        
+
     }
 
     private Vector<InputStream> getInputStreamsOfFilesInDirectory(Path dir, OrderContext orderContext) {

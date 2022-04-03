@@ -4,6 +4,7 @@ import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.NotFoundException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.message.serving.ServingStatus;
+import com.sushi.components.common.message.wrappers.ContentType;
 import com.sushi.components.common.message.wrappers.TextPayload;
 import com.sushi.components.common.protocol.file.FileOrder;
 import com.sushi.components.common.protocol.file.FileServing;
@@ -41,7 +42,7 @@ public class FileOrderService implements OrderService<FileOrder> {
         String payload = serializePayload(files);
         int payloadSize = payload.getBytes(StandardCharsets.UTF_8).length;
         TextPayload textPayload = new TextPayload(payload);
-        FileServing serving = new FileServing(ServingStatus.OK, order.getOrderId(), "txt", payloadSize, textPayload);
+        FileServing serving = new FileServing(ServingStatus.OK, order.getOrderId(), ContentType.TXT, payloadSize, textPayload);
         new MessageSender().send(socketChannel, serving);
     }
 

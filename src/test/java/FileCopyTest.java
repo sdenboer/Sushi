@@ -4,6 +4,7 @@ import com.sushi.components.client.push.PushOrderService;
 import com.sushi.components.client.remove.RemoveOrderService;
 import com.sushi.components.common.message.serving.Serving;
 import com.sushi.components.common.message.serving.ServingStatus;
+import com.sushi.components.common.message.wrappers.ContentType;
 import com.sushi.components.common.message.wrappers.FilePayload;
 import com.sushi.components.common.protocol.file.FileOrder;
 import com.sushi.components.common.protocol.pull.PullOrder;
@@ -98,7 +99,7 @@ public class FileCopyTest extends AbstractTest {
             PushOrder sushiOrder = PushOrder.builder()
                     .host("localhost")
                     .port(9999)
-                    .content("file")
+                    .contentType(ContentType.FILE)
                     .orderId(UUID.randomUUID())
                     .dir("/home/pl00cc/tmp/output")
                     .encryption("AES")

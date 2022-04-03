@@ -7,8 +7,6 @@ import com.sushi.components.common.message.wrappers.WrapperField;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -27,11 +25,9 @@ public class FileOrder extends Order {
     }
 
     @Override
-    public Map<WrapperField, String> optionalWrappers() {
-        EnumMap<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
-        wrappers.put(WrapperField.DIR, dir);
-        wrappers.put(WrapperField.FILE, fileName);
-        return wrappers;
+    public void addOptionalWrappers() {
+        addWrapper(WrapperField.DIR, dir);
+        addWrapper(WrapperField.FILE, fileName);
     }
 
 }

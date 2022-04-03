@@ -1,6 +1,5 @@
 package com.sushi.components.common.message;
 
-import com.sushi.components.common.message.wrappers.HasWrappers;
 import com.sushi.components.common.message.wrappers.WrapperField;
 
 import java.util.Arrays;
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 
-public interface MessageMapper<T extends HasWrappers> {
+public interface MessageMapper<T extends Message> {
 
     static Map<WrapperField, String> deserialize(String request) {
         String[] splitRequest = request.split("\n");

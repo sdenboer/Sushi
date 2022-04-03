@@ -3,6 +3,7 @@ package com.sushi.components.server.pull;
 import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.NotFoundException;
 import com.sushi.components.common.message.serving.ServingStatus;
+import com.sushi.components.common.message.wrappers.ContentType;
 import com.sushi.components.common.message.wrappers.FilePayload;
 import com.sushi.components.common.protocol.pull.PullOrder;
 import com.sushi.components.common.protocol.pull.PullServing;
@@ -25,7 +26,7 @@ public class PullOrderService implements OrderService<PullOrder> {
             Path path = Paths.get(order.getDir(), order.getFileName());
             long size = Files.size(path);
             FilePayload payload = new FilePayload(path);
-            PullServing serving = new PullServing(ServingStatus.OK, orderId, "aes", "file", size, payload);
+            PullServing serving = new PullServing(ServingStatus.OK, orderId, "aes", ContentType.FILE, size, payload);
             new MessageSender().send(socketChannel, serving);
         } catch (IOException e) {
             throw new NotFoundException(e, orderId);

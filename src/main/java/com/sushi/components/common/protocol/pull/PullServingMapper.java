@@ -2,6 +2,7 @@ package com.sushi.components.common.protocol.pull;
 
 import com.sushi.components.common.message.MessageMapper;
 import com.sushi.components.common.message.serving.ServingStatus;
+import com.sushi.components.common.message.wrappers.ContentType;
 import com.sushi.components.common.message.wrappers.WrapperField;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ public class PullServingMapper implements MessageMapper<PullServing> {
                 //optional
                 .encryption(MessageMapper.getStringWrapper(wrappers, ENCRYPTION))
                 .fileSize(MessageMapper.getLongWrapper(wrappers, ENCRYPTION))
-                .content(MessageMapper.getStringWrapper(wrappers, CONTENT))
+                .contentType(ContentType.fromString(MessageMapper.getStringWrapper(wrappers, CONTENT)))
                 .build();
     }
 }

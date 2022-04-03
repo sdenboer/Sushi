@@ -7,8 +7,6 @@ import com.sushi.components.common.message.wrappers.WrapperField;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static com.sushi.components.common.message.wrappers.WrapperField.ENCRYPTION;
@@ -30,12 +28,10 @@ public class PullOrder extends Order {
     }
 
     @Override
-    public Map<WrapperField, String> optionalWrappers() {
-        EnumMap<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
-        wrappers.put(WrapperField.DIR, dir);
-        wrappers.put(WrapperField.FILE, fileName);
-        wrappers.put(ENCRYPTION, encryption);
-        return wrappers;
+    public void addOptionalWrappers() {
+        addWrapper(WrapperField.DIR, dir);
+        addWrapper(WrapperField.FILE, fileName);
+        addWrapper(ENCRYPTION, encryption);
     }
 
 }

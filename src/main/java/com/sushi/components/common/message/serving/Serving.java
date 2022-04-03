@@ -1,16 +1,13 @@
 package com.sushi.components.common.message.serving;
 
 import com.sushi.components.common.message.Message;
-import com.sushi.components.common.message.wrappers.HasWrappers;
 import com.sushi.components.common.message.wrappers.WrapperField;
 import lombok.Getter;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Getter
-public abstract class Serving implements Message, HasWrappers {
+public abstract class Serving extends Message {
 
     private final ServingStatus servingStatus;
     private final UUID orderId;
@@ -21,11 +18,9 @@ public abstract class Serving implements Message, HasWrappers {
     }
 
     @Override
-    public Map<WrapperField, String> mandatoryWrappers() {
-        EnumMap<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
-        wrappers.put(WrapperField.STATUS, String.valueOf(servingStatus.getStatusCode()));
-        wrappers.put(WrapperField.ORDER_ID, String.valueOf(orderId));
-        return wrappers;
+    public void addMandatoryWrappers() {
+        addWrapper(WrapperField.STATUS, String.valueOf(servingStatus.getStatusCode()));
+        addWrapper(WrapperField.ORDER_ID, String.valueOf(orderId));
     }
 
     public UUID getOrderId() {

@@ -1,6 +1,7 @@
 package com.sushi.components.common.protocol.push;
 
 import com.sushi.components.common.message.MessageMapper;
+import com.sushi.components.common.message.wrappers.ContentType;
 import com.sushi.components.common.message.wrappers.WrapperField;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ public class PushOrderMapper implements MessageMapper<PushOrder> {
                 .dir(wrappers.get(DIR))
                 .fileName(wrappers.get(FILE))
                 .encryption(wrappers.get(ENCRYPTION))
-                .content(wrappers.get(CONTENT))
+                .contentType(ContentType.fromString(wrappers.get(CONTENT)))
                 .fileSize((Long.parseLong(wrappers.get(CONTENT_LENGTH))))
                 .build();
     }

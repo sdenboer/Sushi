@@ -5,8 +5,6 @@ import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.WrapperField;
 import lombok.Builder;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class PushServing extends Serving {
@@ -20,10 +18,8 @@ public class PushServing extends Serving {
     }
 
     @Override
-    public Map<WrapperField, String> optionalWrappers() {
-        EnumMap<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
-        wrappers.put(WrapperField.CONTENT, content);
-        return wrappers;
+    public void addOptionalWrappers() {
+        addWrapper(WrapperField.CONTENT, content);
     }
 
 }
