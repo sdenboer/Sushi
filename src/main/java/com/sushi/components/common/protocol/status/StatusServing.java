@@ -6,11 +6,13 @@ import com.sushi.components.common.message.wrappers.HasPayload;
 import com.sushi.components.common.message.wrappers.TextPayload;
 import com.sushi.components.common.message.wrappers.WrapperField;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Getter
 public class StatusServing extends Serving implements HasPayload<TextPayload> {
 
     private final String content;

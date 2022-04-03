@@ -6,4 +6,6 @@ public class Constants {
     public static final int BUFFER_SIZE = 2048;
     public static int DEFAULT_PORT = 9443;
 
+    public static final String TMP_DIR = "/home/pl00cc/tmp/output";
+
 }

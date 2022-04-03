@@ -50,7 +50,6 @@ public class FileOrderService implements OrderService<FileOrder> {
                 .stream()
                 .map(s -> s.getKey() + ": " + s.getValue())
                 .collect(Collectors.joining("\n"));
-
     }
 
     private String getSHA265HexFromPath(Path path, OrderContext orderContext) {

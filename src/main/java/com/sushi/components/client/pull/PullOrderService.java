@@ -12,10 +12,9 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
 import static com.sushi.components.common.message.serving.ServingStatus.OK;
+import static com.sushi.components.utils.Constants.TMP_DIR;
 
 public class PullOrderService implements OrderService<PullOrder, PullServing> {
-
-    private static final String DIR = "/home/pl00cc/tmp/output";
 
     @Override
     public PullServing send(PullOrder order) {
@@ -37,7 +36,7 @@ public class PullOrderService implements OrderService<PullOrder, PullServing> {
     private void receiveFilePayload(SocketChannel socketChannel, PullServing pullServing, PullOrder order) {
 
         try {
-            FileWriter fileWriter = new FileWriter(DIR, order.getFileName(), pullServing.getFileSize());
+            FileWriter fileWriter = new FileWriter(TMP_DIR, order.getFileName(), pullServing.getFileSize());
             fileWriter.write(socketChannel);
             System.out.println("FILE IS SAME SIZE " + (fileWriter.getPosition().get() == pullServing.getFileSize()));
         } catch (IOException e) {

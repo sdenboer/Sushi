@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 public class StatusOrder extends Order {
 
-    private static final OrderMethod method = OrderMethod.REMOVE;
+    private static final OrderMethod method = OrderMethod.STATUS;
 
     @Builder
     public StatusOrder(String host, int port, UUID orderId) {

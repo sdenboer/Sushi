@@ -11,10 +11,12 @@ import com.sushi.components.common.protocol.file.FileOrderMapper;
 import com.sushi.components.common.protocol.pull.PullOrderMapper;
 import com.sushi.components.common.protocol.push.PushOrderMapper;
 import com.sushi.components.common.protocol.remove.RemoveOrderMapper;
+import com.sushi.components.common.protocol.status.StatusOrderMapper;
 import com.sushi.components.server.file.FileOrderService;
 import com.sushi.components.server.pull.PullOrderService;
 import com.sushi.components.server.push.PushOrderService;
 import com.sushi.components.server.remove.RemoveOrderService;
+import com.sushi.components.server.status.StatusOrderService;
 import com.sushi.components.utils.Constants;
 
 import java.nio.ByteBuffer;
@@ -57,6 +59,7 @@ public class OrderController {
                         case PULL -> new PullOrderService().handle(channel, new PullOrderMapper().from(message), orderContext);
                         case FILE -> new FileOrderService().handle(channel, new FileOrderMapper().from(message), orderContext);
                         case REMOVE -> new RemoveOrderService().handle(channel, new RemoveOrderMapper().from(message), orderContext);
+                        case STATUS -> new StatusOrderService().handle(channel, new StatusOrderMapper().from(message), orderContext);
                         default -> throw new NotImplementedException(orderContext.getOrderId());
                     }
                 } else {

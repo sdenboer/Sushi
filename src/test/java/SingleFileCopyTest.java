@@ -2,6 +2,7 @@ import com.sushi.components.client.file.FileOrderService;
 import com.sushi.components.client.pull.PullOrderService;
 import com.sushi.components.client.push.PushOrderService;
 import com.sushi.components.client.remove.RemoveOrderService;
+import com.sushi.components.client.status.StatusOrderService;
 import com.sushi.components.common.message.serving.Serving;
 import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.FilePayload;
@@ -9,6 +10,7 @@ import com.sushi.components.common.protocol.file.FileOrder;
 import com.sushi.components.common.protocol.pull.PullOrder;
 import com.sushi.components.common.protocol.push.PushOrder;
 import com.sushi.components.common.protocol.remove.RemoveOrder;
+import com.sushi.components.common.protocol.status.StatusOrder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 
@@ -99,15 +101,25 @@ public class SingleFileCopyTest {
     }
 
     @Test
-    public void testChecksum() throws IOException {
-        Path path = Paths.get("/home/pl00cc/tmp/output");
+    public void testChecksum() {
+        StatusOrder sushiOrder = StatusOrder.builder()
+                .host("localhost")
+                .port(9999)
+                .orderId(UUID.randomUUID())
+                .build();
+        StatusOrderService sushiPullOrderService = new StatusOrderService();
+        Serving send = sushiPullOrderService.send(sushiOrder);
 
-        Vector<InputStream> inputStreams = new Vector<>();
-        collectInputStreams(path, inputStreams);
-        try (SequenceInputStream stream = new SequenceInputStream(inputStreams.elements())) {
-            String sha256Hex = DigestUtils.sha256Hex(stream);
-            System.out.println(sha256Hex);
-        }
+        assertEquals(ServingStatus.OK, send.getServingStatus());
+
+//        Path path = Paths.get("/home/pl00cc/tmp/output");
+//
+//        Vector<InputStream> inputStreams = new Vector<>();
+//        collectInputStreams(path, inputStreams);
+//        try (SequenceInputStream stream = new SequenceInputStream(inputStreams.elements())) {
+//            String sha256Hex = DigestUtils.sha256Hex(stream);
+//            System.out.println(sha256Hex);
+//        }
     }
 
     private void collectInputStreams(Path dir,
