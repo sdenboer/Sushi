@@ -11,8 +11,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.sushi.components.common.message.wrappers.SushiWrapperField.ENCRYPTION;
-
 @Getter
 public class SushiPushOrder extends SushiOrder implements HasPayload<FilePayload> {
 
