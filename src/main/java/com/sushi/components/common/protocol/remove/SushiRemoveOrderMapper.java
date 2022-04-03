@@ -1,6 +1,6 @@
 package com.sushi.components.common.protocol.remove;
 
-import com.sushi.components.common.mappers.SushiMessageMapper;
+import com.sushi.components.common.message.SushiMessageMapper;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;
 
 import java.util.Map;

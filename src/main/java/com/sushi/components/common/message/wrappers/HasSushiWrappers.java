@@ -1,6 +1,6 @@
 package com.sushi.components.common.message.wrappers;
 
-import com.sushi.components.common.mappers.SushiMessageMapper;
+import com.sushi.components.common.message.SushiMessageMapper;
 import lombok.NonNull;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.sushi.components.common.mappers;
+package com.sushi.components.common.message;
 
 import com.sushi.components.common.message.wrappers.HasSushiWrappers;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;

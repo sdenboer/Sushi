@@ -4,7 +4,7 @@ import com.sushi.components.common.OrderContext;
 import com.sushi.components.common.error.exceptions.InvalidRequestException;
 import com.sushi.components.common.error.exceptions.NotImplementedException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.mappers.SushiMessageMapper;
+import com.sushi.components.common.message.SushiMessageMapper;
 import com.sushi.components.common.message.order.SushiOrderMethod;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;
 import com.sushi.components.common.protocol.file.SushiFileOrderMapper;

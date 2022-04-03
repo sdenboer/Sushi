@@ -1,6 +1,5 @@
 package com.sushi.components.common.message.order;
 
-import com.sushi.components.common.SushiHost;
 import com.sushi.components.common.message.SushiMessage;
 import com.sushi.components.common.message.wrappers.HasSushiWrappers;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;

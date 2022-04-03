@@ -1,6 +1,6 @@
 package com.sushi.components.common.protocol.pull;
 
-import com.sushi.components.common.SushiHost;
+import com.sushi.components.common.message.order.SushiHost;
 import com.sushi.components.common.message.order.SushiOrder;
 import com.sushi.components.common.message.order.SushiOrderMethod;
 import com.sushi.components.common.message.wrappers.SushiWrapperField;
