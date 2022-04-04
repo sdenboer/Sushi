@@ -3,13 +3,13 @@ package com.sushi.components.common.error;
 import com.sushi.components.common.error.exceptions.SushiException;
 import com.sushi.components.common.senders.MessageSender;
 
-import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.AsynchronousByteChannel;
 
 public class GlobalExceptionHandler implements Thread.UncaughtExceptionHandler {
 
-    private final AsynchronousSocketChannel socketChannel;
+    private final AsynchronousByteChannel socketChannel;
 
-    public GlobalExceptionHandler(AsynchronousSocketChannel socketChannel) {
+    public GlobalExceptionHandler(AsynchronousByteChannel socketChannel) {
         this.socketChannel = socketChannel;
     }
     //    private static Logger LOGGER = LoggerFactory.getLogger(Handler.class);

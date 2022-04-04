@@ -5,8 +5,8 @@ import com.sushi.components.utils.Constants;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ByteChannel;
 import java.nio.channels.FileChannel;
-import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -34,7 +34,7 @@ public class FileWriter {
         return bytesWritten;
     }
 
-    public void write(SocketChannel socketChannel) throws IOException {
+    public void write(ByteChannel socketChannel) throws IOException {
         while (!done()) {
             position.addAndGet(fileChannel.transferFrom(socketChannel, position.get(), Constants.TRANSFER_MAX_SIZE));
             System.out.println(((double) this.position.get() / this.fileSize * 100));

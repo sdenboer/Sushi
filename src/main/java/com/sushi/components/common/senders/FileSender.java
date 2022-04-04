@@ -6,17 +6,17 @@ import com.sushi.components.utils.Constants;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.AsynchronousByteChannel;
+import java.nio.channels.ByteChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.channels.FileChannel;
-import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 public class FileSender implements Sender<Path> {
 
     @Override
-    public void send(SocketChannel socketChannel, Path path) {
+    public void send(ByteChannel socketChannel, Path path) {
         try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ)) {
             long position = 0L;
             long size = fileChannel.size();
@@ -30,7 +30,7 @@ public class FileSender implements Sender<Path> {
     }
 
     @Override
-    public void send(AsynchronousSocketChannel socketChannel, Path path, OnComplete onComplete) {
+    public void send(AsynchronousByteChannel socketChannel, Path path, OnComplete onComplete) {
 
         ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
 

@@ -5,27 +5,23 @@ import com.sushi.components.utils.ChannelUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.AsynchronousByteChannel;
+import java.nio.channels.ByteChannel;
 import java.nio.channels.CompletionHandler;
-import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
 public class TextSender implements Sender<String> {
 
     @Override
-    public void send(SocketChannel socketChannel, String payload) {
-        final ByteBuffer buffer = ByteBuffer.wrap(payload.getBytes());
+    public void send(ByteChannel socketChannel, String payload) throws IOException {
+        final ByteBuffer buffer = ByteBuffer.wrap(payload.getBytes(StandardCharsets.US_ASCII));
         while (buffer.hasRemaining()) {
-            try {
-                socketChannel.write(buffer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            socketChannel.write(buffer);
         }
     }
 
     @Override
-    public void send(AsynchronousSocketChannel socketChannel, String payload, OnComplete onComplete) {
+    public void send(AsynchronousByteChannel socketChannel, String payload, OnComplete onComplete) {
         final ByteBuffer payloadBuffer = ByteBuffer.wrap(payload.getBytes(StandardCharsets.UTF_8));
         socketChannel.write(payloadBuffer, null, new CompletionHandler<Integer, Void>() {
             @Override
