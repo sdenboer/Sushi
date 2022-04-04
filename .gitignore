@@ -1,2 +1,4 @@
 .idea/
 target/
+/src/main/resources/ssl/private_key.key
+/src/main/resources/ssl/certificate.crt

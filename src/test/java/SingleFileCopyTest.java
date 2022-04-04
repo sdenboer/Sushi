@@ -42,7 +42,7 @@ public class SingleFileCopyTest {
 
         PushOrder sushiOrder = PushOrder.builder()
                 .host("localhost")
-                .port(DEFAULT_PORT)
+                .port(TLS_PORT)
                 .contentType(ContentType.FILE)
                 .orderId(UUID.randomUUID())
                 .dir("/home/pl00cc/tmp/output")
@@ -77,7 +77,7 @@ public class SingleFileCopyTest {
 
         FileOrder sushiOrder = FileOrder.builder()
                 .host("localhost")
-                .port(DEFAULT_PORT)
+                .port(TLS_PORT)
                 .orderId(UUID.randomUUID())
                 .dir("/home/pl00cc/tmp/output")
                 .fileName("test.txt")
