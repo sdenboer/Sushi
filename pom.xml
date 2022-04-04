@@ -20,11 +20,5 @@
         <jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-
-        </dependencies>
-    </dependencyManagement>
-
 
 </project>
