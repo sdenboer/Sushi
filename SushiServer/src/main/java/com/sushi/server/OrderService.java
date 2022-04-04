@@ -1,6 +1,6 @@
 package com.sushi.server;
 
-import com.sushi.components.common.OrderContext;
+import com.sushi.components.OrderContext;
 
 import java.nio.channels.AsynchronousByteChannel;
 

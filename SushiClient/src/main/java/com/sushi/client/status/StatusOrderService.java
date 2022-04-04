@@ -1,15 +1,15 @@
 package com.sushi.client.status;
 
 import com.sushi.client.OrderService;
-import com.sushi.components.common.message.order.Order;
-import com.sushi.components.common.protocol.status.StatusServing;
-import com.sushi.components.common.protocol.status.StatusServingMapper;
-import com.sushi.components.common.senders.TextSender;
+import com.sushi.components.message.order.Order;
+import com.sushi.components.protocol.status.StatusServing;
+import com.sushi.components.protocol.status.StatusServingMapper;
+import com.sushi.components.senders.TextSender;
 
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
 
-import static com.sushi.components.common.message.serving.ServingStatus.OK;
+import static com.sushi.components.message.serving.ServingStatus.OK;
 
 public class StatusOrderService implements OrderService {
 

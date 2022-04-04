@@ -1,12 +1,12 @@
 package com.sushi.server.remove;
 
-import com.sushi.components.common.OrderContext;
-import com.sushi.components.common.error.exceptions.NotFoundException;
-import com.sushi.components.common.message.serving.ServingStatus;
-import com.sushi.components.common.protocol.remove.RemoveOrder;
-import com.sushi.components.common.protocol.remove.RemoveOrderMapper;
-import com.sushi.components.common.protocol.remove.RemoveServing;
-import com.sushi.components.common.senders.MessageSender;
+import com.sushi.components.OrderContext;
+import com.sushi.components.error.exceptions.NotFoundException;
+import com.sushi.components.message.serving.ServingStatus;
+import com.sushi.components.protocol.remove.RemoveOrder;
+import com.sushi.components.protocol.remove.RemoveOrderMapper;
+import com.sushi.components.protocol.remove.RemoveServing;
+import com.sushi.components.senders.MessageSender;
 import com.sushi.server.OrderService;
 
 import java.io.IOException;

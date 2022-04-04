@@ -1,6 +1,6 @@
 package com.sushi.server;
 
-import com.sushi.components.common.error.GlobalExceptionHandler;
+import com.sushi.components.error.GlobalExceptionHandler;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousChannelGroup;

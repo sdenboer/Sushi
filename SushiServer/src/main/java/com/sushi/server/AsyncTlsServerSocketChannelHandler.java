@@ -1,7 +1,7 @@
 package com.sushi.server;
 
-import com.sushi.components.common.configuration.SSLConfiguration;
-import com.sushi.components.common.error.GlobalExceptionHandler;
+import com.sushi.components.configuration.SSLConfiguration;
+import com.sushi.components.error.GlobalExceptionHandler;
 import tlschannel.ServerTlsChannel;
 import tlschannel.async.AsynchronousTlsChannel;
 import tlschannel.async.AsynchronousTlsChannelGroup;

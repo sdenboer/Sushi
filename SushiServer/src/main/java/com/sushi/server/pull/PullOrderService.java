@@ -1,14 +1,14 @@
 package com.sushi.server.pull;
 
-import com.sushi.components.common.OrderContext;
-import com.sushi.components.common.error.exceptions.NotFoundException;
-import com.sushi.components.common.message.serving.ServingStatus;
-import com.sushi.components.common.message.wrappers.ContentType;
-import com.sushi.components.common.message.wrappers.FilePayload;
-import com.sushi.components.common.protocol.pull.PullOrder;
-import com.sushi.components.common.protocol.pull.PullOrderMapper;
-import com.sushi.components.common.protocol.pull.PullServing;
-import com.sushi.components.common.senders.MessageSender;
+import com.sushi.components.OrderContext;
+import com.sushi.components.error.exceptions.NotFoundException;
+import com.sushi.components.message.serving.ServingStatus;
+import com.sushi.components.message.wrappers.ContentType;
+import com.sushi.components.message.wrappers.FilePayload;
+import com.sushi.components.protocol.pull.PullOrder;
+import com.sushi.components.protocol.pull.PullOrderMapper;
+import com.sushi.components.protocol.pull.PullServing;
+import com.sushi.components.senders.MessageSender;
 import com.sushi.server.OrderService;
 
 import java.io.IOException;

@@ -5,9 +5,9 @@ import com.sushi.client.pull.PullOrderService;
 import com.sushi.client.push.PushOrderService;
 import com.sushi.client.remove.RemoveOrderService;
 import com.sushi.client.status.StatusOrderService;
-import com.sushi.components.common.configuration.SSLConfiguration;
-import com.sushi.components.common.message.order.Order;
-import com.sushi.components.common.message.serving.Serving;
+import com.sushi.components.configuration.SSLConfiguration;
+import com.sushi.components.message.order.Order;
+import com.sushi.components.message.serving.Serving;
 import tlschannel.ClientTlsChannel;
 import tlschannel.TlsChannel;
 

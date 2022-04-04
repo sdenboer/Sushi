@@ -1,7 +1,7 @@
 package com.sushi.client;
 
-import com.sushi.components.common.message.serving.Serving;
-import com.sushi.components.common.protocol.file.FileOrder;
+import com.sushi.components.message.serving.Serving;
+import com.sushi.components.protocol.file.FileOrder;
 
 import java.util.UUID;
 

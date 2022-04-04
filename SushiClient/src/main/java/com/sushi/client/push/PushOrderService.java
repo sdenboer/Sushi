@@ -1,10 +1,10 @@
 package com.sushi.client.push;
 
 import com.sushi.client.OrderService;
-import com.sushi.components.common.message.order.Order;
-import com.sushi.components.common.message.serving.Serving;
-import com.sushi.components.common.protocol.push.PushServingMapper;
-import com.sushi.components.common.senders.MessageSender;
+import com.sushi.components.message.order.Order;
+import com.sushi.components.message.serving.Serving;
+import com.sushi.components.protocol.push.PushServingMapper;
+import com.sushi.components.senders.MessageSender;
 
 import java.io.IOException;
 import java.nio.channels.ByteChannel;

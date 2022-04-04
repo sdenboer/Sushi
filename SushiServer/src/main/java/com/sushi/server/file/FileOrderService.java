@@ -1,15 +1,15 @@
 package com.sushi.server.file;
 
-import com.sushi.components.common.OrderContext;
-import com.sushi.components.common.error.exceptions.NotFoundException;
-import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.message.serving.ServingStatus;
-import com.sushi.components.common.message.wrappers.ContentType;
-import com.sushi.components.common.message.wrappers.TextPayload;
-import com.sushi.components.common.protocol.file.FileOrder;
-import com.sushi.components.common.protocol.file.FileOrderMapper;
-import com.sushi.components.common.protocol.file.FileServing;
-import com.sushi.components.common.senders.MessageSender;
+import com.sushi.components.OrderContext;
+import com.sushi.components.error.exceptions.NotFoundException;
+import com.sushi.components.error.exceptions.ServerErrorException;
+import com.sushi.components.message.serving.ServingStatus;
+import com.sushi.components.message.wrappers.ContentType;
+import com.sushi.components.message.wrappers.TextPayload;
+import com.sushi.components.protocol.file.FileOrder;
+import com.sushi.components.protocol.file.FileOrderMapper;
+import com.sushi.components.protocol.file.FileServing;
+import com.sushi.components.senders.MessageSender;
 import com.sushi.server.OrderService;
 import org.apache.commons.codec.digest.DigestUtils;
 

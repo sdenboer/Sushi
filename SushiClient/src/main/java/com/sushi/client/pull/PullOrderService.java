@@ -1,18 +1,18 @@
 package com.sushi.client.pull;
 
 import com.sushi.client.OrderService;
-import com.sushi.components.common.FileWriter;
-import com.sushi.components.common.message.order.Order;
-import com.sushi.components.common.message.serving.Serving;
-import com.sushi.components.common.protocol.pull.PullOrder;
-import com.sushi.components.common.protocol.pull.PullServing;
-import com.sushi.components.common.protocol.pull.PullServingMapper;
-import com.sushi.components.common.senders.MessageSender;
+import com.sushi.components.FileWriter;
+import com.sushi.components.message.order.Order;
+import com.sushi.components.message.serving.Serving;
+import com.sushi.components.protocol.pull.PullOrder;
+import com.sushi.components.protocol.pull.PullServing;
+import com.sushi.components.protocol.pull.PullServingMapper;
+import com.sushi.components.senders.MessageSender;
 
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
 
-import static com.sushi.components.common.message.serving.ServingStatus.OK;
+import static com.sushi.components.message.serving.ServingStatus.OK;
 import static com.sushi.components.utils.Constants.TMP_DIR;
 
 public class PullOrderService implements OrderService {

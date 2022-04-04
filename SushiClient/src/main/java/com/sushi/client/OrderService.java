@@ -1,7 +1,7 @@
 package com.sushi.client;
 
-import com.sushi.components.common.message.order.Order;
-import com.sushi.components.common.message.serving.Serving;
+import com.sushi.components.message.order.Order;
+import com.sushi.components.message.serving.Serving;
 import com.sushi.components.utils.Constants;
 
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package com.sushi.server;
 
-import com.sushi.components.common.OrderContext;
-import com.sushi.components.common.message.order.OrderMethod;
+import com.sushi.components.OrderContext;
+import com.sushi.components.message.order.OrderMethod;
 import com.sushi.server.file.FileOrderService;
 import com.sushi.server.pull.PullOrderService;
 import com.sushi.server.push.PushOrderService;

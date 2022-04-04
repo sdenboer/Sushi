@@ -1,15 +1,15 @@
 package com.sushi.server.status;
 
-import com.sushi.components.common.OrderContext;
-import com.sushi.components.common.error.exceptions.NotFoundException;
-import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.message.serving.ServingStatus;
-import com.sushi.components.common.message.wrappers.ContentType;
-import com.sushi.components.common.message.wrappers.TextPayload;
-import com.sushi.components.common.protocol.status.StatusOrder;
-import com.sushi.components.common.protocol.status.StatusOrderMapper;
-import com.sushi.components.common.protocol.status.StatusServing;
-import com.sushi.components.common.senders.MessageSender;
+import com.sushi.components.OrderContext;
+import com.sushi.components.error.exceptions.NotFoundException;
+import com.sushi.components.error.exceptions.ServerErrorException;
+import com.sushi.components.message.serving.ServingStatus;
+import com.sushi.components.message.wrappers.ContentType;
+import com.sushi.components.message.wrappers.TextPayload;
+import com.sushi.components.protocol.status.StatusOrder;
+import com.sushi.components.protocol.status.StatusOrderMapper;
+import com.sushi.components.protocol.status.StatusServing;
+import com.sushi.components.senders.MessageSender;
 import com.sushi.server.OrderService;
 import org.apache.commons.codec.digest.DigestUtils;
 
