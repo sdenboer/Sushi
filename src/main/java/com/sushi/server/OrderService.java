@@ -1,12 +1,11 @@
 package com.sushi.server;
 
 import com.sushi.components.common.OrderContext;
-import com.sushi.components.common.message.order.Order;
 
 import java.nio.channels.AsynchronousByteChannel;
 
-public interface OrderService<T extends Order> {
+public interface OrderService {
 
-    void handle(AsynchronousByteChannel socketChannel, T order, OrderContext orderContext);
+    void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext);
 
 }

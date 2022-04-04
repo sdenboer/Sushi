@@ -7,6 +7,7 @@ import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.ContentType;
 import com.sushi.components.common.message.wrappers.TextPayload;
 import com.sushi.components.common.protocol.status.StatusOrder;
+import com.sushi.components.common.protocol.status.StatusOrderMapper;
 import com.sushi.components.common.protocol.status.StatusServing;
 import com.sushi.components.common.senders.MessageSender;
 import com.sushi.server.OrderService;
@@ -26,11 +27,11 @@ import java.util.stream.Stream;
 
 import static com.sushi.components.utils.Constants.TMP_DIR;
 
-public class StatusOrderService implements OrderService<StatusOrder> {
+public class StatusOrderService implements OrderService {
 
     @Override
-    public void handle(AsynchronousByteChannel socketChannel, StatusOrder order, OrderContext orderContext) {
-
+    public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
+        StatusOrder order = new StatusOrderMapper().from(message);
         Path path = Paths.get(TMP_DIR);
         Vector<InputStream> inputStreams = getInputStreamsOfFilesInDirectory(path, orderContext);
         try (SequenceInputStream stream = new SequenceInputStream(inputStreams.elements())) {

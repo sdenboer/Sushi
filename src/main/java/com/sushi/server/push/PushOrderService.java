@@ -6,6 +6,7 @@ import com.sushi.components.common.error.exceptions.InvalidRequestException;
 import com.sushi.components.common.error.exceptions.ServerErrorException;
 import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.protocol.push.PushOrder;
+import com.sushi.components.common.protocol.push.PushOrderMapper;
 import com.sushi.components.common.protocol.push.PushServing;
 import com.sushi.components.common.senders.MessageSender;
 import com.sushi.components.utils.ChannelUtils;
@@ -18,11 +19,11 @@ import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.UUID;
 
-public class PushOrderService implements OrderService<PushOrder> {
+public class PushOrderService implements OrderService {
 
     @Override
-    public void handle(AsynchronousByteChannel socketChannel, PushOrder order, OrderContext orderContext) {
-
+    public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
+        PushOrder order = new PushOrderMapper().from(message);
         try {
             FileWriter fileWriter = new FileWriter(order.getDir(), order.getFileName(), order.getFileSize());
             read(socketChannel, fileWriter, orderContext);

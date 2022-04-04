@@ -7,6 +7,7 @@ import com.sushi.components.common.message.serving.ServingStatus;
 import com.sushi.components.common.message.wrappers.ContentType;
 import com.sushi.components.common.message.wrappers.TextPayload;
 import com.sushi.components.common.protocol.file.FileOrder;
+import com.sushi.components.common.protocol.file.FileOrderMapper;
 import com.sushi.components.common.protocol.file.FileServing;
 import com.sushi.components.common.senders.MessageSender;
 import com.sushi.server.OrderService;
@@ -25,11 +26,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileOrderService implements OrderService<FileOrder> {
+public class FileOrderService implements OrderService {
 
     @Override
-    public void handle(AsynchronousByteChannel socketChannel, FileOrder order, OrderContext orderContext) {
-
+    public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
+        FileOrder order = new FileOrderMapper().from(message);
         Map<String, String> files = new HashMap<>();
         if (order.getFileName() == null) {
             Path dir = Paths.get(order.getDir());

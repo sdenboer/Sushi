@@ -40,8 +40,7 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
                 //for next call
                 accept(serverSocketChannel);
 
-                OrderController orderController = new OrderController(channel);
-                orderController.handleOrder();
+                new OrderInterceptor().intercept(channel);
 
                 GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler(channel);
                 Thread.setDefaultUncaughtExceptionHandler(globalExceptionHandler);

@@ -1,29 +1,14 @@
 package com.sushi.server;
 
 import com.sushi.components.common.OrderContext;
-import com.sushi.components.common.error.exceptions.InvalidRequestException;
-import com.sushi.components.common.error.exceptions.NotImplementedException;
-import com.sushi.components.common.error.exceptions.ServerErrorException;
-import com.sushi.components.common.message.MessageMapper;
 import com.sushi.components.common.message.order.OrderMethod;
-import com.sushi.components.common.message.wrappers.WrapperField;
-import com.sushi.components.common.protocol.file.FileOrderMapper;
-import com.sushi.components.common.protocol.pull.PullOrderMapper;
-import com.sushi.components.common.protocol.push.PushOrderMapper;
-import com.sushi.components.common.protocol.remove.RemoveOrderMapper;
-import com.sushi.components.common.protocol.status.StatusOrderMapper;
-import com.sushi.components.utils.Constants;
 import com.sushi.server.file.FileOrderService;
 import com.sushi.server.pull.PullOrderService;
 import com.sushi.server.push.PushOrderService;
 import com.sushi.server.remove.RemoveOrderService;
 import com.sushi.server.status.StatusOrderService;
 
-import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousByteChannel;
-import java.nio.channels.CompletionHandler;
-import java.util.Map;
-import java.util.UUID;
 
 public class OrderController {
 
@@ -33,53 +18,16 @@ public class OrderController {
         this.channel = channel;
     }
 
-    public void handleOrder() {
+    public void handleOrder(OrderMethod method, String message, OrderContext orderContext) {
+        (switch (method) {
+            case PUSH -> new PushOrderService();
+            case PULL -> new PullOrderService();
+            case FILE -> new FileOrderService();
+            case REMOVE -> new RemoveOrderService();
+            case STATUS -> new StatusOrderService();
+        }).handle(channel, message, orderContext);
 
-        ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
-
-        channel.read(buffer, new StringBuffer(), new CompletionHandler<>() {
-
-            @Override
-            public void completed(final Integer result, final StringBuffer attachment) {
-                if (result < 0) {
-                    throw new InvalidRequestException(getOrderIdFromOrder(attachment));
-                } else if (result > 0) {
-                    attachment.append(new String(buffer.array()).trim());
-
-                    String message = attachment.toString();
-
-                    Map<WrapperField, String> orderHeaders = MessageMapper.deserialize(message);
-                    OrderMethod method = OrderMethod.fromString(orderHeaders.get(WrapperField.METHOD));
-
-                    OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
-
-                    switch (method) {
-                        case PUSH -> new PushOrderService().handle(channel, new PushOrderMapper().from(message), orderContext);
-                        case PULL -> new PullOrderService().handle(channel, new PullOrderMapper().from(message), orderContext);
-                        case FILE -> new FileOrderService().handle(channel, new FileOrderMapper().from(message), orderContext);
-                        case REMOVE -> new RemoveOrderService().handle(channel, new RemoveOrderMapper().from(message), orderContext);
-                        case STATUS -> new StatusOrderService().handle(channel, new StatusOrderMapper().from(message), orderContext);
-                        default -> throw new NotImplementedException(orderContext.getOrderId());
-                    }
-                } else {
-                    buffer.clear();
-                    channel.read(buffer, attachment, this);
-                }
-            }
-
-
-            @Override
-            public void failed(final Throwable exc, final StringBuffer attachment) {
-                throw new ServerErrorException(exc, getOrderIdFromOrder(attachment));
-            }
-
-        });
     }
 
-    private UUID getOrderIdFromOrder(StringBuffer order) {
-        String message = order.toString();
-        String orderId = MessageMapper.deserialize(message).get(WrapperField.ORDER_ID);
-        return UUID.fromString(orderId);
-    }
 
 }

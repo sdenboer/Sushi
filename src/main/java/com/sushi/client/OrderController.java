@@ -22,9 +22,8 @@ import static com.sushi.components.utils.Constants.TLS_PORT;
 public class OrderController {
 
     public Serving handleOrder(Order order) {
-        InetSocketAddress hostAddress = new InetSocketAddress(order.getHost().port());
         try (SocketChannel socketChannel = SocketChannel.open()) {
-            socketChannel.connect(hostAddress);
+            socketChannel.connect(new InetSocketAddress(order.getHost().port()));
             if (order.getHost().port() == TLS_PORT) {
                 SSLContext sslContext = SSLConfiguration.authenticatedContext();
                 try (TlsChannel tlsChannel = ClientTlsChannel.newBuilder(socketChannel, sslContext).build()) {
@@ -34,25 +33,18 @@ public class OrderController {
                 return sendOrder(socketChannel, order);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Problem connecting to socket");
+            throw new RuntimeException("Problem connecting to socket", e);
         }
     }
 
-    private Serving sendOrder(ByteChannel byteChannel, Order order) {
-        OrderService orderService = switch (order.getMethod()) {
+    private Serving sendOrder(ByteChannel byteChannel, Order order) throws IOException {
+        return (switch (order.getMethod()) {
             case FILE -> new FileOrderService();
             case PULL -> new PullOrderService();
             case PUSH -> new PushOrderService();
             case REMOVE -> new RemoveOrderService();
             case STATUS -> new StatusOrderService();
-        };
-        try {
-            return orderService.send(byteChannel, order);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Could not initiate channel");
-        }
+        }).send(byteChannel, order);
 
     }
 }

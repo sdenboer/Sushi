@@ -39,8 +39,8 @@ public class AsyncTlsServerSocketChannelHandler extends ServerSocketChannelHandl
         rawChannel.configureBlocking(false);
         ServerTlsChannel tlsChannel = ServerTlsChannel.newBuilder(rawChannel, sslContext).build();
         AsynchronousTlsChannel asyncTlsChannel = new AsynchronousTlsChannel(channelGroup, tlsChannel, rawChannel);
-        OrderController orderController = new OrderController(asyncTlsChannel);
-        orderController.handleOrder();
+
+        new OrderInterceptor().intercept(asyncTlsChannel);
 
         GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler(asyncTlsChannel);
         Thread.setDefaultUncaughtExceptionHandler(globalExceptionHandler);
