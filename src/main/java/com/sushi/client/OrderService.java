@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 public interface OrderService {
 
-    Serving handle(ByteChannel byteChannel, Order order) throws IOException;
+    Serving send(ByteChannel byteChannel, Order order) throws IOException;
 
     default String receiveServing(ByteChannel socketChannel) throws IOException {
         StringBuilder response = new StringBuilder();

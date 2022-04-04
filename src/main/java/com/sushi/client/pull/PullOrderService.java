@@ -18,7 +18,7 @@ import static com.sushi.components.utils.Constants.TMP_DIR;
 public class PullOrderService implements OrderService {
 
     @Override
-    public Serving handle(ByteChannel socketChannel, Order order) throws IOException {
+    public Serving send(ByteChannel socketChannel, Order order) throws IOException {
         new MessageSender().send(socketChannel, order);
         String serving = receiveServing(socketChannel);
         PullServing pullServing = new PullServingMapper().from(serving);

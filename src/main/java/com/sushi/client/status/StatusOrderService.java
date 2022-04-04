@@ -14,7 +14,7 @@ import static com.sushi.components.common.message.serving.ServingStatus.OK;
 public class StatusOrderService implements OrderService {
 
     @Override
-    public StatusServing handle(ByteChannel socketChannel, Order order) throws IOException {
+    public StatusServing send(ByteChannel socketChannel, Order order) throws IOException {
 
         new TextSender().send(socketChannel, order.toRequest());
         String serving = receiveServing(socketChannel);

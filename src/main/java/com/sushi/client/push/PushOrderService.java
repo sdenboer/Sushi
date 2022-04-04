@@ -12,7 +12,7 @@ import java.nio.channels.ByteChannel;
 public class PushOrderService implements OrderService {
 
     @Override
-    public Serving handle(ByteChannel socketChannel, Order order) throws IOException {
+    public Serving send(ByteChannel socketChannel, Order order) throws IOException {
         new MessageSender().send(socketChannel, order);
         String response = receiveServing(socketChannel);
         return new PushServingMapper().from(response);

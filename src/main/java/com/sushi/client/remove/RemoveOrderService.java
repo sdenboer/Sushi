@@ -12,7 +12,7 @@ import java.nio.channels.ByteChannel;
 public class RemoveOrderService implements OrderService {
 
     @Override
-    public RemoveServing handle(ByteChannel socketChannel, Order order) throws IOException {
+    public RemoveServing send(ByteChannel socketChannel, Order order) throws IOException {
         new TextSender().send(socketChannel, order.toRequest());
         String serving = receiveServing(socketChannel);
         return new RemoveServingMapper().from(serving);

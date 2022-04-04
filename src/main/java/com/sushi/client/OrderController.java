@@ -25,25 +25,21 @@ public class OrderController {
         InetSocketAddress hostAddress = new InetSocketAddress(order.getHost().port());
         try (SocketChannel socketChannel = SocketChannel.open()) {
             socketChannel.connect(hostAddress);
-            return tlsOrNot(socketChannel, order);
+            if (order.getHost().port() == TLS_PORT) {
+                SSLContext sslContext = SSLConfiguration.authenticatedContext();
+                try (TlsChannel tlsChannel = ClientTlsChannel.newBuilder(socketChannel, sslContext).build()) {
+                    return sendOrder(tlsChannel, order);
+                }
+            } else {
+                return sendOrder(socketChannel, order);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Problem connecting to socket");
         }
     }
 
-    private Serving tlsOrNot(SocketChannel socketChannel, Order order) throws IOException {
-        if (order.getHost().port() == TLS_PORT) {
-            SSLContext sslContext = SSLConfiguration.authenticatedContext();
-            try (TlsChannel tlsChannel = ClientTlsChannel.newBuilder(socketChannel, sslContext).build()) {
-                return doSth(tlsChannel, order);
-            }
-        } else {
-            return doSth(socketChannel, order);
-        }
-    }
-
-    private Serving doSth(ByteChannel byteChannel, Order order) {
+    private Serving sendOrder(ByteChannel byteChannel, Order order) {
         OrderService orderService = switch (order.getMethod()) {
             case FILE -> new FileOrderService();
             case PULL -> new PullOrderService();
@@ -52,8 +48,9 @@ public class OrderController {
             case STATUS -> new StatusOrderService();
         };
         try {
-            return orderService.handle(byteChannel, order);
+            return orderService.send(byteChannel, order);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException("Could not initiate channel");
         }
 

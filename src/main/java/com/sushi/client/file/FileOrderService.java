@@ -15,7 +15,7 @@ import static com.sushi.components.common.message.serving.ServingStatus.OK;
 public class FileOrderService implements OrderService {
 
     @Override
-    public Serving handle(ByteChannel socketChannel, Order order) throws IOException {
+    public Serving send(ByteChannel socketChannel, Order order) throws IOException {
         new TextSender().send(socketChannel, order.toRequest());
         String serving = receiveServing(socketChannel);
         FileServing fileServing = new FileServingMapper().from(serving);
