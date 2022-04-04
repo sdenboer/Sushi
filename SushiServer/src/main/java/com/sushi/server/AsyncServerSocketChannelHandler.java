@@ -16,7 +16,7 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
     public AsyncServerSocketChannelHandler(int port) {
         super(port);
         try {
-            this.group = AsynchronousChannelGroup.withThreadPool(Executors.newFixedThreadPool(2));
+            this.group = AsynchronousChannelGroup.withThreadPool(Executors.newFixedThreadPool(10));
         } catch (IOException e) {
             throw new IllegalStateException("unable to start FileReceiver", e);
         }
@@ -36,9 +36,11 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
     private void accept(AsynchronousServerSocketChannel serverSocketChannel) {
 
         serverSocketChannel.accept(null, new CompletionHandler<AsynchronousSocketChannel, Void>() {
+
+            @Override
             public void completed(final AsynchronousSocketChannel channel, final Void attachment) {
                 //for next call
-                accept(serverSocketChannel);
+                serverSocketChannel.accept(null, this);
 
                 new OrderInterceptor().intercept(channel);
 
@@ -46,6 +48,7 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
                 Thread.setDefaultUncaughtExceptionHandler(globalExceptionHandler);
             }
 
+            @Override
             public void failed(final Throwable exc, final Void attachment) {
                 throw new RuntimeException("unable to accept new connection", exc);
             }

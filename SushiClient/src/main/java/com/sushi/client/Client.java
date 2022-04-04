@@ -5,10 +5,10 @@ import com.sushi.components.protocol.file.FileOrder;
 
 import java.util.UUID;
 
+import static com.sushi.components.utils.Constants.DEFAULT_PORT;
 import static com.sushi.components.utils.Constants.TLS_PORT;
 
 public class Client {
-
 
     public static void main(String[] args) {
 
@@ -16,9 +16,10 @@ public class Client {
                 .host("localhost")
                 .port(TLS_PORT)
                 .orderId(UUID.randomUUID())
-                .dir("/home/pl00cc/tmp/output")
+                .dir("/tmp/input")
                 .fileName("test.txt")
                 .build();
         Serving serving = new OrderController().handleOrder(sushiOrder);
+        System.out.println(serving.getServingStatus());
     }
 }
