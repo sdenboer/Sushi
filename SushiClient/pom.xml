@@ -4,12 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>Sushi</artifactId>
-        <groupId>org.sushi</groupId>
+        <groupId>com.sushi</groupId>
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>SushiClient</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -21,7 +22,7 @@
         <dependency>
             <groupId>com.sushi</groupId>
             <artifactId>SushiComponents</artifactId>
-            <version>1.0</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 
