@@ -75,17 +75,19 @@ public class SingleFileCopyTest {
     }
 
     @Test
-    public void remove() {
-        RemoveOrder sushiOrder = RemoveOrder.builder()
-                .host("localhost")
-                .port(DEFAULT_PORT)
-                .orderId(UUID.randomUUID())
-                .dir("/home/pl00cc/tmp/output")
-                .fileName("xaa")
-                .build();
-        Serving serving = new OrderController().handleOrder(sushiOrder);
-
-        assertEquals(ServingStatus.OK, serving.getServingStatus());
+    public void testRemove() {
+        String[] args = new String[]{"--remove", "-h localhost", "-p 9444", "-f /tmp/output/test.txt"};
+        Client.main(args);
+//        RemoveOrder sushiOrder = RemoveOrder.builder()
+//                .host("localhost")
+//                .port(DEFAULT_PORT)
+//                .orderId(UUID.randomUUID())
+//                .dir("/home/pl00cc/tmp/output")
+//                .fileName("xaa")
+//                .build();
+//        Serving serving = new OrderController().handleOrder(sushiOrder);
+//
+//        assertEquals(ServingStatus.OK, serving.getServingStatus());
     }
 
     @Test
