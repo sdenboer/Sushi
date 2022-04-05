@@ -14,5 +14,4 @@ public class Constants {
     public static final String VERIFY_METHOD = "verify";
     public static final String REMOVE_METHOD = "remove";
 
-
 }

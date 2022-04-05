@@ -1,7 +1,9 @@
 import com.sushi.client.CommandLineHandler;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class SingleFileCopyTest {
+@Ignore
+public class IntegrationTest {
 
     @Test
     public void testPush() {
