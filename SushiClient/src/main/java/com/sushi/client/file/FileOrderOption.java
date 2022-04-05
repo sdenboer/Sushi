@@ -4,7 +4,6 @@ import com.sushi.client.OrderOption;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.protocol.file.FileOrder;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 
 import java.nio.file.Path;

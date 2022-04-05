@@ -2,7 +2,6 @@ package com.sushi.client.remove;
 
 import com.sushi.client.OrderOption;
 import com.sushi.components.message.order.Order;
-import com.sushi.components.protocol.file.FileOrder;
 import com.sushi.components.protocol.remove.RemoveOrder;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;

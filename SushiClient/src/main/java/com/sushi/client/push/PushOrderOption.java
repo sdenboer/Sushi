@@ -8,7 +8,6 @@ import com.sushi.components.message.wrappers.ContentType;
 import com.sushi.components.message.wrappers.FilePayload;
 import com.sushi.components.protocol.push.PushOrder;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 
 import java.io.IOException;
