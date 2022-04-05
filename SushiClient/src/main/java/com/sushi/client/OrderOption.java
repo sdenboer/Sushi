@@ -1,0 +1,33 @@
+package com.sushi.client;
+
+import com.sushi.components.error.exceptions.CheckedSushiException;
+import com.sushi.components.message.order.Order;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+
+import java.util.Arrays;
+
+public interface OrderOption {
+
+    Options getMethodOptions();
+
+    Order createOrder(CommandLine cmd) throws CheckedSushiException;
+
+    default void addOptionToGroup(Options optionGroup, boolean necessity, Option... options) {
+        Arrays.stream(options).forEach(option -> {
+            option.setRequired(necessity);
+            optionGroup.addOption(option);
+        });
+    }
+
+    default String getValueFromCMD(CommandLine cmd, String field) {
+        return cmd.getOptionValue(field, null).trim();
+    }
+
+    default Integer getIntValueFromCMD(CommandLine cmd, String field) {
+        String value = getValueFromCMD(cmd, field);
+        return value == null ? null : Integer.parseInt(value);
+    }
+
+}

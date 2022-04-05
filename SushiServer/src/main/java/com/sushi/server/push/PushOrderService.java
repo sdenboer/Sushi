@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.CompletionHandler;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 
 public class PushOrderService implements OrderService {
@@ -25,6 +27,7 @@ public class PushOrderService implements OrderService {
     public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
         PushOrder order = new PushOrderMapper().from(message);
         try {
+            Files.createDirectories(Path.of(order.getDir()));
             FileWriter fileWriter = new FileWriter(order.getDir(), order.getFileName(), order.getFileSize());
             read(socketChannel, fileWriter, orderContext);
         } catch (IOException e) {

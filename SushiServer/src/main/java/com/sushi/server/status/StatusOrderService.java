@@ -25,14 +25,14 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.sushi.components.utils.Constants.TMP_DIR;
+import static com.sushi.components.utils.Constants.ROOT_DIR;
 
 public class StatusOrderService implements OrderService {
 
     @Override
     public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
         StatusOrder order = new StatusOrderMapper().from(message);
-        Path path = Paths.get(TMP_DIR);
+        Path path = Paths.get(ROOT_DIR);
         Vector<InputStream> inputStreams = getInputStreamsOfFilesInDirectory(path, orderContext);
         try (SequenceInputStream stream = new SequenceInputStream(inputStreams.elements())) {
             String payload = DigestUtils.sha256Hex(stream);

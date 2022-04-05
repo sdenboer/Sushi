@@ -12,8 +12,8 @@ import com.sushi.components.senders.MessageSender;
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
 
+import static com.sushi.client.Constants.WORKING_DIR_PROPERTY;
 import static com.sushi.components.message.serving.ServingStatus.OK;
-import static com.sushi.components.utils.Constants.TMP_DIR;
 
 public class PullOrderService implements OrderService {
 
@@ -29,9 +29,9 @@ public class PullOrderService implements OrderService {
     }
 
     private void receiveFilePayload(ByteChannel socketChannel, PullServing pullServing, PullOrder order) {
-
+        final String dir = System.getProperty(WORKING_DIR_PROPERTY);
         try {
-            FileWriter fileWriter = new FileWriter(TMP_DIR, order.getFileName(), pullServing.getFileSize());
+            FileWriter fileWriter = new FileWriter(dir, order.getFileName(), pullServing.getFileSize());
             fileWriter.write(socketChannel);
             System.out.println("FILE IS SAME SIZE " + (fileWriter.getPosition().get() == pullServing.getFileSize()));
         } catch (IOException e) {
