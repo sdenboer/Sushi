@@ -18,6 +18,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static com.sushi.components.utils.Constants.FILE_DIR;
+
 public class PullOrderService implements OrderService {
 
     @Override
@@ -25,7 +27,7 @@ public class PullOrderService implements OrderService {
         PullOrder order = new PullOrderMapper().from(message);
         UUID orderId = order.getOrderId();
         try {
-            Path path = Paths.get(order.getDir(), order.getFileName());
+            Path path = Paths.get(FILE_DIR, order.getDir(), order.getFileName());
             long size = Files.size(path);
             FilePayload payload = new FilePayload(path);
             PullServing serving = new PullServing(ServingStatus.OK, orderId, "aes", ContentType.FILE, size, payload);

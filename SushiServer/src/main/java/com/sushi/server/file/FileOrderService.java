@@ -25,13 +25,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.sushi.components.utils.Constants.FILE_DIR;
+
 public class FileOrderService implements OrderService {
 
     @Override
     public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
         FileOrder order = new FileOrderMapper().from(message);
         Map<String, String> files = new HashMap<>();
-        Path path = Paths.get(order.getDir(), order.getFileName());
+        Path path = Paths.get(FILE_DIR, order.getDir(), order.getFileName());
         if (Files.isDirectory(path)) {
             getFilesInDirectory(path, orderContext).forEach(file -> files.put(file.toString(), getSHA265HexFromPath(file, orderContext)));
         } else {

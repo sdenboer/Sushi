@@ -15,12 +15,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.sushi.components.utils.Constants.FILE_DIR;
+
 public class RemoveOrderService implements OrderService {
 
     @Override
     public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
         RemoveOrder order = new RemoveOrderMapper().from(message);
-        Path path = Paths.get(order.getDir(), order.getFileName());
+        Path path = Paths.get(FILE_DIR, order.getDir(), order.getFileName());
         try {
             Files.delete(path);
             RemoveServing serving = new RemoveServing(ServingStatus.OK, order.getOrderId());

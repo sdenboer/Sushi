@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  sushi_server:
+    image: sdenboer/sushi-server:latest
+    ports:
+      - "9443:9443"
+      - "9444:9444"
+    volumes:
+      - sushi_storage:/home/files/
+volumes:
+  sushi_storage:
+    external: false

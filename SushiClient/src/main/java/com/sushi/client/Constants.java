@@ -6,7 +6,7 @@ public class Constants {
     public static final String PORT = "port";
     public static final String FILE = "file";
 
-    public static final String WORKING_DIR_PROPERTY = "user.dir";
+    public static final String TMP_DIR = "/home";
 
     public static final String LIST_METHOD = "list";
     public static final String FETCH_METHOD = "fetch";

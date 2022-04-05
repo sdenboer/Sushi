@@ -5,7 +5,7 @@ public class SingleFileCopyTest {
 
     @Test
     public void testPush() {
-        String[] args = new String[]{"--backup", "-h localhost", "-p 9444", "-f /tmp/input/test.txt:/tmp/output"};
+        String[] args = new String[]{"--backup", "-h localhost", "-p 9443", "-f /tmp/input/test.txt:/tmp/output"};
         CommandLineHandler.parse(args);
     }
 

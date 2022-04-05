@@ -20,7 +20,10 @@ import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
+
+import static com.sushi.components.utils.Constants.FILE_DIR;
 
 public class PushOrderService implements OrderService {
 
@@ -28,8 +31,8 @@ public class PushOrderService implements OrderService {
     public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
         PushOrder order = new PushOrderMapper().from(message);
         try {
-            Files.createDirectories(Path.of(order.getDir()));
-            FileWriter fileWriter = new FileWriter(order.getDir(), order.getFileName(), order.getFileSize());
+            Files.createDirectories(Paths.get(FILE_DIR, order.getDir()));
+            FileWriter fileWriter = new FileWriter(FILE_DIR + order.getDir(), order.getFileName(), order.getFileSize());
             read(socketChannel, fileWriter, orderContext);
         } catch (IOException e) {
             throw new ServerErrorException(e, orderContext.getOrderId());
