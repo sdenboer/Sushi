@@ -2,7 +2,6 @@ package com.sushi.server.file;
 
 import com.sushi.components.OrderContext;
 import com.sushi.components.error.exceptions.NotFoundException;
-import com.sushi.components.error.exceptions.ServerErrorException;
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.message.wrappers.ContentType;
 import com.sushi.components.message.wrappers.TextPayload;
@@ -58,7 +57,7 @@ public class FileOrderService implements OrderService {
         try (InputStream is = Files.newInputStream(path)) {
             return DigestUtils.sha256Hex(is);
         } catch (IOException e) {
-            throw new ServerErrorException(e, orderContext.getOrderId());
+            throw new NotFoundException(e, orderContext.getOrderId());
         }
     }
 

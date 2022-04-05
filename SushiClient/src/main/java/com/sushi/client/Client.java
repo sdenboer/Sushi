@@ -1,7 +1,9 @@
 package com.sushi.client;
 
+import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
 import com.sushi.components.protocol.file.FileOrder;
+import com.sushi.components.protocol.status.StatusOrder;
 
 import java.util.UUID;
 
@@ -12,14 +14,32 @@ public class Client {
 
     public static void main(String[] args) {
 
-        FileOrder sushiOrder = FileOrder.builder()
+
+        Order order = getOrder();
+        Serving serving = new OrderController().handleOrder(order);
+        System.out.println(serving.getServingStatus());
+
+        new Thread(() -> System.out.println(new OrderController().handleOrder(getOrder()).getServingStatus())).start();
+        new Thread(() -> System.out.println(new OrderController().handleOrder(getOrder()).getServingStatus())).start();
+        new Thread(() -> System.out.println(new OrderController().handleOrder(getOtherOrder()).getServingStatus())).start();
+        new Thread(() -> System.out.println(new OrderController().handleOrder(order).getServingStatus())).start();
+    }
+
+    private static Order getOrder() {
+        return FileOrder.builder()
                 .host("localhost")
                 .port(TLS_PORT)
                 .orderId(UUID.randomUUID())
                 .dir("/tmp/input")
                 .fileName("test.txt")
                 .build();
-        Serving serving = new OrderController().handleOrder(sushiOrder);
-        System.out.println(serving.getServingStatus());
+    }
+
+    private static Order getOtherOrder() {
+        return StatusOrder.builder()
+                .host("localhost")
+                .port(DEFAULT_PORT)
+                .orderId(UUID.randomUUID())
+                .build();
     }
 }

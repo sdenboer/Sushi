@@ -35,10 +35,10 @@ public class AsyncTlsServerSocketChannelHandler extends ServerSocketChannelHandl
     }
 
     private void accept(ServerSocketChannel serverSocket) throws IOException {
-        SocketChannel rawChannel = serverSocket.accept();
-        rawChannel.configureBlocking(false);
-        ServerTlsChannel tlsChannel = ServerTlsChannel.newBuilder(rawChannel, sslContext).build();
-        AsynchronousTlsChannel asyncTlsChannel = new AsynchronousTlsChannel(channelGroup, tlsChannel, rawChannel);
+        SocketChannel socketChannel = serverSocket.accept();
+        socketChannel.configureBlocking(false);
+        ServerTlsChannel tlsChannel = ServerTlsChannel.newBuilder(socketChannel, sslContext).build();
+        AsynchronousTlsChannel asyncTlsChannel = new AsynchronousTlsChannel(channelGroup, tlsChannel, socketChannel);
 
         new OrderInterceptor().intercept(asyncTlsChannel);
 

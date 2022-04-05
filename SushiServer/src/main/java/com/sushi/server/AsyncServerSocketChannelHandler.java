@@ -27,10 +27,7 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
         System.out.println("Waiting for connection...");
         AsynchronousServerSocketChannel serverSocketChannel = AsynchronousServerSocketChannel.open(group);
         serverSocketChannel.bind(inetSocketAddress);
-        while (true) {
-            accept(serverSocketChannel);
-            System.in.read();
-        }
+        accept(serverSocketChannel);
     }
 
     private void accept(AsynchronousServerSocketChannel serverSocketChannel) {
@@ -39,7 +36,6 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
 
             @Override
             public void completed(final AsynchronousSocketChannel channel, final Void attachment) {
-                //for next call
                 serverSocketChannel.accept(null, this);
 
                 new OrderInterceptor().intercept(channel);
