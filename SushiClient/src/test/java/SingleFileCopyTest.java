@@ -4,13 +4,13 @@ import org.junit.Test;
 public class SingleFileCopyTest {
 
     @Test
-    public void push() {
+    public void testPush() {
         String[] args = new String[]{"--backup", "-h localhost", "-p 9444", "-f /tmp/input/test.txt:/tmp/output"};
         Client.main(args);
     }
 
     @Test
-    public void pull() {
+    public void testPull() {
         String[] args = new String[]{"--fetch", "-h localhost", "-p 9444", "-f /tmp/input/test.txt"};
         Client.main(args);
     }
@@ -18,7 +18,10 @@ public class SingleFileCopyTest {
     @Test
     public void testFile() {
         String[] args = new String[]{"--list", "-h localhost", "-p 9443", "-f /tmp/output"};
-        Client.main(args);
+//        Client.main(args);
+        for (int i = 0; i < 1; i++) {
+            new Thread(() -> Client.main(args)).start();
+        }
     }
 
     @Test

@@ -33,11 +33,9 @@ public class FileOrderService implements OrderService {
         Map<String, String> files = new HashMap<>();
         Path path = Paths.get(order.getDir(), order.getFileName());
         if (Files.isDirectory(path)) {
-            Path dir = Paths.get(order.getDir());
-            getFilesInDirectory(dir, orderContext).forEach(file -> files.put(file.toString(), getSHA265HexFromPath(file, orderContext)));
+            getFilesInDirectory(path, orderContext).forEach(file -> files.put(file.toString(), getSHA265HexFromPath(file, orderContext)));
         } else {
-            Path file = Paths.get(order.getDir(), order.getFileName());
-            files.put(file.toString(), getSHA265HexFromPath(file, orderContext));
+            files.put(path.toString(), getSHA265HexFromPath(path, orderContext));
         }
 
         String payload = serializePayload(files);
