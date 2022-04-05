@@ -1,11 +1,11 @@
 package com.sushi.client;
 
+import com.sushi.client.exceptions.SushiException;
 import com.sushi.client.file.FileOrderOption;
 import com.sushi.client.pull.PullOrderOption;
 import com.sushi.client.push.PushOrderOption;
 import com.sushi.client.remove.RemoveOrderOption;
 import com.sushi.client.status.StatusOrderOption;
-import com.sushi.components.error.exceptions.CheckedSushiException;
 import org.apache.commons.cli.CommandLine;
 
 import static com.sushi.client.Constants.*;
@@ -18,7 +18,7 @@ public class OrderOptionFactory {
         this.cmd = cmd;
     }
 
-    public OrderOption getOrderOption() throws CheckedSushiException {
+    public OrderOption getOrderOption() throws SushiException {
 
         if (hasOption(VERIFY_METHOD)) {
             return new StatusOrderOption();
@@ -35,7 +35,7 @@ public class OrderOptionFactory {
         if (hasOption(REMOVE_METHOD)) {
             return new RemoveOrderOption();
         }
-        throw new CheckedSushiException("Not implemented");
+        throw new SushiException();
     }
 
     private boolean hasOption(String method) {

@@ -20,6 +20,7 @@
         <jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
         <commons-cli.version>1.5.0</commons-cli.version>
         <junit.version>4.13.2</junit.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 

@@ -32,7 +32,6 @@ public class PullOrderService implements OrderService {
         try {
             FileWriter fileWriter = new FileWriter(TMP_DIR, order.getFileName(), pullServing.getFileSize());
             fileWriter.write(socketChannel);
-            System.out.println("FILE IS SAME SIZE " + (fileWriter.getPosition().get() == pullServing.getFileSize()));
         } catch (IOException e) {
             e.printStackTrace();
         }

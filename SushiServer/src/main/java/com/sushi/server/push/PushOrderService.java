@@ -1,10 +1,6 @@
 package com.sushi.server.push;
 
 import com.sushi.components.FileWriter;
-import com.sushi.components.OrderContext;
-import com.sushi.components.error.exceptions.AbortedException;
-import com.sushi.components.error.exceptions.InvalidRequestException;
-import com.sushi.components.error.exceptions.ServerErrorException;
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.protocol.push.PushOrder;
 import com.sushi.components.protocol.push.PushOrderMapper;
@@ -12,20 +8,25 @@ import com.sushi.components.protocol.push.PushServing;
 import com.sushi.components.senders.MessageSender;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
+import com.sushi.server.OrderContext;
 import com.sushi.server.OrderService;
+import com.sushi.server.utils.LoggerUtils;
+import com.sushi.server.exceptions.SushiError;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
 import static com.sushi.components.utils.Constants.FILE_DIR;
 
 public class PushOrderService implements OrderService {
+
+    private static final Logger logger = Logger.getLogger(PushOrderService.class);
 
     @Override
     public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
@@ -35,22 +36,27 @@ public class PushOrderService implements OrderService {
             FileWriter fileWriter = new FileWriter(FILE_DIR + order.getDir(), order.getFileName(), order.getFileSize());
             read(socketChannel, fileWriter, orderContext);
         } catch (IOException e) {
-            throw new ServerErrorException(e, orderContext.getOrderId());
+            logger.error(LoggerUtils.createMessage(orderContext), e);
+            SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
+            e.printStackTrace();
         }
     }
 
     private void read(final AsynchronousByteChannel socketChannel, final FileWriter fileWriter, OrderContext orderContext) {
-
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
+        logger.info(LoggerUtils.createMessage(orderContext) + "attempting to write file");
         socketChannel.read(buffer, fileWriter, new CompletionHandler<>() {
             @Override
             public void completed(final Integer result, final FileWriter attachedFileWriter) {
-
                 if (result >= 0) {
                     if (result > 0) {
                         writeToFile(buffer, attachedFileWriter);
                     }
                     if (attachedFileWriter.done()) {
+                        logger.info(LoggerUtils.createMessage(orderContext)
+                                + "finished writing "
+                                + (attachedFileWriter.getPosition().get() / (1024 * 1024))
+                                + " MB to file " + attachedFileWriter.getPath());
                         PushServing serving = new PushServing(ServingStatus.OK, UUID.randomUUID(), "txt");
                         new MessageSender().send(socketChannel, serving);
                         ChannelUtils.close(attachedFileWriter.getFileChannel());
@@ -60,15 +66,16 @@ public class PushOrderService implements OrderService {
                     }
                 } else {
                     ChannelUtils.close(fileWriter.getFileChannel());
-                    throw new InvalidRequestException(orderContext.getOrderId());
+                    logger.info(LoggerUtils.createMessage(orderContext) + "Problem with buffer");
+                    SushiError.send(socketChannel, ServingStatus.INVALID, orderContext);
                 }
             }
 
 
             @Override
             public void failed(final Throwable exc, final FileWriter failedFileWriter) {
-
-                throw new RuntimeException("unable to read data", exc);
+                logger.error(LoggerUtils.createMessage(orderContext), exc);
+                SushiError.send(socketChannel, ServingStatus.INVALID, orderContext);
             }
 
             private void writeToFile(final ByteBuffer buffer, final FileWriter fileWriter) {
@@ -79,9 +86,10 @@ public class PushOrderService implements OrderService {
                     final long bytesWritten = fileWriter.write(buffer, fileWriter.getPosition().get());
                     fileWriter.getPosition().addAndGet(bytesWritten);
                 } catch (IOException e) {
-                    e.printStackTrace();
                     ChannelUtils.close(fileWriter.getFileChannel());
-                    throw new AbortedException(orderContext.getOrderId());
+                    logger.error(LoggerUtils.createMessage(orderContext), e);
+                    SushiError.send(socketChannel, ServingStatus.ABORTED, orderContext);
+                    e.printStackTrace();
                 }
             }
         });

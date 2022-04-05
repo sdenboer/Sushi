@@ -1,8 +1,5 @@
 package com.sushi.server.status;
 
-import com.sushi.components.OrderContext;
-import com.sushi.components.error.exceptions.NotFoundException;
-import com.sushi.components.error.exceptions.ServerErrorException;
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.message.wrappers.ContentType;
 import com.sushi.components.message.wrappers.TextPayload;
@@ -10,8 +7,12 @@ import com.sushi.components.protocol.status.StatusOrder;
 import com.sushi.components.protocol.status.StatusOrderMapper;
 import com.sushi.components.protocol.status.StatusServing;
 import com.sushi.components.senders.MessageSender;
+import com.sushi.server.OrderContext;
 import com.sushi.server.OrderService;
+import com.sushi.server.utils.LoggerUtils;
+import com.sushi.server.exceptions.SushiError;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,11 +30,13 @@ import static com.sushi.components.utils.Constants.FILE_DIR;
 
 public class StatusOrderService implements OrderService {
 
+    private static final Logger logger = Logger.getLogger(StatusOrderService.class);
+
     @Override
     public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
         StatusOrder order = new StatusOrderMapper().from(message);
         Path path = Paths.get(FILE_DIR);
-        Vector<InputStream> inputStreams = getInputStreamsOfFilesInDirectory(path, orderContext);
+        Vector<InputStream> inputStreams = getInputStreamsOfFilesInDirectory(socketChannel, path, orderContext);
         try (SequenceInputStream stream = new SequenceInputStream(inputStreams.elements())) {
             String payload = DigestUtils.sha256Hex(stream);
             int payloadSize = payload.getBytes(StandardCharsets.UTF_8).length;
@@ -41,12 +44,14 @@ public class StatusOrderService implements OrderService {
             StatusServing serving = new StatusServing(ServingStatus.OK, order.getOrderId(), ContentType.TXT, payloadSize, textPayload);
             new MessageSender().send(socketChannel, serving);
         } catch (IOException e) {
-            throw new ServerErrorException(e, order.getOrderId());
+            logger.error(LoggerUtils.createMessage(orderContext), e);
+            SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
+            e.printStackTrace();
         }
 
     }
 
-    private Vector<InputStream> getInputStreamsOfFilesInDirectory(Path dir, OrderContext orderContext) {
+    private Vector<InputStream> getInputStreamsOfFilesInDirectory(AsynchronousByteChannel socketChannel, Path dir, OrderContext orderContext) {
         try (Stream<Path> paths = Files.walk(dir)) {
             return paths.map(Path::normalize)
                     .filter(Files::isRegularFile)
@@ -54,11 +59,17 @@ public class StatusOrderService implements OrderService {
                         try {
                             return Files.newInputStream(path);
                         } catch (IOException e) {
-                            throw new ServerErrorException(e, orderContext.getOrderId());
+                            logger.error(LoggerUtils.createMessage(orderContext), e);
+                            SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
+                            e.printStackTrace();
+                            return null;
                         }
                     }).collect(Collectors.toCollection(Vector::new));
         } catch (IOException e) {
-            throw new NotFoundException(e, orderContext.getOrderId());
+            logger.error(LoggerUtils.createMessage(orderContext), e);
+            SushiError.send(socketChannel, ServingStatus.NOT_FOUND, orderContext);
+            e.printStackTrace();
         }
+        return null;
     }
 }

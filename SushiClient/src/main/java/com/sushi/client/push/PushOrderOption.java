@@ -2,7 +2,6 @@ package com.sushi.client.push;
 
 import com.sushi.client.Constants;
 import com.sushi.client.OrderOption;
-import com.sushi.components.error.exceptions.CheckedSushiException;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.wrappers.ContentType;
 import com.sushi.components.message.wrappers.FilePayload;
@@ -28,22 +27,24 @@ public class PushOrderOption implements OrderOption {
     }
 
     @Override
-    public Order createOrder(CommandLine cmd) throws CheckedSushiException {
+    public Order createOrder(CommandLine cmd) {
         String localToRemoteFile = getValueFromCMD(cmd, Constants.FILE);
         String[] split = localToRemoteFile.split(":");
 
         if (split.length != 2) {
-            throw new CheckedSushiException("incorrect file syntax");
+            System.out.println("incorrect file syntax");
+            System.exit(1);
         }
 
         String localFile = split[0];
         Path localPath = Paths.get(localFile);
-        long size;
+        long size = 0L;
 
         try {
             size = Files.size(localPath);
         } catch (IOException e) {
-            throw new CheckedSushiException("cannot find file");
+            System.out.println("cannot find file");
+            System.exit(1);
         }
 
         String remoteFile = split[1];

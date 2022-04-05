@@ -1,6 +1,5 @@
 package com.sushi.client;
 
-import com.sushi.components.error.exceptions.CheckedSushiException;
 import com.sushi.components.message.order.Order;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -12,7 +11,7 @@ public interface OrderOption {
 
     Options getMethodOptions();
 
-    Order createOrder(CommandLine cmd) throws CheckedSushiException;
+    Order createOrder(CommandLine cmd);
 
     default void addOptionToGroup(Options optionGroup, boolean necessity, Option... options) {
         Arrays.stream(options).forEach(option -> {

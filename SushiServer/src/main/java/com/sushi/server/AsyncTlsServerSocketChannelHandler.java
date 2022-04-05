@@ -1,7 +1,7 @@
 package com.sushi.server;
 
 import com.sushi.components.configuration.SSLConfiguration;
-import com.sushi.components.error.GlobalExceptionHandler;
+import org.apache.log4j.Logger;
 import tlschannel.ServerTlsChannel;
 import tlschannel.async.AsynchronousTlsChannel;
 import tlschannel.async.AsynchronousTlsChannelGroup;
@@ -14,6 +14,8 @@ import java.nio.channels.SocketChannel;
 
 public class AsyncTlsServerSocketChannelHandler extends ServerSocketChannelHandler implements Runnable {
 
+    private static final Logger logger = Logger.getLogger(AsyncTlsServerSocketChannelHandler.class);
+
     private final AsynchronousTlsChannelGroup channelGroup;
     private final SSLContext sslContext;
 
@@ -25,7 +27,7 @@ public class AsyncTlsServerSocketChannelHandler extends ServerSocketChannelHandl
 
     @Override
     public void listen() throws IOException {
-        System.out.println("Waiting for TLS connection...");
+        logger.info("Waiting for TLS connection...");
         try (ServerSocketChannel serverSocket = ServerSocketChannel.open()) {
             serverSocket.socket().bind(inetSocketAddress);
             while (true) {
@@ -39,11 +41,10 @@ public class AsyncTlsServerSocketChannelHandler extends ServerSocketChannelHandl
         socketChannel.configureBlocking(false);
         ServerTlsChannel tlsChannel = ServerTlsChannel.newBuilder(socketChannel, sslContext).build();
         AsynchronousTlsChannel asyncTlsChannel = new AsynchronousTlsChannel(channelGroup, tlsChannel, socketChannel);
-        
+
         new OrderInterceptor().intercept(asyncTlsChannel);
 
-        GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler(asyncTlsChannel);
-        Thread.setDefaultUncaughtExceptionHandler(globalExceptionHandler);
+
     }
 
 }

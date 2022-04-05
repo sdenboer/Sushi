@@ -2,6 +2,7 @@ package com.sushi.components.senders;
 
 import com.sushi.components.OnComplete;
 import com.sushi.components.utils.ChannelUtils;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -11,6 +12,8 @@ import java.nio.channels.CompletionHandler;
 import java.nio.charset.StandardCharsets;
 
 public class TextSender implements Sender<String> {
+
+    private static final Logger logger = Logger.getLogger(TextSender.class);
 
     @Override
     public void send(ByteChannel socketChannel, String payload) throws IOException {
@@ -40,7 +43,7 @@ public class TextSender implements Sender<String> {
 
             @Override
             public void failed(Throwable exc, Void attachment) {
-                exc.printStackTrace();
+                logger.error(exc);
             }
         });
     }

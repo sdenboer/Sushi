@@ -1,6 +1,6 @@
 package com.sushi.client;
 
-import com.sushi.components.error.exceptions.CheckedSushiException;
+import com.sushi.client.exceptions.SushiException;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
 import org.apache.commons.cli.*;
@@ -25,7 +25,7 @@ public class CommandLineHandler {
 
         try {
             if (args.length <= 0) {
-                throw new CheckedSushiException("No arguments given");
+                throw new RuntimeException("No arguments given");
             }
 
             String[] method = {args[0]};
@@ -42,8 +42,7 @@ public class CommandLineHandler {
             Serving serving = new OrderController().handleOrder(order);
             System.out.println(serving.getServingStatus());
 
-        } catch (ParseException | CheckedSushiException e) {
-            System.out.println(e.getMessage());
+        } catch (ParseException | SushiException e) {
             formatter.printHelp("options", options);
             System.exit(1);
         }

@@ -1,6 +1,6 @@
 package com.sushi.server;
 
-import com.sushi.components.error.GlobalExceptionHandler;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousChannelGroup;
@@ -10,6 +10,8 @@ import java.nio.channels.CompletionHandler;
 import java.util.concurrent.Executors;
 
 public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler {
+
+    private static final Logger logger = Logger.getLogger(AsyncServerSocketChannelHandler.class);
 
     private final AsynchronousChannelGroup group;
 
@@ -24,7 +26,7 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
 
     @Override
     public void listen() throws IOException {
-        System.out.println("Waiting for connection...");
+        logger.info("Waiting for connection...");
         AsynchronousServerSocketChannel serverSocketChannel = AsynchronousServerSocketChannel.open(group);
         serverSocketChannel.bind(inetSocketAddress);
         accept(serverSocketChannel);
@@ -39,9 +41,6 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
                 serverSocketChannel.accept(null, this);
 
                 new OrderInterceptor().intercept(channel);
-
-                GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler(channel);
-                Thread.setDefaultUncaughtExceptionHandler(globalExceptionHandler);
             }
 
             @Override

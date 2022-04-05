@@ -2,6 +2,7 @@ package com.sushi.components;
 
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,14 +13,17 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Getter
 public class FileWriter {
 
     private final FileChannel fileChannel;
     private final AtomicLong position;
     private final long fileSize;
+    private final Path path;
 
     public FileWriter(String dir, String fileName, long fileSize) throws IOException {
         Path path = Paths.get(dir, fileName);
+        this.path = path;
         this.fileChannel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         this.position = new AtomicLong(0L);
         this.fileSize = fileSize;
@@ -42,15 +46,8 @@ public class FileWriter {
         ChannelUtils.close(fileChannel);
     }
 
-    public AtomicLong getPosition() {
-        return position;
-    }
-
     public boolean done() {
         return this.position.get() == this.fileSize;
     }
 
-    public FileChannel getFileChannel() {
-        return fileChannel;
-    }
 }

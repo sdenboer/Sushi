@@ -13,7 +13,7 @@ public class IntegrationTest {
 
     @Test
     public void testPull() {
-        String[] args = new String[]{"--fetch", "-h localhost", "-p 9444", "-f /tmp/input/test.txt"};
+        String[] args = new String[]{"--fetch", "-h localhost", "-p 9444", "-f /tmp/output/test.txt"};
         CommandLineHandler.parse(args);
     }
 
