@@ -31,7 +31,8 @@ public class FileOrderService implements OrderService {
     public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
         FileOrder order = new FileOrderMapper().from(message);
         Map<String, String> files = new HashMap<>();
-        if (order.getFileName() == null) {
+        Path path = Paths.get(order.getDir(), order.getFileName());
+        if (Files.isDirectory(path)) {
             Path dir = Paths.get(order.getDir());
             getFilesInDirectory(dir, orderContext).forEach(file -> files.put(file.toString(), getSHA265HexFromPath(file, orderContext)));
         } else {

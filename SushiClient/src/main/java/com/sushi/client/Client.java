@@ -50,7 +50,7 @@ public class Client {
 
         } catch (ParseException | CheckedSushiException e) {
             System.out.println(e.getMessage());
-            formatter.printHelp("utility-name", options);
+            formatter.printHelp("options", options);
             System.exit(1);
         }
 

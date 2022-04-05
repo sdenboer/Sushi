@@ -2,6 +2,7 @@ package com.sushi.server.push;
 
 import com.sushi.components.FileWriter;
 import com.sushi.components.OrderContext;
+import com.sushi.components.error.exceptions.AbortedException;
 import com.sushi.components.error.exceptions.InvalidRequestException;
 import com.sushi.components.error.exceptions.ServerErrorException;
 import com.sushi.components.message.serving.ServingStatus;
@@ -44,7 +45,7 @@ public class PushOrderService implements OrderService {
 
                 if (result >= 0) {
                     if (result > 0) {
-                        writeToFile(socketChannel, buffer, attachedFileWriter);
+                        writeToFile(buffer, attachedFileWriter);
                     }
                     if (attachedFileWriter.done()) {
                         PushServing serving = new PushServing(ServingStatus.OK, UUID.randomUUID(), "txt");
@@ -63,10 +64,11 @@ public class PushOrderService implements OrderService {
 
             @Override
             public void failed(final Throwable exc, final FileWriter failedFileWriter) {
+
                 throw new RuntimeException("unable to read data", exc);
             }
 
-            private void writeToFile(final AsynchronousByteChannel socketChannel, final ByteBuffer buffer, final FileWriter fileWriter) {
+            private void writeToFile(final ByteBuffer buffer, final FileWriter fileWriter) {
 
                 try {
                     buffer.flip();
@@ -74,7 +76,9 @@ public class PushOrderService implements OrderService {
                     final long bytesWritten = fileWriter.write(buffer, fileWriter.getPosition().get());
                     fileWriter.getPosition().addAndGet(bytesWritten);
                 } catch (IOException e) {
-                    ChannelUtils.close(socketChannel, fileWriter.getFileChannel());
+                    e.printStackTrace();
+                    ChannelUtils.close(fileWriter.getFileChannel());
+                    throw new AbortedException(orderContext.getOrderId());
                 }
             }
         });

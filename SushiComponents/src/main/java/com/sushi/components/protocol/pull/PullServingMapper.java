@@ -21,7 +21,7 @@ public class PullServingMapper implements MessageMapper<PullServing> {
                 .orderId(UUID.fromString(wrappers.get(ORDER_ID)))
                 //optional
                 .encryption(MessageMapper.getStringWrapper(wrappers, ENCRYPTION))
-                .fileSize(MessageMapper.getLongWrapper(wrappers, ENCRYPTION))
+                .fileSize(MessageMapper.getLongWrapper(wrappers, CONTENT_LENGTH))
                 .contentType(ContentType.fromString(MessageMapper.getStringWrapper(wrappers, CONTENT)))
                 .build();
     }

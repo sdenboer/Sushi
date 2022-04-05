@@ -19,8 +19,7 @@ public class FileOrderOption implements OrderOption {
     @Override
     public Options getMethodOptions() {
         Options options = new Options();
-        addOptionToGroup(options, true, hostOption, portOption);
-        addOptionToGroup(options, false, fileOption);
+        addOptionToGroup(options, true, fileOption, hostOption, portOption);
         return options;
     }
 
@@ -30,7 +29,7 @@ public class FileOrderOption implements OrderOption {
 
         Path remotePath = Paths.get(file);
         String fileName = remotePath.getFileName().toString();
-        String directory = remotePath.getParent().getFileName().toString();
+        String directory = remotePath.getParent().toString();
 
         return FileOrder.builder()
                 .host(getValueFromCMD(cmd, HOST))

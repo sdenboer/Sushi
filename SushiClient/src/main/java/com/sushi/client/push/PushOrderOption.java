@@ -44,14 +44,13 @@ public class PushOrderOption implements OrderOption {
         try {
             size = Files.size(localPath);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new CheckedSushiException("cannot find file");
         }
 
         String remoteFile = split[1];
         Path remotePath = Paths.get(remoteFile);
-        String fileName = remotePath.getFileName().toString();
-        String dir = remotePath.getParent().getFileName().toString();
+        String fileName = localPath.getFileName().toString();
+        String dir = remotePath.toString();
 
         return PushOrder.builder()
                 .host(getValueFromCMD(cmd, Constants.HOST))
