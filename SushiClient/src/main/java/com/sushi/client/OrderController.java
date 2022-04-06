@@ -23,7 +23,7 @@ public class OrderController {
 
     public Serving handleOrder(Order order) {
         try (SocketChannel socketChannel = SocketChannel.open()) {
-            socketChannel.connect(new InetSocketAddress(order.getHost().port()));
+            socketChannel.connect(new InetSocketAddress(order.getHost().host(), order.getHost().port()));
             if (order.getHost().port() == TLS_PORT) {
                 SSLContext sslContext = SSLConfiguration.authenticatedContext();
                 try (TlsChannel tlsChannel = ClientTlsChannel.newBuilder(socketChannel, sslContext).build()) {
