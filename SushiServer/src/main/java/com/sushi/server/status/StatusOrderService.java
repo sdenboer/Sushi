@@ -5,7 +5,6 @@ import static com.sushi.components.utils.Constants.FILE_DIR;
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.senders.ServingSender;
 import com.sushi.components.utils.OrderContext;
-import com.sushi.server.exceptions.SushiError;
 import com.sushi.server.handlers.OrderService;
 import com.sushi.server.utils.LoggerUtils;
 import java.io.IOException;
@@ -32,10 +31,10 @@ public class StatusOrderService implements OrderService {
         try (SequenceInputStream stream = new SequenceInputStream(
             getInputStreamsOfFilesInDirectory(path).elements())) {
             String payloadMessage = DigestUtils.sha256Hex(stream);
-            ServingSender.send(socketChannel, payloadMessage, orderContext);
+            ServingSender.sendTextPayload(socketChannel, payloadMessage, orderContext);
         } catch (IOException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
-            SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
+            ServingSender.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
         }
 
     }

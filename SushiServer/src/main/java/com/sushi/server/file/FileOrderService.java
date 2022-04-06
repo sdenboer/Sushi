@@ -5,22 +5,15 @@ import static com.sushi.server.utils.FileUtils.filesToPayload;
 import static com.sushi.server.utils.FileUtils.getSHA265HexFromPath;
 import static com.sushi.server.utils.FileUtils.removeBaseDir;
 
-import com.sushi.components.message.serving.Serving;
 import com.sushi.components.message.serving.ServingStatus;
-import com.sushi.components.message.wrappers.ContentType;
-import com.sushi.components.message.wrappers.Payload;
-import com.sushi.components.message.wrappers.PayloadContext;
-import com.sushi.components.message.wrappers.PayloadMetaData;
 import com.sushi.components.protocol.file.FileOrder;
 import com.sushi.components.protocol.file.FileOrderMapper;
-import com.sushi.components.senders.MessageSender;
+import com.sushi.components.senders.ServingSender;
 import com.sushi.components.utils.OrderContext;
-import com.sushi.server.exceptions.SushiError;
 import com.sushi.server.handlers.OrderService;
 import com.sushi.server.utils.LoggerUtils;
 import java.io.IOException;
 import java.nio.channels.AsynchronousByteChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,15 +36,10 @@ public class FileOrderService implements OrderService {
         try {
             addPathChecksumToFiles(path, files);
             String payloadText = filesToPayload(files);
-            int payloadSize = payloadText.getBytes(StandardCharsets.UTF_8).length;
-            Payload payload = new Payload(payloadText);
-            PayloadMetaData metaData = new PayloadMetaData(ContentType.TXT, payloadSize);
-            Serving serving = new Serving(ServingStatus.OK, order.getOrderId(),
-                new PayloadContext(metaData, payload));
-            MessageSender.send(socketChannel, serving);
+            ServingSender.sendTextPayload(socketChannel, payloadText, orderContext);
         } catch (IOException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
-            SushiError.send(socketChannel, ServingStatus.NOT_FOUND, orderContext);
+            ServingSender.send(socketChannel, ServingStatus.NOT_FOUND, orderContext);
         }
 
     }

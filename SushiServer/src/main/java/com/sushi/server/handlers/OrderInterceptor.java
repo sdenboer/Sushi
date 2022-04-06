@@ -4,9 +4,9 @@ import com.sushi.components.message.MessageMapper;
 import com.sushi.components.message.order.OrderMethod;
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.message.wrappers.WrapperField;
+import com.sushi.components.senders.ServingSender;
 import com.sushi.components.utils.Constants;
 import com.sushi.components.utils.OrderContext;
-import com.sushi.server.exceptions.SushiError;
 import com.sushi.server.utils.LoggerUtils;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousByteChannel;
@@ -54,7 +54,7 @@ public class OrderInterceptor {
             public void failed(final Throwable e, final StringBuffer attachment) {
                 OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
                 logger.error(LoggerUtils.createMessage(orderContext), e);
-                SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
+                ServingSender.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
             }
 
         });

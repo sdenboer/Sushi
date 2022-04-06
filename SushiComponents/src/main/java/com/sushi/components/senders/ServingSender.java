@@ -9,13 +9,14 @@ import com.sushi.components.message.wrappers.PayloadMetaData;
 import com.sushi.components.utils.OrderContext;
 import java.nio.channels.AsynchronousByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServingSender {
 
-    public static void send(AsynchronousByteChannel socketChannel, String message,
+    public static void sendTextPayload(AsynchronousByteChannel socketChannel, String message,
         OrderContext orderContext) {
         int payloadSize = message.getBytes(StandardCharsets.UTF_8).length;
         Payload payload = new Payload(message);
@@ -23,6 +24,27 @@ public class ServingSender {
         Serving serving = new Serving(ServingStatus.OK, orderContext.orderId(),
             new PayloadContext(metaData, payload));
         MessageSender.send(socketChannel, serving);
+    }
+
+    public static void sendFilePayload(AsynchronousByteChannel socketChannel, Path path,
+        long size,
+        OrderContext orderContext) {
+        Payload payload = new Payload(path.toString());
+        PayloadMetaData payloadMetaData = new PayloadMetaData(ContentType.FILE, size);
+        Serving serving = new Serving(ServingStatus.OK, orderContext.orderId(),
+            new PayloadContext(payloadMetaData, payload));
+        MessageSender.send(socketChannel, serving);
+    }
+
+    public static void send(AsynchronousByteChannel socketChannel, ServingStatus status,
+        OrderContext orderContext) {
+        Serving serving = new Serving(status, orderContext.orderId(), null);
+        MessageSender.send(socketChannel, serving);
+    }
+
+    public static void send(AsynchronousByteChannel socketChannel,
+        OrderContext orderContext) {
+        send(socketChannel, ServingStatus.OK, orderContext);
     }
 
 }

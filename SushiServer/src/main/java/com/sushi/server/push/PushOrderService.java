@@ -13,7 +13,6 @@ import com.sushi.components.utils.Constants;
 import com.sushi.components.utils.FileWriter;
 import com.sushi.components.utils.OrderContext;
 import com.sushi.components.utils.Utils;
-import com.sushi.server.exceptions.SushiError;
 import com.sushi.server.handlers.OrderService;
 import com.sushi.server.utils.LoggerUtils;
 import java.io.IOException;
@@ -41,10 +40,10 @@ public class PushOrderService implements OrderService {
             read(socketChannel, fileWriter, orderContext);
         } catch (OverlappingFileLockException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
-            SushiError.send(socketChannel, ServingStatus.PERMISSION_DENIED, orderContext);
+            ServingSender.send(socketChannel, ServingStatus.PERMISSION_DENIED, orderContext);
         } catch (IOException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
-            SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
+            ServingSender.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
         }
     }
 
@@ -62,7 +61,7 @@ public class PushOrderService implements OrderService {
                         } catch (IOException e) {
                             ChannelUtils.close(fileWriter.getFileChannel());
                             logger.error(LoggerUtils.createMessage(orderContext), e);
-                            SushiError.send(socketChannel, ServingStatus.ABORTED, orderContext);
+                            ServingSender.send(socketChannel, ServingStatus.ABORTED, orderContext);
                         }
                     }
                     if (attachedFileWriter.done()) {
@@ -74,14 +73,14 @@ public class PushOrderService implements OrderService {
                 } else {
                     ChannelUtils.close(fileWriter.getFileChannel());
                     logger.info(LoggerUtils.createMessage(orderContext) + "Problem with buffer");
-                    SushiError.send(socketChannel, ServingStatus.INVALID, orderContext);
+                    ServingSender.send(socketChannel, ServingStatus.INVALID, orderContext);
                 }
             }
 
             @Override
             public void failed(final Throwable exc, final FileWriter failedFileWriter) {
                 logger.error(LoggerUtils.createMessage(orderContext), exc);
-                SushiError.send(socketChannel, ServingStatus.INVALID, orderContext);
+                ServingSender.send(socketChannel, ServingStatus.INVALID, orderContext);
             }
 
             private void writeToFile(final ByteBuffer buffer, final FileWriter fileWriter)
@@ -102,10 +101,10 @@ public class PushOrderService implements OrderService {
         try {
             String hash = getSHA265HexFromPath(fileWriter.getPath());
             String payloadMessage = filesToPayload(Map.of(fileWriter.getPath().toString(), hash));
-            ServingSender.send(socketChannel, payloadMessage, orderContext);
+            ServingSender.sendTextPayload(socketChannel, payloadMessage, orderContext);
         } catch (IOException e) {
             logger.info(LoggerUtils.createMessage(orderContext) + "Problem with buffer");
-            SushiError.send(socketChannel, ServingStatus.INVALID, orderContext);
+            ServingSender.send(socketChannel, ServingStatus.INVALID, orderContext);
         } finally {
             ChannelUtils.close(fileWriter.getFileChannel());
         }
