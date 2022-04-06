@@ -19,7 +19,8 @@ public class PushOrderService implements OrderService {
         String response = receiveServing(socketChannel);
         Serving serving = new ServingMapper().from(response);
         if (serving.getServingStatus().equals(OK)) {
-            receiveTextPayload(socketChannel, serving.getPayloadContext());
+            String payload = receiveTextPayload(socketChannel, serving.getPayloadContext());
+            System.out.println(payload);
         }
         if (ServingStatus.PERMISSION_DENIED.equals(serving.getServingStatus())) {
             System.out.println("File is being written by another process. Please try again later");
