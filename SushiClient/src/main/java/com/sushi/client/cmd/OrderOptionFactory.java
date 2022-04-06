@@ -1,4 +1,10 @@
-package com.sushi.client;
+package com.sushi.client.cmd;
+
+import static com.sushi.client.utils.Constants.BACKUP_METHOD;
+import static com.sushi.client.utils.Constants.FETCH_METHOD;
+import static com.sushi.client.utils.Constants.LIST_METHOD;
+import static com.sushi.client.utils.Constants.REMOVE_METHOD;
+import static com.sushi.client.utils.Constants.VERIFY_METHOD;
 
 import com.sushi.client.exceptions.SushiException;
 import com.sushi.client.file.FileOrderOption;
@@ -7,8 +13,6 @@ import com.sushi.client.push.PushOrderOption;
 import com.sushi.client.remove.RemoveOrderOption;
 import com.sushi.client.status.StatusOrderOption;
 import org.apache.commons.cli.CommandLine;
-
-import static com.sushi.client.Constants.*;
 
 public class OrderOptionFactory {
 

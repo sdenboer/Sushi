@@ -1,4 +1,4 @@
-package com.sushi.components;
+package com.sushi.components.utils;
 
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
@@ -27,6 +27,8 @@ public class FileWriter {
         this.fileChannel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         this.position = new AtomicLong(0L);
         this.fileSize = fileSize;
+        //lock for other processes
+        fileChannel.tryLock();
     }
 
     public int write(ByteBuffer buffer, long position) throws IOException {

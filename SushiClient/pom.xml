@@ -1,78 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>Sushi</artifactId>
-        <groupId>com.sushi</groupId>
-        <version>1.0</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>SushiClient</artifactId>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>jib-maven-plugin</artifactId>
+        <configuration>
+          <container>
+            <ports>
+              <port>9443</port>
+              <port>9444</port>
+            </ports>
+          </container>
+          <from>
+            <image>openjdk:17-alpine</image>
+          </from>
+          <to>
+            <image>docker.io/sdenboer/sushi-client</image>
+            <tags>
+              <tag>${project.version}</tag>
+              <tag>latest</tag>
+            </tags>
+          </to>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <groupId>com.google.cloud.tools</groupId>
+        <version>${jib-maven-plugin.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 
-    <artifactId>SushiClient</artifactId>
-    <packaging>jar</packaging>
+  <dependencies>
+    <dependency>
+      <artifactId>SushiComponents</artifactId>
+      <groupId>com.sushi</groupId>
+      <version>${project.parent.version}</version>
+    </dependency>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
+    <dependency>
+      <artifactId>commons-cli</artifactId>
+      <groupId>commons-cli</groupId>
+      <version>${commons-cli.version}</version>
+    </dependency>
+
+    <dependency>
+      <artifactId>junit</artifactId>
+      <groupId>junit</groupId>
+      <scope>test</scope>
+      <version>${junit.version}</version>
+    </dependency>
+  </dependencies>
+  <modelVersion>4.0.0</modelVersion>
+
+  <packaging>jar</packaging>
 
 
-    <dependencies>
-        <dependency>
-            <groupId>com.sushi</groupId>
-            <artifactId>SushiComponents</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+  <parent>
+    <artifactId>Sushi</artifactId>
+    <groupId>com.sushi</groupId>
+    <version>1.0</version>
+  </parent>
 
-        <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>${commons-cli.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>${jib-maven-plugin.version}</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:17-alpine</image>
-                    </from>
-                    <to>
-                        <image>docker.io/sdenboer/sushi-client</image>
-                        <tags>
-                            <tag>${project.version}</tag>
-                            <tag>latest</tag>
-                        </tags>
-                    </to>
-                    <container>
-                        <ports>
-                            <port>9443</port>
-                            <port>9444</port>
-                        </ports>
-                    </container>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+  </properties>
 
 </project>

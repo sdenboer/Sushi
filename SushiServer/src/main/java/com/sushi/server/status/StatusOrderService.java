@@ -7,10 +7,10 @@ import com.sushi.components.protocol.status.StatusOrder;
 import com.sushi.components.protocol.status.StatusOrderMapper;
 import com.sushi.components.protocol.status.StatusServing;
 import com.sushi.components.senders.MessageSender;
-import com.sushi.server.OrderContext;
-import com.sushi.server.OrderService;
-import com.sushi.server.utils.LoggerUtils;
+import com.sushi.server.utils.OrderContext;
+import com.sushi.server.handlers.OrderService;
 import com.sushi.server.exceptions.SushiError;
+import com.sushi.server.utils.LoggerUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 
@@ -22,8 +22,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Vector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.sushi.components.utils.Constants.FILE_DIR;
@@ -36,8 +36,7 @@ public class StatusOrderService implements OrderService {
     public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
         StatusOrder order = new StatusOrderMapper().from(message);
         Path path = Paths.get(FILE_DIR);
-        Vector<InputStream> inputStreams = getInputStreamsOfFilesInDirectory(socketChannel, path, orderContext);
-        try (SequenceInputStream stream = new SequenceInputStream(inputStreams.elements())) {
+        try (SequenceInputStream stream = new SequenceInputStream(getInputStreamsOfFilesInDirectory(path).elements())) {
             String payload = DigestUtils.sha256Hex(stream);
             int payloadSize = payload.getBytes(StandardCharsets.UTF_8).length;
             TextPayload textPayload = new TextPayload(payload);
@@ -46,30 +45,18 @@ public class StatusOrderService implements OrderService {
         } catch (IOException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
             SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
-            e.printStackTrace();
         }
 
     }
 
-    private Vector<InputStream> getInputStreamsOfFilesInDirectory(AsynchronousByteChannel socketChannel, Path dir, OrderContext orderContext) {
+    private Vector<InputStream> getInputStreamsOfFilesInDirectory(Path dir) throws IOException {
+        Vector<InputStream> vector = new Vector<>();
         try (Stream<Path> paths = Files.walk(dir)) {
-            return paths.map(Path::normalize)
-                    .filter(Files::isRegularFile)
-                    .map(path -> {
-                        try {
-                            return Files.newInputStream(path);
-                        } catch (IOException e) {
-                            logger.error(LoggerUtils.createMessage(orderContext), e);
-                            SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
-                            e.printStackTrace();
-                            return null;
-                        }
-                    }).collect(Collectors.toCollection(Vector::new));
-        } catch (IOException e) {
-            logger.error(LoggerUtils.createMessage(orderContext), e);
-            SushiError.send(socketChannel, ServingStatus.NOT_FOUND, orderContext);
-            e.printStackTrace();
+            List<Path> pathList = paths.map(Path::normalize).filter(Files::isRegularFile).toList();
+            for (Path path : pathList) {
+                vector.addElement(Files.newInputStream(path));
+            }
         }
-        return null;
+        return vector;
     }
 }

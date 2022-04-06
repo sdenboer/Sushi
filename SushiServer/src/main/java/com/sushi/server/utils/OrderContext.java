@@ -1,4 +1,4 @@
-package com.sushi.server;
+package com.sushi.server.utils;
 
 import java.util.UUID;
 

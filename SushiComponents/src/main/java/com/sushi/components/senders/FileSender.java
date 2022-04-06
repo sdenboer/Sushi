@@ -1,8 +1,9 @@
 package com.sushi.components.senders;
 
-import com.sushi.components.OnComplete;
+import com.sushi.components.utils.OnComplete;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -15,6 +16,8 @@ import java.nio.file.StandardOpenOption;
 
 public class FileSender implements Sender<Path> {
 
+    private static final Logger logger = Logger.getLogger(FileSender.class);
+
     @Override
     public void send(ByteChannel socketChannel, Path path) {
         try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ)) {
@@ -25,7 +28,8 @@ public class FileSender implements Sender<Path> {
                 position += fileChannel.transferTo(position, Constants.TRANSFER_MAX_SIZE, socketChannel);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Problem sending file");
+            logger.error(e);
         }
     }
 
@@ -51,17 +55,20 @@ public class FileSender implements Sender<Path> {
                             buffer.flip();
                             socketChannel.write(buffer, completionFileChannel, this);
                         } catch (IOException e) {
+                            logger.error(e);
                             ChannelUtils.close(completionFileChannel, socketChannel);
                         }
                     }
                 }
 
                 @Override
-                public void failed(Throwable exc, FileChannel attachment) {
+                public void failed(Throwable e, FileChannel attachment) {
+                    logger.error(e);
                     ChannelUtils.close(attachment, socketChannel);
                 }
             });
         } catch (IOException e) {
+            logger.error(e);
             ChannelUtils.close(socketChannel);
         }
 

@@ -1,9 +1,13 @@
-package com.sushi.server;
+package com.sushi.server.handlers;
+
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
 public abstract class ServerSocketChannelHandler implements Runnable {
+
+    private static final Logger logger = Logger.getLogger(ServerSocketChannelHandler.class);
 
     protected final InetSocketAddress inetSocketAddress;
 
@@ -18,7 +22,7 @@ public abstract class ServerSocketChannelHandler implements Runnable {
         try {
             listen();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 }

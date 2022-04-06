@@ -1,6 +1,6 @@
 package com.sushi.components.senders;
 
-import com.sushi.components.OnComplete;
+import com.sushi.components.utils.OnComplete;
 import com.sushi.components.message.wrappers.FilePayload;
 import com.sushi.components.message.wrappers.Payload;
 import com.sushi.components.message.wrappers.TextPayload;

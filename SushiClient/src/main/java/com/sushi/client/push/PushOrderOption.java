@@ -1,21 +1,22 @@
 package com.sushi.client.push;
 
-import com.sushi.client.Constants;
-import com.sushi.client.OrderOption;
+import static com.sushi.client.cmd.CommandLineOptions.hostOption;
+import static com.sushi.client.cmd.CommandLineOptions.localToRemoteFileOption;
+import static com.sushi.client.cmd.CommandLineOptions.portOption;
+
+import com.sushi.client.cmd.OrderOption;
+import com.sushi.client.utils.Constants;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.wrappers.ContentType;
 import com.sushi.components.message.wrappers.FilePayload;
 import com.sushi.components.protocol.push.PushOrder;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
-
-import static com.sushi.client.CommandLineOptions.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 
 public class PushOrderOption implements OrderOption {
 
@@ -43,7 +44,7 @@ public class PushOrderOption implements OrderOption {
         try {
             size = Files.size(localPath);
         } catch (IOException e) {
-            System.out.println("cannot find file");
+            System.out.println("Cannot find file " + localFile);
             System.exit(1);
         }
 
@@ -53,14 +54,14 @@ public class PushOrderOption implements OrderOption {
         String dir = remotePath.toString();
 
         return PushOrder.builder()
-                .host(getValueFromCMD(cmd, Constants.HOST))
-                .port(getIntValueFromCMD(cmd, Constants.PORT))
-                .orderId(UUID.randomUUID())
-                .contentType(ContentType.FILE)
-                .dir(dir)
-                .fileName(fileName)
-                .fileSize(size)
-                .payload(new FilePayload(localPath))
-                .build();
+            .host(getValueFromCMD(cmd, Constants.HOST))
+            .port(getIntValueFromCMD(cmd, Constants.PORT))
+            .orderId(UUID.randomUUID())
+            .contentType(ContentType.FILE)
+            .dir(dir)
+            .fileName(fileName)
+            .fileSize(size)
+            .payload(new FilePayload(localPath))
+            .build();
     }
 }

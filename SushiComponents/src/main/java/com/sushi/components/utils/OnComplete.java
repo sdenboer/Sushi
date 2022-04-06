@@ -1,4 +1,4 @@
-package com.sushi.components;
+package com.sushi.components.utils;
 
 @FunctionalInterface
 public interface OnComplete {

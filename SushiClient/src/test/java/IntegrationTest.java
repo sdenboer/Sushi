@@ -1,4 +1,5 @@
-import com.sushi.client.CommandLineHandler;
+import com.sushi.client.cmd.CommandLineHandler;
+import com.sushi.components.message.serving.ServingStatus;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -7,13 +8,15 @@ public class IntegrationTest {
 
     @Test
     public void testPush() {
-        String[] args = new String[]{"--backup", "-h localhost", "-p 9443", "-f /tmp/input/test.txt:/tmp/output"};
-        CommandLineHandler.parse(args);
+        String[] args = new String[]{"--backup", "-h localhost", "-p 9444",
+            "-f /tmp/input/sushi.sushi:/tmp/output/this/is/a/test"};
+        ServingStatus servingStatus = CommandLineHandler.parse(args);
     }
 
     @Test
     public void testPull() {
-        String[] args = new String[]{"--fetch", "-h localhost", "-p 9444", "-f /tmp/output/test.txt"};
+        String[] args = new String[]{"--fetch", "-h localhost", "-p 9444",
+            "-f /tmp/output/test.txt"};
         CommandLineHandler.parse(args);
     }
 
@@ -25,7 +28,8 @@ public class IntegrationTest {
 
     @Test
     public void testRemove() {
-        String[] args = new String[]{"--remove", "-h localhost", "-p 9444", "-f /tmp/output/test.txt"};
+        String[] args = new String[]{"--remove", "-h localhost", "-p 9444",
+            "-f /tmp/output/test.txt"};
         CommandLineHandler.parse(args);
     }
 

@@ -1,6 +1,6 @@
 package com.sushi.components.senders;
 
-import com.sushi.components.OnComplete;
+import com.sushi.components.utils.OnComplete;
 import com.sushi.components.utils.ChannelUtils;
 import org.apache.log4j.Logger;
 

@@ -1,4 +1,4 @@
-package com.sushi.server;
+package com.sushi.server.handlers;
 
 import com.sushi.components.configuration.SSLConfiguration;
 import org.apache.log4j.Logger;

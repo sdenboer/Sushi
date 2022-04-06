@@ -1,6 +1,6 @@
 package com.sushi.server.push;
 
-import com.sushi.components.FileWriter;
+import com.sushi.components.utils.FileWriter;
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.protocol.push.PushOrder;
 import com.sushi.components.protocol.push.PushOrderMapper;
@@ -8,16 +8,18 @@ import com.sushi.components.protocol.push.PushServing;
 import com.sushi.components.senders.MessageSender;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
-import com.sushi.server.OrderContext;
-import com.sushi.server.OrderService;
-import com.sushi.server.utils.LoggerUtils;
+import com.sushi.components.utils.Utils;
+import com.sushi.server.utils.OrderContext;
+import com.sushi.server.handlers.OrderService;
 import com.sushi.server.exceptions.SushiError;
+import com.sushi.server.utils.LoggerUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.CompletionHandler;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -35,10 +37,12 @@ public class PushOrderService implements OrderService {
             Files.createDirectories(Paths.get(FILE_DIR, order.getDir()));
             FileWriter fileWriter = new FileWriter(FILE_DIR + order.getDir(), order.getFileName(), order.getFileSize());
             read(socketChannel, fileWriter, orderContext);
+        } catch (OverlappingFileLockException e) {
+            logger.error(LoggerUtils.createMessage(orderContext), e);
+            SushiError.send(socketChannel, ServingStatus.PERMISSION_DENIED, orderContext);
         } catch (IOException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
             SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
-            e.printStackTrace();
         }
     }
 
@@ -50,16 +54,16 @@ public class PushOrderService implements OrderService {
             public void completed(final Integer result, final FileWriter attachedFileWriter) {
                 if (result >= 0) {
                     if (result > 0) {
-                        writeToFile(buffer, attachedFileWriter);
+                        try {
+                            writeToFile(buffer, attachedFileWriter);
+                        } catch (IOException e) {
+                            ChannelUtils.close(fileWriter.getFileChannel());
+                            logger.error(LoggerUtils.createMessage(orderContext), e);
+                            SushiError.send(socketChannel, ServingStatus.ABORTED, orderContext);
+                        }
                     }
                     if (attachedFileWriter.done()) {
-                        logger.info(LoggerUtils.createMessage(orderContext)
-                                + "finished writing "
-                                + (attachedFileWriter.getPosition().get() / (1024 * 1024))
-                                + " MB to file " + attachedFileWriter.getPath());
-                        PushServing serving = new PushServing(ServingStatus.OK, UUID.randomUUID(), "txt");
-                        new MessageSender().send(socketChannel, serving);
-                        ChannelUtils.close(attachedFileWriter.getFileChannel());
+                        sendSuccessResponse(attachedFileWriter, socketChannel, orderContext);
                     } else {
                         buffer.clear();
                         socketChannel.read(buffer, attachedFileWriter, this);
@@ -71,27 +75,28 @@ public class PushOrderService implements OrderService {
                 }
             }
 
-
             @Override
             public void failed(final Throwable exc, final FileWriter failedFileWriter) {
                 logger.error(LoggerUtils.createMessage(orderContext), exc);
                 SushiError.send(socketChannel, ServingStatus.INVALID, orderContext);
             }
 
-            private void writeToFile(final ByteBuffer buffer, final FileWriter fileWriter) {
-
-                try {
-                    buffer.flip();
-
-                    final long bytesWritten = fileWriter.write(buffer, fileWriter.getPosition().get());
-                    fileWriter.getPosition().addAndGet(bytesWritten);
-                } catch (IOException e) {
-                    ChannelUtils.close(fileWriter.getFileChannel());
-                    logger.error(LoggerUtils.createMessage(orderContext), e);
-                    SushiError.send(socketChannel, ServingStatus.ABORTED, orderContext);
-                    e.printStackTrace();
-                }
+            private void writeToFile(final ByteBuffer buffer, final FileWriter fileWriter) throws IOException {
+                buffer.flip();
+                final long bytesWritten = fileWriter.write(buffer, fileWriter.getPosition().get());
+                fileWriter.getPosition().addAndGet(bytesWritten);
             }
         });
+    }
+
+    private void sendSuccessResponse(FileWriter fileWriter, AsynchronousByteChannel socketChannel, OrderContext orderContext) {
+        logger.info(LoggerUtils.createMessage(orderContext)
+                + "finished writing "
+                + Utils.bytesToFileSize(fileWriter.getFileSize())
+                + " to file " + fileWriter.getPath());
+        PushServing serving = new PushServing(ServingStatus.OK, UUID.randomUUID(), "txt");
+        ChannelUtils.close(fileWriter.getFileChannel());
+        new MessageSender().send(socketChannel, serving);
+
     }
 }

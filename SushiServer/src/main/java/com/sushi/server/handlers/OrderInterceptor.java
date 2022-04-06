@@ -1,4 +1,4 @@
-package com.sushi.server;
+package com.sushi.server.handlers;
 
 import com.sushi.components.message.MessageMapper;
 import com.sushi.components.message.order.OrderMethod;
@@ -7,6 +7,7 @@ import com.sushi.components.message.wrappers.WrapperField;
 import com.sushi.components.utils.Constants;
 import com.sushi.server.exceptions.SushiError;
 import com.sushi.server.utils.LoggerUtils;
+import com.sushi.server.utils.OrderContext;
 import org.apache.log4j.Logger;
 
 import java.nio.ByteBuffer;
@@ -39,7 +40,6 @@ public class OrderInterceptor {
                     OrderMethod method = OrderMethod.fromString(orderHeaders.get(WrapperField.METHOD));
 
                     OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
-                    logger.info(method.getValue() + " order: " + orderContext.orderId() + " received");
                     logger.info(message);
 
                     new OrderController(socketChannel).handleOrder(method, message, orderContext);
@@ -55,7 +55,6 @@ public class OrderInterceptor {
                 OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
                 logger.error(LoggerUtils.createMessage(orderContext), e);
                 SushiError.send(socketChannel, ServingStatus.SERVER_ERROR, orderContext);
-                e.printStackTrace();
             }
 
         });

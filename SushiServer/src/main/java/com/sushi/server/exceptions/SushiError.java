@@ -3,7 +3,7 @@ package com.sushi.server.exceptions;
 import com.sushi.components.error.ErrorServing;
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.senders.MessageSender;
-import com.sushi.server.OrderContext;
+import com.sushi.server.utils.OrderContext;
 
 import java.nio.channels.AsynchronousByteChannel;
 

@@ -1,24 +1,33 @@
-package com.sushi.client;
+package com.sushi.client.cmd;
+
+import static com.sushi.client.cmd.CommandLineOptions.backupMethod;
+import static com.sushi.client.cmd.CommandLineOptions.fetchMethod;
+import static com.sushi.client.cmd.CommandLineOptions.listMethod;
+import static com.sushi.client.cmd.CommandLineOptions.removeMethod;
+import static com.sushi.client.cmd.CommandLineOptions.verifyMethod;
 
 import com.sushi.client.exceptions.SushiException;
+import com.sushi.client.order.OrderController;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
-import org.apache.commons.cli.*;
-
+import com.sushi.components.message.serving.ServingStatus;
 import java.util.Arrays;
-
-import static com.sushi.client.CommandLineOptions.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class CommandLineHandler {
 
-    public static void parse(String[] args) {
+    public static ServingStatus parse(String[] args) {
         Options options = new Options();
         options.addOption(listMethod);
         options.addOption(fetchMethod);
         options.addOption(backupMethod);
         options.addOption(verifyMethod);
         options.addOption(removeMethod);
-
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -41,10 +50,12 @@ public class CommandLineHandler {
             Order order = orderOption.createOrder(cmd);
             Serving serving = new OrderController().handleOrder(order);
             System.out.println(serving.getServingStatus());
+            return serving.getServingStatus();
 
         } catch (ParseException | SushiException e) {
             formatter.printHelp("options", options);
             System.exit(1);
         }
+        return null;
     }
 }

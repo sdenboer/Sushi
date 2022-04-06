@@ -1,11 +1,10 @@
-package com.sushi.client;
+package com.sushi.client.cmd;
 
 import com.sushi.components.message.order.Order;
+import java.util.Arrays;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-
-import java.util.Arrays;
 
 public interface OrderOption {
 

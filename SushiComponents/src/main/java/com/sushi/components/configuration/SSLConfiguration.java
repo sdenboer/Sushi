@@ -1,5 +1,7 @@
 package com.sushi.components.configuration;
 
+import org.apache.log4j.Logger;
+
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -10,9 +12,10 @@ import java.security.KeyStore;
 
 public class SSLConfiguration {
 
+    private static final Logger logger = Logger.getLogger(SSLConfiguration.class);
+
     public static SSLContext authenticatedContext() {
-        try (InputStream keystoreFile =
-                     SSLConfiguration.class.getClassLoader().getResourceAsStream("ssl/certificate.pfx")) {
+        try (InputStream keystoreFile = SSLConfiguration.class.getClassLoader().getResourceAsStream("ssl/certificate.pfx")) {
 
             SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
             KeyStore ks = KeyStore.getInstance("PKCS12");
@@ -28,8 +31,8 @@ public class SSLConfiguration {
 
             return sslContext;
         } catch (GeneralSecurityException | IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Problem creating SSL context");
+            logger.error("Problem creating SSL context");
+            throw new RuntimeException(e);
         }
 
     }

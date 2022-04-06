@@ -1,4 +1,4 @@
-package com.sushi.client;
+package com.sushi.client.utils;
 
 public class Constants {
 

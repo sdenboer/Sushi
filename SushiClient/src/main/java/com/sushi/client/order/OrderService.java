@@ -1,9 +1,8 @@
-package com.sushi.client;
+package com.sushi.client.order;
 
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
 import com.sushi.components.utils.Constants;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
@@ -27,7 +26,8 @@ public interface OrderService {
     }
 
 
-    default String receiveTextPayload(ByteChannel socketChannel, int payloadSize) throws IOException {
+    default String receiveTextPayload(ByteChannel socketChannel, int payloadSize)
+        throws IOException {
         StringBuilder response = new StringBuilder();
         while (response.toString().getBytes(StandardCharsets.UTF_8).length < payloadSize) {
             final ByteBuffer buffer = ByteBuffer.allocate(payloadSize);

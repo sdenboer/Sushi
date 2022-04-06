@@ -7,10 +7,11 @@ import com.sushi.components.protocol.pull.PullOrder;
 import com.sushi.components.protocol.pull.PullOrderMapper;
 import com.sushi.components.protocol.pull.PullServing;
 import com.sushi.components.senders.MessageSender;
-import com.sushi.server.OrderContext;
-import com.sushi.server.OrderService;
-import com.sushi.server.utils.LoggerUtils;
+import com.sushi.components.utils.Utils;
+import com.sushi.server.utils.OrderContext;
+import com.sushi.server.handlers.OrderService;
 import com.sushi.server.exceptions.SushiError;
+import com.sushi.server.utils.LoggerUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -33,14 +34,13 @@ public class PullOrderService implements OrderService {
         try {
             Path path = Paths.get(FILE_DIR, order.getDir(), order.getFileName());
             long size = Files.size(path);
-            logger.info(LoggerUtils.createMessage(orderContext) + "pulling " + path + " of " + (size / (1024 * 1024)) + " MB");
+            logger.info(LoggerUtils.createMessage(orderContext) + "pulling " + path + " of " + Utils.bytesToFileSize(size));
             FilePayload payload = new FilePayload(path);
             PullServing serving = new PullServing(ServingStatus.OK, orderId, "aes", ContentType.FILE, size, payload);
             new MessageSender().send(socketChannel, serving);
         } catch (IOException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
             SushiError.send(socketChannel, ServingStatus.NOT_FOUND, orderContext);
-            e.printStackTrace();
         }
     }
 

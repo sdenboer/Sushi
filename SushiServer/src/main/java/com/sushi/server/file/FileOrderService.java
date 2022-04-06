@@ -7,10 +7,10 @@ import com.sushi.components.protocol.file.FileOrder;
 import com.sushi.components.protocol.file.FileOrderMapper;
 import com.sushi.components.protocol.file.FileServing;
 import com.sushi.components.senders.MessageSender;
-import com.sushi.server.OrderContext;
-import com.sushi.server.OrderService;
-import com.sushi.server.utils.LoggerUtils;
+import com.sushi.server.utils.OrderContext;
+import com.sushi.server.handlers.OrderService;
 import com.sushi.server.exceptions.SushiError;
+import com.sushi.server.utils.LoggerUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 
@@ -39,24 +39,32 @@ public class FileOrderService implements OrderService {
         Map<String, String> files = new HashMap<>();
         Path path = Paths.get(FILE_DIR, order.getDir(), order.getFileName());
         try {
-            if (Files.isDirectory(path)) {
-                for (Path file : getFilesInDirectory(path)) {
-                    files.put(file.toString(), getSHA265HexFromPath(file));
-                }
-            } else {
-                files.put(path.toString(), getSHA265HexFromPath(path));
-            }
+            addPathChecksumToFiles(path, files);
+            String payload = serializePayload(files);
+            int payloadSize = payload.getBytes(StandardCharsets.UTF_8).length;
+            TextPayload textPayload = new TextPayload(payload);
+            FileServing serving = new FileServing(ServingStatus.OK, order.getOrderId(), ContentType.TXT, payloadSize, textPayload);
+            new MessageSender().send(socketChannel, serving);
         } catch (IOException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
             SushiError.send(socketChannel, ServingStatus.NOT_FOUND, orderContext);
-            e.printStackTrace();
         }
 
-        String payload = serializePayload(files);
-        int payloadSize = payload.getBytes(StandardCharsets.UTF_8).length;
-        TextPayload textPayload = new TextPayload(payload);
-        FileServing serving = new FileServing(ServingStatus.OK, order.getOrderId(), ContentType.TXT, payloadSize, textPayload);
-        new MessageSender().send(socketChannel, serving);
+    }
+
+    private void addPathChecksumToFiles(Path path, Map<String, String> files) throws IOException {
+        if (Files.isDirectory(path)) {
+            for (Path file : getFilesInDirectory(path)) {
+                addFileChecksumToFiles(file, files);
+            }
+        } else {
+            addFileChecksumToFiles(path, files);
+        }
+    }
+
+    private void addFileChecksumToFiles(Path file, Map<String, String> files) throws IOException {
+        String cleanPath = file.toString().replace(FILE_DIR, "");
+        files.put(cleanPath, getSHA265HexFromPath(file));
     }
 
     private String serializePayload(Map<String, String> files) {

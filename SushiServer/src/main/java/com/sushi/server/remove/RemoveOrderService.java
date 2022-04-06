@@ -5,8 +5,8 @@ import com.sushi.components.protocol.remove.RemoveOrder;
 import com.sushi.components.protocol.remove.RemoveOrderMapper;
 import com.sushi.components.protocol.remove.RemoveServing;
 import com.sushi.components.senders.MessageSender;
-import com.sushi.server.OrderContext;
-import com.sushi.server.OrderService;
+import com.sushi.server.utils.OrderContext;
+import com.sushi.server.handlers.OrderService;
 import com.sushi.server.utils.LoggerUtils;
 import com.sushi.server.exceptions.SushiError;
 import org.apache.log4j.Logger;
@@ -34,7 +34,6 @@ public class RemoveOrderService implements OrderService {
         } catch (IOException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
             SushiError.send(socketChannel, ServingStatus.NOT_FOUND, orderContext);
-            e.printStackTrace();
         }
 
     }
