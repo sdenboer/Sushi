@@ -1,20 +1,21 @@
 package com.sushi.server.push;
 
-import com.sushi.components.utils.FileWriter;
+import static com.sushi.components.utils.Constants.FILE_DIR;
+import static com.sushi.server.utils.FileUtils.filesToPayload;
+import static com.sushi.server.utils.FileUtils.getSHA265HexFromPath;
+
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.protocol.push.PushOrder;
 import com.sushi.components.protocol.push.PushOrderMapper;
-import com.sushi.components.protocol.push.PushServing;
-import com.sushi.components.senders.MessageSender;
+import com.sushi.components.senders.ServingSender;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
+import com.sushi.components.utils.FileWriter;
+import com.sushi.components.utils.OrderContext;
 import com.sushi.components.utils.Utils;
-import com.sushi.server.utils.OrderContext;
-import com.sushi.server.handlers.OrderService;
 import com.sushi.server.exceptions.SushiError;
+import com.sushi.server.handlers.OrderService;
 import com.sushi.server.utils.LoggerUtils;
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousByteChannel;
@@ -22,20 +23,21 @@ import java.nio.channels.CompletionHandler;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.UUID;
-
-import static com.sushi.components.utils.Constants.FILE_DIR;
+import java.util.Map;
+import org.apache.log4j.Logger;
 
 public class PushOrderService implements OrderService {
 
     private static final Logger logger = Logger.getLogger(PushOrderService.class);
 
     @Override
-    public void handle(AsynchronousByteChannel socketChannel, String message, OrderContext orderContext) {
+    public void handle(AsynchronousByteChannel socketChannel, String message,
+        OrderContext orderContext) {
         PushOrder order = new PushOrderMapper().from(message);
         try {
             Files.createDirectories(Paths.get(FILE_DIR, order.getDir()));
-            FileWriter fileWriter = new FileWriter(FILE_DIR + order.getDir(), order.getFileName(), order.getFileSize());
+            FileWriter fileWriter = new FileWriter(FILE_DIR + order.getDir(), order.getFileName(),
+                order.getPayloadContext().payloadMetaData().contentLength());
             read(socketChannel, fileWriter, orderContext);
         } catch (OverlappingFileLockException e) {
             logger.error(LoggerUtils.createMessage(orderContext), e);
@@ -46,9 +48,10 @@ public class PushOrderService implements OrderService {
         }
     }
 
-    private void read(final AsynchronousByteChannel socketChannel, final FileWriter fileWriter, OrderContext orderContext) {
+    private void read(final AsynchronousByteChannel socketChannel, final FileWriter fileWriter,
+        OrderContext orderContext) {
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
-        logger.info(LoggerUtils.createMessage(orderContext) + "attempting to write file");
+        logger.info(LoggerUtils.createMessage(orderContext) + "waiting for file...");
         socketChannel.read(buffer, fileWriter, new CompletionHandler<>() {
             @Override
             public void completed(final Integer result, final FileWriter attachedFileWriter) {
@@ -81,7 +84,8 @@ public class PushOrderService implements OrderService {
                 SushiError.send(socketChannel, ServingStatus.INVALID, orderContext);
             }
 
-            private void writeToFile(final ByteBuffer buffer, final FileWriter fileWriter) throws IOException {
+            private void writeToFile(final ByteBuffer buffer, final FileWriter fileWriter)
+                throws IOException {
                 buffer.flip();
                 final long bytesWritten = fileWriter.write(buffer, fileWriter.getPosition().get());
                 fileWriter.getPosition().addAndGet(bytesWritten);
@@ -89,14 +93,23 @@ public class PushOrderService implements OrderService {
         });
     }
 
-    private void sendSuccessResponse(FileWriter fileWriter, AsynchronousByteChannel socketChannel, OrderContext orderContext) {
+    private void sendSuccessResponse(FileWriter fileWriter, AsynchronousByteChannel socketChannel,
+        OrderContext orderContext) {
         logger.info(LoggerUtils.createMessage(orderContext)
-                + "finished writing "
-                + Utils.bytesToFileSize(fileWriter.getFileSize())
-                + " to file " + fileWriter.getPath());
-        PushServing serving = new PushServing(ServingStatus.OK, UUID.randomUUID(), "txt");
-        ChannelUtils.close(fileWriter.getFileChannel());
-        new MessageSender().send(socketChannel, serving);
+            + "finished writing "
+            + Utils.bytesToFileSize(fileWriter.getFileSize())
+            + " to file " + fileWriter.getPath());
+        try {
+            String hash = getSHA265HexFromPath(fileWriter.getPath());
+            String payloadMessage = filesToPayload(Map.of(fileWriter.getPath().toString(), hash));
+            ServingSender.send(socketChannel, payloadMessage, orderContext);
+        } catch (IOException e) {
+            logger.info(LoggerUtils.createMessage(orderContext) + "Problem with buffer");
+            SushiError.send(socketChannel, ServingStatus.INVALID, orderContext);
+        } finally {
+            ChannelUtils.close(fileWriter.getFileChannel());
+        }
+
 
     }
 }

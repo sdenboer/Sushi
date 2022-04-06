@@ -2,6 +2,7 @@ package com.sushi.client.order;
 
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
+import com.sushi.components.message.wrappers.PayloadContext;
 import com.sushi.components.utils.Constants;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,11 +27,12 @@ public interface OrderService {
     }
 
 
-    default String receiveTextPayload(ByteChannel socketChannel, int payloadSize)
+    default String receiveTextPayload(ByteChannel socketChannel, PayloadContext payloadContext)
         throws IOException {
+        long payloadSize = payloadContext.payloadMetaData().contentLength();
         StringBuilder response = new StringBuilder();
         while (response.toString().getBytes(StandardCharsets.UTF_8).length < payloadSize) {
-            final ByteBuffer buffer = ByteBuffer.allocate(payloadSize);
+            final ByteBuffer buffer = ByteBuffer.allocate((int) payloadSize);
             final long bytesRead = socketChannel.read(buffer);
             if (bytesRead > 0) {
                 response.append(new String(buffer.array()));

@@ -1,10 +1,8 @@
 package com.sushi.components.senders;
 
-import com.sushi.components.utils.OnComplete;
 import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
-import org.apache.log4j.Logger;
-
+import com.sushi.components.utils.OnComplete;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousByteChannel;
@@ -13,19 +11,21 @@ import java.nio.channels.CompletionHandler;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import org.apache.log4j.Logger;
 
-public class FileSender implements Sender<Path> {
+public class FileSender implements Sender {
 
     private static final Logger logger = Logger.getLogger(FileSender.class);
 
     @Override
-    public void send(ByteChannel socketChannel, Path path) {
-        try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ)) {
+    public void send(ByteChannel socketChannel, String path) {
+        try (FileChannel fileChannel = FileChannel.open(Path.of(path), StandardOpenOption.READ)) {
             long position = 0L;
             long size = fileChannel.size();
 
             while (position < size) {
-                position += fileChannel.transferTo(position, Constants.TRANSFER_MAX_SIZE, socketChannel);
+                position += fileChannel.transferTo(position, Constants.TRANSFER_MAX_SIZE,
+                    socketChannel);
             }
         } catch (IOException e) {
             System.out.println("Problem sending file");
@@ -34,12 +34,12 @@ public class FileSender implements Sender<Path> {
     }
 
     @Override
-    public void send(AsynchronousByteChannel socketChannel, Path path, OnComplete onComplete) {
+    public void send(AsynchronousByteChannel socketChannel, String path, OnComplete onComplete) {
 
         ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFFER_SIZE);
 
         try {
-            FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);
+            FileChannel fileChannel = FileChannel.open(Path.of(path), StandardOpenOption.READ);
             fileChannel.read(buffer);
             buffer.flip();
 

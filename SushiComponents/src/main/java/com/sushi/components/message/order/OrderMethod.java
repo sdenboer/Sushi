@@ -18,9 +18,9 @@ public enum OrderMethod {
 
     public static OrderMethod fromString(String text) {
         return Arrays.stream(OrderMethod.values())
-                .filter(value -> value.value.equalsIgnoreCase(text))
-                .findFirst()
-                .orElseThrow(RuntimeException::new);
+            .filter(value -> value.value.equalsIgnoreCase(text))
+            .findFirst()
+            .orElseThrow(RuntimeException::new);
     }
 
     public String getValue() {

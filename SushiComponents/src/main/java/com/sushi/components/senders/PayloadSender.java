@@ -1,31 +1,22 @@
 package com.sushi.components.senders;
 
-import com.sushi.components.utils.OnComplete;
-import com.sushi.components.message.wrappers.FilePayload;
-import com.sushi.components.message.wrappers.Payload;
-import com.sushi.components.message.wrappers.TextPayload;
-
-import java.io.IOException;
+import com.sushi.components.message.wrappers.ContentType;
+import com.sushi.components.message.wrappers.PayloadContext;
 import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.ByteChannel;
 
-public class PayloadSender implements Sender<Payload> {
+public class PayloadSender {
 
-    @Override
-    public void send(AsynchronousByteChannel channel, Payload payload, OnComplete onComplete) {
-        if (payload instanceof TextPayload textPayload) {
-            new TextSender().send(channel, textPayload.getText(), null);
-        } else if (payload instanceof FilePayload filePayload) {
-            new FileSender().send(channel, filePayload.getPath(), null);
-        }
+    public void send(AsynchronousByteChannel channel, PayloadContext payloadContext) {
+        ContentType contentType = payloadContext.payloadMetaData().contentType();
+        (ContentType.FILE.equals(contentType) ? new FileSender() : new TextSender()).send(channel,
+            payloadContext.payload().content(), null);
     }
 
-    @Override
-    public void send(ByteChannel channel, Payload payload) throws IOException {
-        if (payload instanceof TextPayload textPayload) {
-            new TextSender().send(channel, textPayload.getText());
-        } else if (payload instanceof FilePayload filePayload) {
-            new FileSender().send(channel, filePayload.getPath());
-        }
+    public void send(ByteChannel channel, PayloadContext payloadContext) {
+        ContentType contentType = payloadContext.payloadMetaData().contentType();
+        (ContentType.FILE.equals(contentType) ? new FileSender() : new TextSender()).send(channel,
+            payloadContext.payload().content());
     }
+
 }

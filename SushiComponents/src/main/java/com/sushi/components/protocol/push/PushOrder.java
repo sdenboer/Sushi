@@ -3,49 +3,37 @@ package com.sushi.components.protocol.push;
 import com.sushi.components.message.order.Host;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.order.OrderMethod;
-import com.sushi.components.message.wrappers.ContentType;
-import com.sushi.components.message.wrappers.FilePayload;
-import com.sushi.components.message.wrappers.HasPayload;
+import com.sushi.components.message.wrappers.PayloadContext;
+import com.sushi.components.message.wrappers.PayloadMetaData;
 import com.sushi.components.message.wrappers.WrapperField;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
-public class PushOrder extends Order implements HasPayload<FilePayload> {
-
-    private static final OrderMethod METHOD = OrderMethod.PUSH;
+public class PushOrder extends Order {
 
     private final String dir;
     private final String fileName;
-    private final String encryption;
-    private final ContentType contentType;
-    private final long fileSize;
-    private final FilePayload payload;
 
     @Builder
-    public PushOrder(String host, int port, UUID orderId, String dir, String fileName, String encryption, ContentType contentType, long fileSize, FilePayload payload) {
-        super(METHOD, new Host(host, port), orderId);
+    public PushOrder(String host, int port, UUID orderId, String dir, String fileName,
+        PayloadContext payloadContext) {
+        super(OrderMethod.PUSH, new Host(host, port), orderId, payloadContext);
         this.dir = dir;
         this.fileName = fileName;
-        this.encryption = encryption;
-        this.contentType = contentType;
-        this.fileSize = fileSize;
-        this.payload = payload;
     }
 
     @Override
-    public void addOptionalWrappers() {
-        addWrapper(WrapperField.DIR, dir);
-        addWrapper(WrapperField.FILE, fileName);
-        addWrapper(WrapperField.ENCRYPTION, encryption);
-        addWrapper(WrapperField.CONTENT, contentType.getType());
-        addWrapper(WrapperField.CONTENT_LENGTH, String.valueOf(fileSize));
-    }
-
-    @Override
-    public FilePayload getPayload() {
-        return payload;
+    public Map<WrapperField, String> getOptionalWrappers() {
+        Map<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
+        PayloadMetaData metaData = payloadContext.payloadMetaData();
+        wrappers.put(WrapperField.DIR, dir);
+        wrappers.put(WrapperField.FILE, fileName);
+        wrappers.put(WrapperField.CONTENT, metaData.contentType().getType());
+        wrappers.put(WrapperField.CONTENT_LENGTH, String.valueOf(metaData.contentLength()));
+        return wrappers;
     }
 }

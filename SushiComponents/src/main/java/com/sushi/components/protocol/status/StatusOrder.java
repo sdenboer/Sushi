@@ -3,23 +3,23 @@ package com.sushi.components.protocol.status;
 import com.sushi.components.message.order.Host;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.order.OrderMethod;
+import com.sushi.components.message.wrappers.WrapperField;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.UUID;
 
 @Getter
 public class StatusOrder extends Order {
 
-    private static final OrderMethod method = OrderMethod.STATUS;
-
     @Builder
     public StatusOrder(String host, int port, UUID orderId) {
-        super(method, new Host(host, port), orderId);
+        super(OrderMethod.STATUS, new Host(host, port), orderId, null);
     }
 
     @Override
-    public void addOptionalWrappers() {
-        //not needed
+    public Map<WrapperField, String> getOptionalWrappers() {
+        return Collections.emptyMap();
     }
 }

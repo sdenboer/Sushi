@@ -34,12 +34,14 @@ public class OrderController {
                 return sendOrder(socketChannel, order);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Problem connecting to socket", e);
+            System.out.println("Problem connecting to socket");
+            System.exit(1);
+            return null;
         }
     }
 
     private Serving sendOrder(ByteChannel byteChannel, Order order) throws IOException {
-        return (switch (order.getMethod()) {
+        return (switch (order.getOrderMethod()) {
             case FILE -> new FileOrderService();
             case PULL -> new PullOrderService();
             case PUSH -> new PushOrderService();

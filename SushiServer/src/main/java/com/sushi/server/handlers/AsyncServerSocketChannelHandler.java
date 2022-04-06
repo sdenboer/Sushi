@@ -1,13 +1,12 @@
 package com.sushi.server.handlers;
 
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.Executors;
+import org.apache.log4j.Logger;
 
 public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler {
 
@@ -27,7 +26,8 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
     @Override
     public void listen() throws IOException {
         logger.info("Waiting for connection...");
-        AsynchronousServerSocketChannel serverSocketChannel = AsynchronousServerSocketChannel.open(group);
+        AsynchronousServerSocketChannel serverSocketChannel = AsynchronousServerSocketChannel.open(
+            group);
         serverSocketChannel.bind(inetSocketAddress);
         accept(serverSocketChannel);
     }
@@ -45,7 +45,7 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
 
             @Override
             public void failed(final Throwable exc, final Void attachment) {
-                throw new RuntimeException("unable to accept new connection", exc);
+                logger.error("Unable to accept new connection", exc);
             }
         });
     }

@@ -1,18 +1,18 @@
 package com.sushi.server.handlers;
 
 import com.sushi.components.configuration.SSLConfiguration;
+import java.io.IOException;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import javax.net.ssl.SSLContext;
 import org.apache.log4j.Logger;
 import tlschannel.ServerTlsChannel;
 import tlschannel.async.AsynchronousTlsChannel;
 import tlschannel.async.AsynchronousTlsChannelGroup;
 
-import javax.net.ssl.SSLContext;
-import java.io.IOException;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 
-
-public class AsyncTlsServerSocketChannelHandler extends ServerSocketChannelHandler implements Runnable {
+public class AsyncTlsServerSocketChannelHandler extends ServerSocketChannelHandler implements
+    Runnable {
 
     private static final Logger logger = Logger.getLogger(AsyncTlsServerSocketChannelHandler.class);
 
@@ -39,8 +39,10 @@ public class AsyncTlsServerSocketChannelHandler extends ServerSocketChannelHandl
     private void accept(ServerSocketChannel serverSocket) throws IOException {
         SocketChannel socketChannel = serverSocket.accept();
         socketChannel.configureBlocking(false);
-        ServerTlsChannel tlsChannel = ServerTlsChannel.newBuilder(socketChannel, sslContext).build();
-        AsynchronousTlsChannel asyncTlsChannel = new AsynchronousTlsChannel(channelGroup, tlsChannel, socketChannel);
+        ServerTlsChannel tlsChannel = ServerTlsChannel.newBuilder(socketChannel, sslContext)
+            .build();
+        AsynchronousTlsChannel asyncTlsChannel = new AsynchronousTlsChannel(channelGroup,
+            tlsChannel, socketChannel);
 
         new OrderInterceptor().intercept(asyncTlsChannel);
 

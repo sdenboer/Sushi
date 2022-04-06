@@ -1,14 +1,13 @@
 package com.sushi.components.senders;
 
 import com.sushi.components.utils.OnComplete;
-
-import java.io.IOException;
 import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.ByteChannel;
 
-public interface Sender<T> {
+public interface Sender {
 
-    void send(ByteChannel socketChannel, T payload) throws IOException;
+    void send(ByteChannel socketChannel, String content);
 
-    void send(AsynchronousByteChannel socketChannel, T payload, OnComplete onComplete);
+    void send(AsynchronousByteChannel socketChannel, String content, OnComplete onComplete);
+
 }

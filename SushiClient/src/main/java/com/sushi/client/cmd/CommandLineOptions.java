@@ -7,8 +7,11 @@ import static com.sushi.client.utils.Constants.REMOVE_METHOD;
 import static com.sushi.client.utils.Constants.VERIFY_METHOD;
 
 import com.sushi.client.utils.Constants;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.cli.Option;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommandLineOptions {
 
     public static final Option hostOption = Option.builder()

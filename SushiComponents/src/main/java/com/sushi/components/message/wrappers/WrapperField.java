@@ -10,7 +10,6 @@ public enum WrapperField {
     FILE("file"),
     DIR("dir"),
     CONTENT_LENGTH("content-length"),
-    ENCRYPTION("encryption"),
     CONTENT("content"),
     STATUS("status");
 
@@ -22,9 +21,9 @@ public enum WrapperField {
 
     public static WrapperField fromString(String text) {
         return Arrays.stream(WrapperField.values())
-                .filter(value -> value.field.equalsIgnoreCase(text))
-                .findFirst()
-                .orElseThrow(RuntimeException::new);
+            .filter(value -> value.field.equalsIgnoreCase(text))
+            .findFirst()
+            .orElseThrow(RuntimeException::new);
     }
 
     public String getField() {

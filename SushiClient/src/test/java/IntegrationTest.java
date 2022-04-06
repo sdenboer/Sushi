@@ -1,42 +1,61 @@
+import static com.sushi.components.message.serving.ServingStatus.OK;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.sushi.client.cmd.CommandLineHandler;
 import com.sushi.components.message.serving.ServingStatus;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-@Ignore
-public class IntegrationTest {
+@Disabled
+class IntegrationTest {
 
-    @Test
-    public void testPush() {
-        String[] args = new String[]{"--backup", "-h localhost", "-p 9444",
-            "-f /tmp/input/sushi.sushi:/tmp/output/this/is/a/test"};
+    @ParameterizedTest
+    @ValueSource(ints = {9444, 9443})
+    void testPush(int port) {
+        String[] args = new String[]{"--backup", "-h localhost", "-p " + port,
+            "-f /tmp/input/test.txt:/tmp/output"};
         ServingStatus servingStatus = CommandLineHandler.parse(args);
+        assertEquals(OK, servingStatus);
     }
 
-    @Test
-    public void testPull() {
-        String[] args = new String[]{"--fetch", "-h localhost", "-p 9444",
+    @ParameterizedTest
+    @ValueSource(ints = {9444, 9443})
+    void testPull(int port) {
+        testPush(port);
+        String[] args = new String[]{"--fetch", "-h localhost", "-p " + port,
             "-f /tmp/output/test.txt"};
-        CommandLineHandler.parse(args);
+        ServingStatus servingStatus = CommandLineHandler.parse(args);
+        assertEquals(OK, servingStatus);
     }
 
-    @Test
-    public void testFile() {
-        String[] args = new String[]{"--list", "-h localhost", "-p 9443", "-f /tmp/output"};
-        CommandLineHandler.parse(args);
+    @ParameterizedTest
+    @ValueSource(ints = {9444, 9443})
+    void testFile(int port) {
+        testPush(port);
+        String[] args = new String[]{"--list", "-h localhost", "-p " + port, "-f /tmp/output"};
+        ServingStatus servingStatus = CommandLineHandler.parse(args);
+        assertEquals(OK, servingStatus);
     }
 
-    @Test
-    public void testRemove() {
-        String[] args = new String[]{"--remove", "-h localhost", "-p 9444",
+    @ParameterizedTest
+    @ValueSource(ints = {9444, 9443})
+    void testRemove(int port) {
+        testPush(port);
+        String[] args = new String[]{"--remove", "-h localhost", "-p " + port,
             "-f /tmp/output/test.txt"};
-        CommandLineHandler.parse(args);
+        ServingStatus servingStatus = CommandLineHandler.parse(args);
+        assertEquals(OK, servingStatus);
+
     }
 
-    @Test
-    public void testChecksum() {
-        String[] args = new String[]{"--verify", "-h localhost", "-p 9443"};
-        CommandLineHandler.parse(args);
+    @ParameterizedTest
+    @ValueSource(ints = {9444, 9443})
+    void testChecksum(int port) {
+        testPush(port);
+        String[] args = new String[]{"--verify", "-h localhost", "-p " + port};
+        ServingStatus servingStatus = CommandLineHandler.parse(args);
+        assertEquals(OK, servingStatus);
     }
 
 }

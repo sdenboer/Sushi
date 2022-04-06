@@ -1,9 +1,8 @@
 package com.sushi.server.handlers;
 
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import org.apache.log4j.Logger;
 
 public abstract class ServerSocketChannelHandler implements Runnable {
 

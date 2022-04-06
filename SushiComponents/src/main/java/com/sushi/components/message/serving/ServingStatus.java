@@ -22,9 +22,9 @@ public enum ServingStatus {
 
     public static ServingStatus fromString(String text) {
         return Arrays.stream(ServingStatus.values())
-                .filter(value -> value.statusCode == Integer.parseInt(text))
-                .findFirst()
-                .orElseThrow(RuntimeException::new);
+            .filter(value -> value.statusCode == Integer.parseInt(text))
+            .findFirst()
+            .orElseThrow(RuntimeException::new);
 
     }
 

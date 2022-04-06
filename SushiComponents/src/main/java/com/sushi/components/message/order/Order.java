@@ -1,30 +1,40 @@
 package com.sushi.components.message.order;
 
 import com.sushi.components.message.Message;
+import com.sushi.components.message.wrappers.PayloadContext;
 import com.sushi.components.message.wrappers.WrapperField;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.UUID;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
-public abstract class Order extends Message {
+public abstract class Order implements Message {
 
-    private final OrderMethod method;
-    private final Host host;
-    private final UUID orderId;
+    protected final OrderMethod orderMethod;
+    protected final Host host;
+    protected final UUID orderId;
+    protected final PayloadContext payloadContext;
 
-    protected Order(OrderMethod method, Host host, UUID orderId) {
+    protected Order(OrderMethod orderMethod, Host host, UUID orderId,
+        PayloadContext payloadContext) {
         this.orderId = orderId;
-        this.method = method;
+        this.orderMethod = orderMethod;
         this.host = host;
+        this.payloadContext = payloadContext;
     }
 
     @Override
-    public void addMandatoryWrappers() {
-        addWrapper(WrapperField.METHOD, method.getValue());
-        addWrapper(WrapperField.HOST, host.host());
-        addWrapper(WrapperField.PORT, String.valueOf(host.port()));
-        addWrapper(WrapperField.ORDER_ID, String.valueOf(orderId));
+    public Map<WrapperField, String> getWrappers() {
+        Map<WrapperField, String> wrappers = new EnumMap<>(WrapperField.class);
+        wrappers.put(WrapperField.METHOD, orderMethod.getValue());
+        wrappers.put(WrapperField.HOST, host.host());
+        wrappers.put(WrapperField.PORT, String.valueOf(host.port()));
+        wrappers.put(WrapperField.ORDER_ID, String.valueOf(orderId));
+        wrappers.putAll(getOptionalWrappers());
+        return wrappers;
     }
+
+    public abstract Map<WrapperField, String> getOptionalWrappers();
 
 }

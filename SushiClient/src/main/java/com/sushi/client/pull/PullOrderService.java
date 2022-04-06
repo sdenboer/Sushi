@@ -6,9 +6,8 @@ import static com.sushi.components.message.serving.ServingStatus.OK;
 import com.sushi.client.order.OrderService;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
+import com.sushi.components.message.serving.ServingMapper;
 import com.sushi.components.protocol.pull.PullOrder;
-import com.sushi.components.protocol.pull.PullServing;
-import com.sushi.components.protocol.pull.PullServingMapper;
 import com.sushi.components.senders.MessageSender;
 import com.sushi.components.utils.FileWriter;
 import java.io.IOException;
@@ -21,20 +20,20 @@ public class PullOrderService implements OrderService {
 
     @Override
     public Serving send(ByteChannel socketChannel, Order order) throws IOException {
-        new MessageSender().send(socketChannel, order);
-        String serving = receiveServing(socketChannel);
-        PullServing pullServing = new PullServingMapper().from(serving);
-        if (pullServing.getServingStatus().equals(OK)) {
-            receiveFilePayload(socketChannel, pullServing, (PullOrder) order);
+        MessageSender.send(socketChannel, order);
+        String message = receiveServing(socketChannel);
+        Serving serving = new ServingMapper().from(message);
+        if (serving.getServingStatus().equals(OK)) {
+            receiveFilePayload(socketChannel, serving, (PullOrder) order);
         }
-        return pullServing;
+        return serving;
     }
 
-    private void receiveFilePayload(ByteChannel socketChannel, PullServing pullServing,
+    private void receiveFilePayload(ByteChannel socketChannel, Serving pullServing,
         PullOrder order) {
         try {
             FileWriter fileWriter = new FileWriter(TMP_DIR, order.getFileName(),
-                pullServing.getFileSize());
+                pullServing.getPayloadContext().payloadMetaData().contentLength());
             fileWriter.write(socketChannel);
         } catch (IOException e) {
             System.out.println("Problem receiving file");

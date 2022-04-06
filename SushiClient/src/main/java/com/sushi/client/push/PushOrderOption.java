@@ -8,7 +8,9 @@ import com.sushi.client.cmd.OrderOption;
 import com.sushi.client.utils.Constants;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.wrappers.ContentType;
-import com.sushi.components.message.wrappers.FilePayload;
+import com.sushi.components.message.wrappers.Payload;
+import com.sushi.components.message.wrappers.PayloadContext;
+import com.sushi.components.message.wrappers.PayloadMetaData;
 import com.sushi.components.protocol.push.PushOrder;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,16 +54,16 @@ public class PushOrderOption implements OrderOption {
         Path remotePath = Paths.get(remoteFile);
         String fileName = localPath.getFileName().toString();
         String dir = remotePath.toString();
+        PayloadMetaData metaData = new PayloadMetaData(ContentType.FILE, size);
+        Payload payload = new Payload(localPath.toString());
 
         return PushOrder.builder()
             .host(getValueFromCMD(cmd, Constants.HOST))
             .port(getIntValueFromCMD(cmd, Constants.PORT))
             .orderId(UUID.randomUUID())
-            .contentType(ContentType.FILE)
             .dir(dir)
             .fileName(fileName)
-            .fileSize(size)
-            .payload(new FilePayload(localPath))
+            .payloadContext(new PayloadContext(metaData, payload))
             .build();
     }
 }

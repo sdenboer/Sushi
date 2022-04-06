@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.sushi</groupId>
-    <artifactId>Sushi</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0</version>
-    <modules>
-        <module>SushiComponents</module>
-        <module>SushiServer</module>
-        <module>SushiClient</module>
-    </modules>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
-        <commons-cli.version>1.5.0</commons-cli.version>
-        <junit.version>4.13.2</junit.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-
-
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.sushi</groupId>
+  <artifactId>Sushi</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0</version>
+  <modules>
+    <module>SushiComponents</module>
+    <module>SushiServer</module>
+    <module>SushiClient</module>
+  </modules>
+  <properties>
+    <commons-cli.version>1.5.0</commons-cli.version>
+    <jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
+    <junit.version>5.8.2</junit.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 </project>

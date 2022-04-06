@@ -1,9 +1,5 @@
 package com.sushi.components.utils;
 
-import com.sushi.components.utils.ChannelUtils;
-import com.sushi.components.utils.Constants;
-import lombok.Getter;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
@@ -12,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.atomic.AtomicLong;
+import lombok.Getter;
 
 @Getter
 public class FileWriter {
@@ -22,9 +19,9 @@ public class FileWriter {
     private final Path path;
 
     public FileWriter(String dir, String fileName, long fileSize) throws IOException {
-        Path path = Paths.get(dir, fileName);
-        this.path = path;
-        this.fileChannel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+        this.path = Paths.get(dir, fileName);
+        this.fileChannel = FileChannel.open(path, StandardOpenOption.WRITE,
+            StandardOpenOption.CREATE);
         this.position = new AtomicLong(0L);
         this.fileSize = fileSize;
         //lock for other processes
@@ -42,8 +39,8 @@ public class FileWriter {
 
     public void write(ByteChannel socketChannel) throws IOException {
         while (!done()) {
-            position.addAndGet(fileChannel.transferFrom(socketChannel, position.get(), Constants.TRANSFER_MAX_SIZE));
-            System.out.println(((double) this.position.get() / this.fileSize * 100));
+            position.addAndGet(fileChannel.transferFrom(socketChannel, position.get(),
+                Constants.TRANSFER_MAX_SIZE));
         }
         ChannelUtils.close(fileChannel);
     }

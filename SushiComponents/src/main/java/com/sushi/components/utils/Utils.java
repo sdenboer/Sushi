@@ -2,7 +2,10 @@ package com.sushi.components.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
 
     public static String bytesToFileSize(long byteValue) {

@@ -12,6 +12,8 @@ import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
 import com.sushi.components.message.serving.ServingStatus;
 import java.util.Arrays;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -19,6 +21,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommandLineHandler {
 
     public static ServingStatus parse(String[] args) {
@@ -34,7 +37,8 @@ public class CommandLineHandler {
 
         try {
             if (args.length <= 0) {
-                throw new RuntimeException("No arguments given");
+                System.out.println("No arguments given");
+                System.exit(1);
             }
 
             String[] method = {args[0]};

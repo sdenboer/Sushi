@@ -1,25 +1,28 @@
 package com.sushi.components.senders;
 
-import com.sushi.components.utils.OnComplete;
 import com.sushi.components.utils.ChannelUtils;
-import org.apache.log4j.Logger;
-
+import com.sushi.components.utils.OnComplete;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.charset.StandardCharsets;
+import org.apache.log4j.Logger;
 
-public class TextSender implements Sender<String> {
+public class TextSender implements Sender {
 
     private static final Logger logger = Logger.getLogger(TextSender.class);
 
     @Override
-    public void send(ByteChannel socketChannel, String payload) throws IOException {
+    public void send(ByteChannel socketChannel, String payload) {
         final ByteBuffer buffer = ByteBuffer.wrap(payload.getBytes(StandardCharsets.US_ASCII));
         while (buffer.hasRemaining()) {
-            socketChannel.write(buffer);
+            try {
+                socketChannel.write(buffer);
+            } catch (IOException e) {
+                logger.error(e);
+            }
         }
     }
 
