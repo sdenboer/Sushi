@@ -22,7 +22,7 @@ public class FileUtils {
     public static String filesToPayload(Map<String, String> files) {
         return files.entrySet()
             .stream()
-            .map(s -> s.getKey() + ": " + s.getValue())
+            .map(s -> s.getKey().replace(FILE_DIR, "") + ": " + s.getValue())
             .collect(Collectors.joining("\n"));
     }
 
