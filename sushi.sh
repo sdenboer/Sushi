@@ -1,3 +1,5 @@
 #!/bin/bash
 
-docker run --pull always --network host -v $PWD:/home/files sdenboer/sushi-client "$@"
+DOCKER_DIR=/home/files
+
+docker run --pull always --network host -v "$PWD":"$DOCKER_DIR" sdenboer/sushi-client "$@"
