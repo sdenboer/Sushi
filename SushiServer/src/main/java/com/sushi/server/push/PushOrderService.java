@@ -98,14 +98,14 @@ public class PushOrderService implements OrderService {
             + "finished writing "
             + Utils.bytesToFileSize(fileWriter.getFileSize())
             + " to file " + fileWriter.getPath());
+        String hash = "";
         try {
-            String hash = getSHA265HexFromPath(fileWriter.getPath());
+            hash = getSHA265HexFromPath(fileWriter.getPath());
+        } catch (IOException e) {
+            hash = "File too big for hashing";
+        } finally {
             String payloadMessage = filesToPayload(Map.of(fileWriter.getPath().toString(), hash));
             ServingSender.sendTextPayload(socketChannel, payloadMessage, orderContext);
-        } catch (IOException e) {
-            logger.info(LoggerUtils.createMessage(orderContext) + "Problem with buffer");
-            ServingSender.send(socketChannel, ServingStatus.INVALID, orderContext);
-        } finally {
             fileWriter.finish();
         }
 
