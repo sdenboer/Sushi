@@ -34,7 +34,10 @@ public class PullOrderService implements OrderService {
         try {
             FileWriter fileWriter = new FileWriter(FILE_DIR, order.getFileName(),
                 pullServing.getPayloadContext().payloadMetaData().contentLength());
-            fileWriter.write(socketChannel);
+            while(!fileWriter.done()) {
+                fileWriter.write(socketChannel);
+            }
+            fileWriter.finish();
         } catch (IOException e) {
             System.out.println("Problem receiving file");
             logger.error(e);

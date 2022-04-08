@@ -8,7 +8,6 @@ import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.protocol.push.PushOrder;
 import com.sushi.components.protocol.push.PushOrderMapper;
 import com.sushi.components.senders.ServingSender;
-import com.sushi.components.utils.ChannelUtils;
 import com.sushi.components.utils.Constants;
 import com.sushi.components.utils.FileWriter;
 import com.sushi.components.utils.OrderContext;
@@ -59,7 +58,7 @@ public class PushOrderService implements OrderService {
                         try {
                             writeToFile(buffer, attachedFileWriter);
                         } catch (IOException e) {
-                            ChannelUtils.close(fileWriter.getFileChannel());
+                            fileWriter.fail();
                             logger.error(LoggerUtils.createMessage(orderContext), e);
                             ServingSender.send(socketChannel, ServingStatus.ABORTED, orderContext);
                         }
@@ -71,7 +70,7 @@ public class PushOrderService implements OrderService {
                         socketChannel.read(buffer, attachedFileWriter, this);
                     }
                 } else {
-                    ChannelUtils.close(fileWriter.getFileChannel());
+                    fileWriter.fail();
                     logger.info(LoggerUtils.createMessage(orderContext) + "Problem with buffer");
                     ServingSender.send(socketChannel, ServingStatus.INVALID, orderContext);
                 }
@@ -79,6 +78,7 @@ public class PushOrderService implements OrderService {
 
             @Override
             public void failed(final Throwable exc, final FileWriter failedFileWriter) {
+                failedFileWriter.fail();
                 logger.error(LoggerUtils.createMessage(orderContext), exc);
                 ServingSender.send(socketChannel, ServingStatus.INVALID, orderContext);
             }
@@ -106,7 +106,7 @@ public class PushOrderService implements OrderService {
             logger.info(LoggerUtils.createMessage(orderContext) + "Problem with buffer");
             ServingSender.send(socketChannel, ServingStatus.INVALID, orderContext);
         } finally {
-            ChannelUtils.close(fileWriter.getFileChannel());
+            fileWriter.finish();
         }
 
 

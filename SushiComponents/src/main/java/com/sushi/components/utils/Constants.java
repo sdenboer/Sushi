@@ -11,5 +11,6 @@ public class Constants {
     public static final String FILE_DIR = "/home/files";
     public static final int DEFAULT_PORT = 9444;
     public static final int TLS_PORT = 9443;
+    public static final String TMP_FILE_SUFFIX = ".partial";
 
 }

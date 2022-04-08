@@ -4,24 +4,28 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.FileChannel;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.concurrent.atomic.AtomicLong;
+
 import lombok.Getter;
+import org.apache.log4j.Logger;
 
 @Getter
 public class FileWriter {
+
+    private static final Logger logger = Logger.getLogger(FileWriter.class);
 
     private final FileChannel fileChannel;
     private final AtomicLong position;
     private final long fileSize;
     private final Path path;
+    private final Path tmpPath;
 
     public FileWriter(String dir, String fileName, long fileSize) throws IOException {
         this.path = Paths.get(dir, fileName);
-        this.fileChannel = FileChannel.open(path, StandardOpenOption.WRITE,
-            StandardOpenOption.CREATE);
+        this.tmpPath = Paths.get(dir, fileName + Constants.TMP_FILE_SUFFIX);
+        this.fileChannel = FileChannel.open(tmpPath, StandardOpenOption.WRITE,
+                StandardOpenOption.CREATE);
         this.position = new AtomicLong(0L);
         this.fileSize = fileSize;
         //lock for other processes
@@ -38,15 +42,30 @@ public class FileWriter {
     }
 
     public void write(ByteChannel socketChannel) throws IOException {
-        while (!done()) {
-            position.addAndGet(fileChannel.transferFrom(socketChannel, position.get(),
+        position.addAndGet(fileChannel.transferFrom(socketChannel, position.get(),
                 Constants.TRANSFER_MAX_SIZE));
-        }
-        ChannelUtils.close(fileChannel);
     }
 
     public boolean done() {
         return this.position.get() == this.fileSize;
+    }
+
+    public void finish() {
+        ChannelUtils.close(fileChannel);
+        try {
+            Files.move(tmpPath, path, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+    }
+
+    public void fail() {
+        ChannelUtils.close(fileChannel);
+        try {
+            Files.delete(tmpPath);
+        } catch (IOException e) {
+            logger.error(e);
+        }
     }
 
 }
