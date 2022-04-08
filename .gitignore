@@ -4,3 +4,4 @@ target/
 /SushiComponents/src/main/resources/ssl/private_key.key
 ./tmp/
 /SushiClient/test.txt
+.java-version
