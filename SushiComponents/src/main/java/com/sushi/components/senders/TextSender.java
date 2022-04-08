@@ -21,7 +21,8 @@ public class TextSender implements Sender {
             try {
                 socketChannel.write(buffer);
             } catch (IOException e) {
-                logger.error(e);
+                System.out.println("Lost connection");
+                System.exit(1);
             }
         }
     }

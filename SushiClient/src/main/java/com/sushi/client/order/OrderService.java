@@ -22,6 +22,10 @@ public interface OrderService {
             if (bytesRead > 0) {
                 response.append(new String(buffer.array()));
             }
+            if (!socketChannel.isOpen()) {
+                System.out.println("Lost connection");
+                System.exit(1);
+            }
         }
         return response.toString();
     }

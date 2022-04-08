@@ -17,9 +17,7 @@ import java.nio.channels.AsynchronousByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 import org.apache.log4j.Logger;
 
@@ -32,7 +30,11 @@ public class FileOrderService implements OrderService {
         OrderContext orderContext) {
         FileOrder order = new FileOrderMapper().from(message);
         Map<String, String> files = new HashMap<>();
-        Path path = Paths.get(FILE_DIR, order.getDir(), order.getFileName());
+        String[] paths = Stream.of(order.getDir(), order.getFileName())
+                .filter(Objects::nonNull)
+                .toArray(String[]::new);
+        Path path = Paths.get(FILE_DIR, paths);
+        logger.info(LoggerUtils.createMessage(orderContext) + "listing files in " + path);
         try {
             addPathChecksumToFiles(path, files);
             String payloadText = filesToPayload(files);

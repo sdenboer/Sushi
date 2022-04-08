@@ -30,8 +30,8 @@ public class FileOrderOption implements OrderOption {
         String file = getValueFromCMD(cmd, FILE);
 
         Path remotePath = Paths.get(file);
-        String fileName = remotePath.getFileName().toString();
-        String directory = remotePath.getParent().toString();
+        String fileName = remotePath.getFileName() != null ? remotePath.getFileName().toString() : null;
+        String directory = remotePath.getParent() != null ? remotePath.getParent().toString() : remotePath.toString();
 
         return FileOrder.builder()
             .host(getValueFromCMD(cmd, HOST))
