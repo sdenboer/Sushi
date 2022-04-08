@@ -3,6 +3,7 @@ package com.sushi.client.push;
 import static com.sushi.client.cmd.CommandLineOptions.hostOption;
 import static com.sushi.client.cmd.CommandLineOptions.localToRemoteFileOption;
 import static com.sushi.client.cmd.CommandLineOptions.portOption;
+import static com.sushi.components.utils.Constants.FILE_DIR;
 
 import com.sushi.client.cmd.OrderOption;
 import com.sushi.client.utils.Constants;
@@ -40,7 +41,7 @@ public class PushOrderOption implements OrderOption {
         }
 
         String localFile = split[0];
-        Path localPath = Paths.get(localFile);
+        Path localPath = Paths.get(FILE_DIR, localFile);
         long size = 0L;
 
         try {

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run --network host -v /tmp:/tmp sdenboer/sushi-client "$@"
+docker run --pull always --network host -v $PWD:/home/files sdenboer/sushi-client "$@"

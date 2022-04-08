@@ -1,7 +1,7 @@
 package com.sushi.client.pull;
 
-import static com.sushi.client.utils.Constants.TMP_DIR;
 import static com.sushi.components.message.serving.ServingStatus.OK;
+import static com.sushi.components.utils.Constants.FILE_DIR;
 
 import com.sushi.client.order.OrderService;
 import com.sushi.components.message.order.Order;
@@ -32,7 +32,7 @@ public class PullOrderService implements OrderService {
     private void receiveFilePayload(ByteChannel socketChannel, Serving pullServing,
         PullOrder order) {
         try {
-            FileWriter fileWriter = new FileWriter(TMP_DIR, order.getFileName(),
+            FileWriter fileWriter = new FileWriter(FILE_DIR, order.getFileName(),
                 pullServing.getPayloadContext().payloadMetaData().contentLength());
             fileWriter.write(socketChannel);
         } catch (IOException e) {

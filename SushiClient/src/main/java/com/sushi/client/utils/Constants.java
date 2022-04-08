@@ -11,8 +11,6 @@ public class Constants {
     public static final String PORT = "port";
     public static final String FILE = "file";
 
-    public static final String TMP_DIR = "/tmp";
-
     public static final String LIST_METHOD = "list";
     public static final String FETCH_METHOD = "fetch";
     public static final String BACKUP_METHOD = "backup";
