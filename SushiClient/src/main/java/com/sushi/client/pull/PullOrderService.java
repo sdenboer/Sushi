@@ -8,14 +8,12 @@ import com.sushi.components.protocol.pull.PullOrder;
 import com.sushi.components.sender.synchronous.ByteChannelMessageSender;
 import com.sushi.components.utils.FileWriter;
 import com.sushi.components.utils.Utils;
-import jdk.swing.interop.SwingInterOpUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.TimeUnit;
 
 import static com.sushi.components.message.serving.ServingStatus.OK;
 import static com.sushi.components.utils.Constants.FILE_DIR;
@@ -59,7 +57,7 @@ public class PullOrderService implements OrderService {
                     System.out.printf("%s%% - %s/s", Utils.getPercentage(fileWriter.getPosition().get(), size),
                             Utils.bytesToFileSize(dataTransferredPerStream / seconds));
                     timePassed = timeAfterTransfer;
-                    dataTransferredPerStream= 0;
+                    dataTransferredPerStream = 0;
                 }
             }
             System.out.printf("\rFinished transferring in %s second(s)%n", Duration.between(totalTime, now()).toSeconds());
