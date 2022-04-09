@@ -4,16 +4,17 @@ import com.sushi.components.message.MessageMapper;
 import com.sushi.components.message.order.OrderMethod;
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.message.wrappers.WrapperField;
-import com.sushi.components.senders.ServingSender;
+import com.sushi.components.sender.asynchronous.ServingSender;
 import com.sushi.components.utils.Constants;
 import com.sushi.components.utils.OrderContext;
 import com.sushi.server.utils.LoggerUtils;
+import org.apache.log4j.Logger;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.log4j.Logger;
 
 public class OrderInterceptor {
 
@@ -37,7 +38,7 @@ public class OrderInterceptor {
 
                     Map<WrapperField, String> orderHeaders = MessageMapper.deserialize(message);
                     OrderMethod method = OrderMethod.fromString(
-                        orderHeaders.get(WrapperField.METHOD));
+                            orderHeaders.get(WrapperField.METHOD));
 
                     OrderContext orderContext = new OrderContext(getOrderIdFromOrder(attachment));
                     logger.info(message);

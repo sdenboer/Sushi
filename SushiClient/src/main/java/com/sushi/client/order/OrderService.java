@@ -4,6 +4,7 @@ import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
 import com.sushi.components.message.wrappers.PayloadContext;
 import com.sushi.components.utils.Constants;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
@@ -32,7 +33,7 @@ public interface OrderService {
 
 
     default String receiveTextPayload(ByteChannel socketChannel, PayloadContext payloadContext)
-        throws IOException {
+            throws IOException {
         long payloadSize = payloadContext.payloadMetaData().contentLength();
         StringBuilder response = new StringBuilder();
         while (response.toString().getBytes(StandardCharsets.UTF_8).length < payloadSize) {

@@ -6,11 +6,12 @@ import com.sushi.components.message.order.OrderMethod;
 import com.sushi.components.message.wrappers.PayloadContext;
 import com.sushi.components.message.wrappers.PayloadMetaData;
 import com.sushi.components.message.wrappers.WrapperField;
+import lombok.Builder;
+import lombok.Getter;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
-import lombok.Builder;
-import lombok.Getter;
 
 @Getter
 public class PushOrder extends Order {
@@ -20,7 +21,7 @@ public class PushOrder extends Order {
 
     @Builder
     public PushOrder(String host, int port, UUID orderId, String dir, String fileName,
-        PayloadContext payloadContext) {
+                     PayloadContext payloadContext) {
         super(OrderMethod.PUSH, new Host(host, port), orderId, payloadContext);
         this.dir = dir;
         this.fileName = fileName;

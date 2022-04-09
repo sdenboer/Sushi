@@ -1,10 +1,5 @@
 package com.sushi.client.push;
 
-import static com.sushi.client.cmd.CommandLineOptions.hostOption;
-import static com.sushi.client.cmd.CommandLineOptions.localToRemoteFileOption;
-import static com.sushi.client.cmd.CommandLineOptions.portOption;
-import static com.sushi.components.utils.Constants.FILE_DIR;
-
 import com.sushi.client.cmd.OrderOption;
 import com.sushi.client.utils.Constants;
 import com.sushi.components.message.order.Order;
@@ -13,13 +8,17 @@ import com.sushi.components.message.wrappers.Payload;
 import com.sushi.components.message.wrappers.PayloadContext;
 import com.sushi.components.message.wrappers.PayloadMetaData;
 import com.sushi.components.protocol.push.PushOrder;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
+
+import static com.sushi.client.cmd.CommandLineOptions.*;
+import static com.sushi.components.utils.Constants.FILE_DIR;
 
 public class PushOrderOption implements OrderOption {
 
@@ -59,12 +58,12 @@ public class PushOrderOption implements OrderOption {
         Payload payload = new Payload(localPath.toString());
 
         return PushOrder.builder()
-            .host(getValueFromCMD(cmd, Constants.HOST))
-            .port(getIntValueFromCMD(cmd, Constants.PORT))
-            .orderId(UUID.randomUUID())
-            .dir(dir)
-            .fileName(fileName)
-            .payloadContext(new PayloadContext(metaData, payload))
-            .build();
+                .host(getValueFromCMD(cmd, Constants.HOST))
+                .port(getIntValueFromCMD(cmd, Constants.PORT))
+                .orderId(UUID.randomUUID())
+                .dir(dir)
+                .fileName(fileName)
+                .payloadContext(new PayloadContext(metaData, payload))
+                .build();
     }
 }

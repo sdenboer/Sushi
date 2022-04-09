@@ -1,18 +1,25 @@
 package com.sushi.client.pull;
 
-import static com.sushi.components.message.serving.ServingStatus.OK;
-import static com.sushi.components.utils.Constants.FILE_DIR;
-
 import com.sushi.client.order.OrderService;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
 import com.sushi.components.message.serving.ServingMapper;
 import com.sushi.components.protocol.pull.PullOrder;
-import com.sushi.components.senders.MessageSender;
+import com.sushi.components.sender.synchronous.ByteChannelMessageSender;
 import com.sushi.components.utils.FileWriter;
+import com.sushi.components.utils.Utils;
+import jdk.swing.interop.SwingInterOpUtils;
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
-import org.apache.log4j.Logger;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.TimeUnit;
+
+import static com.sushi.components.message.serving.ServingStatus.OK;
+import static com.sushi.components.utils.Constants.FILE_DIR;
+import static java.time.Instant.now;
 
 public class PullOrderService implements OrderService {
 
@@ -20,7 +27,7 @@ public class PullOrderService implements OrderService {
 
     @Override
     public Serving send(ByteChannel socketChannel, Order order) throws IOException {
-        MessageSender.send(socketChannel, order);
+        new ByteChannelMessageSender().send(socketChannel, order);
         String message = receiveServing(socketChannel);
         Serving serving = new ServingMapper().from(message);
         if (serving.getServingStatus().equals(OK)) {
@@ -30,13 +37,32 @@ public class PullOrderService implements OrderService {
     }
 
     private void receiveFilePayload(ByteChannel socketChannel, Serving pullServing,
-        PullOrder order) {
+                                    PullOrder order) {
         try {
             FileWriter fileWriter = new FileWriter(FILE_DIR, order.getFileName(),
-                pullServing.getPayloadContext().payloadMetaData().contentLength());
-            while(!fileWriter.done()) {
-                fileWriter.write(socketChannel);
+                    pullServing.getPayloadContext().payloadMetaData().contentLength());
+
+            long dataTransferredPerStream = 0;
+            final long size = fileWriter.getFileSize();
+
+            Instant totalTime = now();
+            Instant timePassed = now();
+
+            System.out.println("Receiving " + Utils.bytesToFileSize(fileWriter.getFileSize()) + " file...");
+            while (!fileWriter.done()) {
+                long dataTransferred = fileWriter.write(socketChannel);
+                dataTransferredPerStream += dataTransferred;
+                Instant timeAfterTransfer = now();
+                long seconds = Duration.between(timePassed, timeAfterTransfer).getSeconds();
+                if (seconds > 0) {
+                    System.out.print("\r");
+                    System.out.printf("%s%% - %s/s", Utils.getPercentage(fileWriter.getPosition().get(), size),
+                            Utils.bytesToFileSize(dataTransferredPerStream / seconds));
+                    timePassed = timeAfterTransfer;
+                    dataTransferredPerStream= 0;
+                }
             }
+            System.out.printf("\rFinished transferring in %s second(s)%n", Duration.between(totalTime, now()).toSeconds());
             fileWriter.finish();
         } catch (IOException e) {
             System.out.println("Problem receiving file");

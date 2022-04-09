@@ -1,11 +1,11 @@
-import static com.sushi.components.message.serving.ServingStatus.OK;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.sushi.client.cmd.CommandLineHandler;
 import com.sushi.components.message.serving.ServingStatus;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static com.sushi.components.message.serving.ServingStatus.OK;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled
 class IntegrationTest {
@@ -14,7 +14,7 @@ class IntegrationTest {
     @ValueSource(ints = {9444, 9443})
     void testPush(int port) {
         String[] args = new String[]{"--backup", "-h localhost", "-p " + port,
-            "-f /tmp/input/test.txt:/tmp/output"};
+                "-f /tmp/input/test.txt:/tmp/output"};
         ServingStatus servingStatus = CommandLineHandler.parse(args);
         assertEquals(OK, servingStatus);
     }
@@ -24,7 +24,7 @@ class IntegrationTest {
     void testPull(int port) {
         testPush(port);
         String[] args = new String[]{"--fetch", "-h localhost", "-p " + port,
-            "-f /tmp/output/test.txt"};
+                "-f /tmp/output/test.txt"};
         ServingStatus servingStatus = CommandLineHandler.parse(args);
         assertEquals(OK, servingStatus);
     }
@@ -43,7 +43,7 @@ class IntegrationTest {
     void testRemove(int port) {
         testPush(port);
         String[] args = new String[]{"--remove", "-h localhost", "-p " + port,
-            "-f /tmp/output/test.txt"};
+                "-f /tmp/output/test.txt"};
         ServingStatus servingStatus = CommandLineHandler.parse(args);
         assertEquals(OK, servingStatus);
 

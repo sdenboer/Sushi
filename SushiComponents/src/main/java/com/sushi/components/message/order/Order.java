@@ -3,10 +3,11 @@ package com.sushi.components.message.order;
 import com.sushi.components.message.Message;
 import com.sushi.components.message.wrappers.PayloadContext;
 import com.sushi.components.message.wrappers.WrapperField;
+import lombok.Getter;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
-import lombok.Getter;
 
 @Getter
 public abstract class Order implements Message {
@@ -17,7 +18,7 @@ public abstract class Order implements Message {
     protected final PayloadContext payloadContext;
 
     protected Order(OrderMethod orderMethod, Host host, UUID orderId,
-        PayloadContext payloadContext) {
+                    PayloadContext payloadContext) {
         this.orderId = orderId;
         this.orderMethod = orderMethod;
         this.host = host;

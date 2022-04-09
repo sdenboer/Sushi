@@ -2,6 +2,7 @@ package com.sushi.components.message;
 
 import com.sushi.components.message.wrappers.PayloadContext;
 import com.sushi.components.message.wrappers.WrapperField;
+
 import java.util.Map;
 
 public interface Message {
@@ -16,9 +17,9 @@ public interface Message {
 
     default String toRequest() {
         return """
-            %s
-                       
-            """.formatted(MessageMapper.serialize(getWrappers()));
+                %s
+                           
+                """.formatted(MessageMapper.serialize(getWrappers()));
     }
 
 

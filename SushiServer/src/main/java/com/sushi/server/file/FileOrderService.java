@@ -1,25 +1,27 @@
 package com.sushi.server.file;
 
-import static com.sushi.components.utils.Constants.FILE_DIR;
-import static com.sushi.server.utils.FileUtils.filesToPayload;
-import static com.sushi.server.utils.FileUtils.getSHA265HexFromPath;
-import static com.sushi.server.utils.FileUtils.removeBaseDir;
-
 import com.sushi.components.message.serving.ServingStatus;
 import com.sushi.components.protocol.file.FileOrder;
 import com.sushi.components.protocol.file.FileOrderMapper;
-import com.sushi.components.senders.ServingSender;
+import com.sushi.components.sender.asynchronous.ServingSender;
 import com.sushi.components.utils.OrderContext;
 import com.sushi.server.handlers.OrderService;
 import com.sushi.server.utils.LoggerUtils;
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.nio.channels.AsynchronousByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
-import org.apache.log4j.Logger;
+
+import static com.sushi.components.utils.Constants.FILE_DIR;
+import static com.sushi.server.utils.FileUtils.*;
 
 public class FileOrderService implements OrderService {
 
@@ -27,7 +29,7 @@ public class FileOrderService implements OrderService {
 
     @Override
     public void handle(AsynchronousByteChannel socketChannel, String message,
-        OrderContext orderContext) {
+                       OrderContext orderContext) {
         FileOrder order = new FileOrderMapper().from(message);
         Map<String, String> files = new HashMap<>();
         String[] paths = Stream.of(order.getDir(), order.getFileName())
@@ -65,7 +67,7 @@ public class FileOrderService implements OrderService {
     private List<Path> getFilesInDirectory(Path dir) throws IOException {
         try (Stream<Path> paths = Files.walk(dir)) {
             return paths.map(Path::normalize)
-                .filter(Files::isRegularFile).toList();
+                    .filter(Files::isRegularFile).toList();
         }
     }
 

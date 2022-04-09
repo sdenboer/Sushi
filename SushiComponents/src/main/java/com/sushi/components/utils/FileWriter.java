@@ -1,14 +1,14 @@
 package com.sushi.components.utils;
 
+import lombok.Getter;
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.FileChannel;
 import java.nio.file.*;
 import java.util.concurrent.atomic.AtomicLong;
-
-import lombok.Getter;
-import org.apache.log4j.Logger;
 
 @Getter
 public class FileWriter {
@@ -41,9 +41,10 @@ public class FileWriter {
         return bytesWritten;
     }
 
-    public void write(ByteChannel socketChannel) throws IOException {
-        position.addAndGet(fileChannel.transferFrom(socketChannel, position.get(),
-                Constants.TRANSFER_MAX_SIZE));
+    public long write(ByteChannel socketChannel) throws IOException {
+        long bytesWritten = fileChannel.transferFrom(socketChannel, position.get(), Constants.TRANSFER_MAX_SIZE);
+        position.addAndGet(bytesWritten);
+        return bytesWritten;
     }
 
     public boolean done() {

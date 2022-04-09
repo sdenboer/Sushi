@@ -1,12 +1,13 @@
 package com.sushi.server.status;
 
-import static com.sushi.components.utils.Constants.FILE_DIR;
-
 import com.sushi.components.message.serving.ServingStatus;
-import com.sushi.components.senders.ServingSender;
+import com.sushi.components.sender.asynchronous.ServingSender;
 import com.sushi.components.utils.OrderContext;
 import com.sushi.server.handlers.OrderService;
 import com.sushi.server.utils.LoggerUtils;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
@@ -17,8 +18,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.log4j.Logger;
+
+import static com.sushi.components.utils.Constants.FILE_DIR;
 
 public class StatusOrderService implements OrderService {
 
@@ -26,10 +27,10 @@ public class StatusOrderService implements OrderService {
 
     @Override
     public void handle(AsynchronousByteChannel socketChannel, String message,
-        OrderContext orderContext) {
+                       OrderContext orderContext) {
         Path path = Paths.get(FILE_DIR);
         try (SequenceInputStream stream = new SequenceInputStream(
-            getInputStreamsOfFilesInDirectory(path).elements())) {
+                getInputStreamsOfFilesInDirectory(path).elements())) {
             String payloadMessage = DigestUtils.sha256Hex(stream);
             ServingSender.sendTextPayload(socketChannel, payloadMessage, orderContext);
         } catch (IOException e) {

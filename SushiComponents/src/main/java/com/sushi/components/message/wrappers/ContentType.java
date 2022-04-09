@@ -1,7 +1,8 @@
 package com.sushi.components.message.wrappers;
 
-import java.util.Arrays;
 import lombok.Getter;
+
+import java.util.Arrays;
 
 @Getter
 public enum ContentType {
@@ -17,8 +18,8 @@ public enum ContentType {
 
     public static ContentType fromString(String text) {
         return Arrays.stream(ContentType.values())
-            .filter(value -> value.type.equalsIgnoreCase(text))
-            .findFirst()
-            .orElse(null);
+                .filter(value -> value.type.equalsIgnoreCase(text))
+                .findFirst()
+                .orElse(null);
     }
 }

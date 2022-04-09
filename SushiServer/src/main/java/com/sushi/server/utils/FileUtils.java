@@ -1,6 +1,8 @@
 package com.sushi.server.utils;
 
-import static com.sushi.components.utils.Constants.FILE_DIR;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,9 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.digest.DigestUtils;
+
+import static com.sushi.components.utils.Constants.FILE_DIR;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUtils {
@@ -21,9 +22,9 @@ public class FileUtils {
 
     public static String filesToPayload(Map<String, String> files) {
         return files.entrySet()
-            .stream()
-            .map(s -> s.getKey().replace(FILE_DIR, "") + ": " + s.getValue())
-            .collect(Collectors.joining("\n"));
+                .stream()
+                .map(s -> s.getKey().replace(FILE_DIR, "") + ": " + s.getValue())
+                .collect(Collectors.joining("\n"));
     }
 
     public static String getSHA265HexFromPath(Path path) throws IOException {

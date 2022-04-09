@@ -1,8 +1,9 @@
 package tlschannel.util;
 
-import javax.net.ssl.SSLEngineResult;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+
+import javax.net.ssl.SSLEngineResult;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Util {
@@ -22,11 +23,11 @@ public class Util {
      */
     public static String resultToString(SSLEngineResult result) {
         return String.format(
-            "status=%s,handshakeStatus=%s,bytesProduced=%d,bytesConsumed=%d",
-            result.getStatus(),
-            result.getHandshakeStatus(),
-            result.bytesProduced(),
-            result.bytesConsumed());
+                "status=%s,handshakeStatus=%s,bytesProduced=%d,bytesConsumed=%d",
+                result.getStatus(),
+                result.getHandshakeStatus(),
+                result.bytesProduced(),
+                result.bytesConsumed());
     }
 
     public static int getJavaMajorVersion() {
@@ -42,6 +43,6 @@ public class Util {
         int dotPos = version.indexOf('.');
         int dashPos = version.indexOf('-');
         return Integer.parseInt(version.substring(0,
-            dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
+                dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
     }
 }

@@ -1,11 +1,12 @@
 package com.sushi.components.utils;
 
-import java.io.IOException;
-import java.nio.channels.Channel;
-import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.nio.channels.Channel;
+import java.util.Arrays;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChannelUtils {
@@ -18,7 +19,7 @@ public class ChannelUtils {
                 channel.close();
             } catch (IOException e) {
                 logger.error("Unable to close " + channel.getClass().getSimpleName() + " channel",
-                    e);
+                        e);
             }
         });
 

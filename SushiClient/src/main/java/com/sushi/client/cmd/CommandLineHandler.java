@@ -1,25 +1,17 @@
 package com.sushi.client.cmd;
 
-import static com.sushi.client.cmd.CommandLineOptions.backupMethod;
-import static com.sushi.client.cmd.CommandLineOptions.fetchMethod;
-import static com.sushi.client.cmd.CommandLineOptions.listMethod;
-import static com.sushi.client.cmd.CommandLineOptions.removeMethod;
-import static com.sushi.client.cmd.CommandLineOptions.verifyMethod;
-
 import com.sushi.client.exceptions.SushiException;
 import com.sushi.client.order.OrderController;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
 import com.sushi.components.message.serving.ServingStatus;
-import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
+
+import java.util.Arrays;
+
+import static com.sushi.client.cmd.CommandLineOptions.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommandLineHandler {

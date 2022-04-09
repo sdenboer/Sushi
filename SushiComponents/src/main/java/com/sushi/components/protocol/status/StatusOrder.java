@@ -4,11 +4,12 @@ import com.sushi.components.message.order.Host;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.order.OrderMethod;
 import com.sushi.components.message.wrappers.WrapperField;
+import lombok.Builder;
+import lombok.Getter;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
-import lombok.Builder;
-import lombok.Getter;
 
 @Getter
 public class StatusOrder extends Order {

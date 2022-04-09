@@ -1,20 +1,17 @@
 package com.sushi.client.remove;
 
-import static com.sushi.client.cmd.CommandLineOptions.fileOption;
-import static com.sushi.client.cmd.CommandLineOptions.hostOption;
-import static com.sushi.client.cmd.CommandLineOptions.portOption;
-import static com.sushi.client.utils.Constants.FILE;
-import static com.sushi.client.utils.Constants.HOST;
-import static com.sushi.client.utils.Constants.PORT;
-
 import com.sushi.client.cmd.OrderOption;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.protocol.remove.RemoveOrder;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
+
+import static com.sushi.client.cmd.CommandLineOptions.*;
+import static com.sushi.client.utils.Constants.*;
 
 public class RemoveOrderOption implements OrderOption {
 
@@ -34,11 +31,11 @@ public class RemoveOrderOption implements OrderOption {
         String directory = remotePath.getParent().toString();
 
         return RemoveOrder.builder()
-            .host(getValueFromCMD(cmd, HOST))
-            .port(getIntValueFromCMD(cmd, PORT))
-            .orderId(UUID.randomUUID())
-            .dir(directory)
-            .fileName(fileName)
-            .build();
+                .host(getValueFromCMD(cmd, HOST))
+                .port(getIntValueFromCMD(cmd, PORT))
+                .orderId(UUID.randomUUID())
+                .dir(directory)
+                .fileName(fileName)
+                .build();
     }
 }
