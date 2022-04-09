@@ -32,8 +32,7 @@ public interface OrderService {
     }
 
 
-    default String receiveTextPayload(ByteChannel socketChannel, PayloadContext payloadContext)
-            throws IOException {
+    default String receiveTextPayload(ByteChannel socketChannel, PayloadContext payloadContext) throws IOException {
         long payloadSize = payloadContext.payloadMetaData().contentLength();
         StringBuilder response = new StringBuilder();
         while (response.toString().getBytes(StandardCharsets.UTF_8).length < payloadSize) {
@@ -41,6 +40,10 @@ public interface OrderService {
             final long bytesRead = socketChannel.read(buffer);
             if (bytesRead > 0) {
                 response.append(new String(buffer.array()));
+            }
+            if (bytesRead < 0) {
+                System.out.println("Please try again, Server connection no longer exists");
+                System.exit(1);
             }
         }
         return response.toString();

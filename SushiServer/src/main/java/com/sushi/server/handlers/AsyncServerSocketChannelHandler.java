@@ -27,8 +27,7 @@ public class AsyncServerSocketChannelHandler extends ServerSocketChannelHandler 
     @Override
     public void listen() throws IOException {
         logger.info("Waiting for connection...");
-        AsynchronousServerSocketChannel serverSocketChannel = AsynchronousServerSocketChannel.open(
-                group);
+        AsynchronousServerSocketChannel serverSocketChannel = AsynchronousServerSocketChannel.open(group);
         serverSocketChannel.bind(inetSocketAddress);
         accept(serverSocketChannel);
     }

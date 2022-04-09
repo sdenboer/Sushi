@@ -24,8 +24,8 @@ public class AsyncByteChannelTextSender implements SenderStrategy<AsynchronousBy
     }
 
     @Override
-    public void send(AsynchronousByteChannel socketChannel, String payload) {
-        final ByteBuffer payloadBuffer = ByteBuffer.wrap(payload.getBytes(StandardCharsets.UTF_8));
+    public void send(AsynchronousByteChannel socketChannel, String message) {
+        final ByteBuffer payloadBuffer = ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8));
         socketChannel.write(payloadBuffer, null, new CompletionHandler<Integer, Void>() {
             @Override
             public void completed(Integer result, Void attachment) {
