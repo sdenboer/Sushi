@@ -11,7 +11,6 @@ public class ByteChannelPayloadSender implements SenderStrategy<ByteChannel, Pay
     @Override
     public void send(ByteChannel socketChannel, PayloadContext content) {
         ContentType contentType = content.payloadMetaData().contentType();
-        System.out.println(contentType);
         if (ContentType.TXT.equals(contentType)) {
             new ByteChannelTextSender().send(socketChannel, content.payload().content());
         } else {
