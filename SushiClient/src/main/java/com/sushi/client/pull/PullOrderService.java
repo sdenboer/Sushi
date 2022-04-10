@@ -16,7 +16,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 import static com.sushi.components.message.serving.ServingStatus.OK;
-import static com.sushi.components.utils.Constants.FILE_DIR;
 import static java.time.Instant.now;
 
 public class PullOrderService implements OrderService {
@@ -37,7 +36,7 @@ public class PullOrderService implements OrderService {
     private void receiveFilePayload(ByteChannel socketChannel, Serving pullServing,
                                     PullOrder order) {
         try {
-            FileWriter fileWriter = new FileWriter(FILE_DIR, order.getFileName(),
+            FileWriter fileWriter = new FileWriter(System.getProperty("user.dir"), order.getFileName(),
                     pullServing.getPayloadContext().payloadMetaData().contentLength());
 
             long dataTransferredPerStream = 0;

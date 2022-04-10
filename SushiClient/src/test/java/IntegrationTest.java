@@ -15,7 +15,7 @@ class IntegrationTest {
     void testPush(int port) {
         String[] args = new String[]{"--backup", "-h localhost", "-p " + port,
                 "-f /tmp/input/test.txt:/tmp/output"};
-        ServingStatus servingStatus = CommandLineHandler.parse(args);
+        ServingStatus servingStatus = new CommandLineHandler().parse(args);
         assertEquals(OK, servingStatus);
     }
 
@@ -25,7 +25,7 @@ class IntegrationTest {
         testPush(port);
         String[] args = new String[]{"--fetch", "-h localhost", "-p " + port,
                 "-f /tmp/output/test.txt"};
-        ServingStatus servingStatus = CommandLineHandler.parse(args);
+        ServingStatus servingStatus = new CommandLineHandler().parse(args);
         assertEquals(OK, servingStatus);
     }
 
@@ -34,7 +34,7 @@ class IntegrationTest {
     void testFile(int port) {
         testPush(port);
         String[] args = new String[]{"--list", "-h localhost", "-p " + port, "-f /tmp/output"};
-        ServingStatus servingStatus = CommandLineHandler.parse(args);
+        ServingStatus servingStatus = new CommandLineHandler().parse(args);
         assertEquals(OK, servingStatus);
     }
 
@@ -44,7 +44,7 @@ class IntegrationTest {
         testPush(port);
         String[] args = new String[]{"--remove", "-h localhost", "-p " + port,
                 "-f /tmp/output/test.txt"};
-        ServingStatus servingStatus = CommandLineHandler.parse(args);
+        ServingStatus servingStatus = new CommandLineHandler().parse(args);
         assertEquals(OK, servingStatus);
 
     }
@@ -54,7 +54,7 @@ class IntegrationTest {
     void testChecksum(int port) {
         testPush(port);
         String[] args = new String[]{"--verify", "-h localhost", "-p " + port};
-        ServingStatus servingStatus = CommandLineHandler.parse(args);
+        ServingStatus servingStatus = new CommandLineHandler().parse(args);
         assertEquals(OK, servingStatus);
     }
 

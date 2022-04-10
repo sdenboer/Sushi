@@ -5,18 +5,25 @@ import com.sushi.client.order.OrderController;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
 import com.sushi.components.message.serving.ServingStatus;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.cli.*;
 
 import java.util.Arrays;
 
 import static com.sushi.client.cmd.CommandLineOptions.*;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommandLineHandler {
 
-    public static ServingStatus parse(String[] args) {
+    private final OrderController orderController;
+
+    public CommandLineHandler() {
+        this.orderController = new OrderController();
+    }
+
+    public CommandLineHandler(OrderController orderController) {
+        this.orderController = orderController;
+    }
+
+    public ServingStatus parse(String[] args) {
         Options options = new Options();
         options.addOption(listMethod);
         options.addOption(fetchMethod);
@@ -43,7 +50,7 @@ public class CommandLineHandler {
             cmd = parser.parse(options, methodArgs);
 
             Order order = orderOption.createOrder(cmd);
-            Serving serving = new OrderController().handleOrder(order);
+            Serving serving = orderController.handleOrder(order);
             System.out.println(serving.getServingStatus());
             return serving.getServingStatus();
 
