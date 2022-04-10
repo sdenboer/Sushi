@@ -8,6 +8,7 @@ import com.sushi.client.status.StatusOrderService;
 import com.sushi.components.configuration.SSLConfiguration;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
+import lombok.NoArgsConstructor;
 import tlschannel.ClientTlsChannel;
 import tlschannel.TlsChannel;
 
@@ -21,11 +22,21 @@ import static com.sushi.components.utils.Constants.TLS_PORT;
 
 public class OrderController {
 
+    private final int tlsPort;
+
+    public OrderController(int tlsPort) {
+        this.tlsPort = tlsPort;
+    }
+
+    public OrderController() {
+        this.tlsPort = TLS_PORT;
+    }
+
     public Serving handleOrder(Order order) {
         try (SocketChannel socketChannel = SocketChannel.open()) {
             socketChannel.connect(
                     new InetSocketAddress(order.getHost().host(), order.getHost().port()));
-            if (order.getHost().port() == TLS_PORT) {
+            if (order.getHost().port() == tlsPort) {
                 SSLContext sslContext = SSLConfiguration.authenticatedContext();
                 try (TlsChannel tlsChannel = ClientTlsChannel.newBuilder(socketChannel, sslContext)
                         .build()) {

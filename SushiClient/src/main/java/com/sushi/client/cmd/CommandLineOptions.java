@@ -1,6 +1,5 @@
 package com.sushi.client.cmd;
 
-import com.sushi.client.utils.Constants;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.cli.Option;
@@ -12,28 +11,28 @@ public class CommandLineOptions {
 
     public static final Option hostOption = Option.builder()
             .option("h")
-            .longOpt(Constants.HOST)
+            .longOpt(HOST)
             .hasArg(true)
             .desc("host ip address")
             .build();
 
     public static final Option portOption = Option.builder()
             .option("p")
-            .longOpt(Constants.PORT)
+            .longOpt(PORT)
             .hasArg(true)
             .desc("host port")
             .build();
 
     public static final Option fileOption = Option.builder()
             .option("f")
-            .longOpt(Constants.FILE)
+            .longOpt(FILE)
             .hasArg(true)
             .desc("/path/to/remote/file")
             .build();
 
     public static final Option localToRemoteFileOption = Option.builder()
             .option("f")
-            .longOpt(Constants.FILE)
+            .longOpt(FILE)
             .hasArg(true)
             .desc("/path/to/local/file:/path/to/remote/file")
             .build();

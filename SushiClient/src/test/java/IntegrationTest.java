@@ -1,60 +1,92 @@
 import com.sushi.client.cmd.CommandLineHandler;
+import com.sushi.client.order.OrderController;
 import com.sushi.components.message.serving.ServingStatus;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import java.util.Arrays;
 
 import static com.sushi.components.message.serving.ServingStatus.OK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled
+@Testcontainers
+@ExtendWith(MockitoExtension.class)
 class IntegrationTest {
 
-    @ParameterizedTest
-    @ValueSource(ints = {9444, 9443})
-    void testPush(int port) {
-        String[] args = new String[]{"--backup", "-h localhost", "-p " + port,
-                "-f /tmp/input/test.txt:/tmp/output"};
-        ServingStatus servingStatus = new CommandLineHandler().parse(args);
+    private static final String LOCAL_DIR = "src/test/resources/";
+    private static final String REMOTE_DIR = "/";
+    private static final String FILE = "test.txt";
+
+    @Container
+    private final static GenericContainer SERVER = new GenericContainer<>(DockerImageName.parse("sdenboer/sushi-server"))
+            .withExposedPorts(9443, 9444);
+
+
+    private String host;
+    private int tlsPort;
+    private int nonTlsPort;
+
+    private String hostCmd;
+    private String tlsPortCmd;
+    private String nonTlsPortCmd;
+
+    private CommandLineHandler cmdHandler;
+
+    @BeforeEach
+    void setUp() {
+        host = SERVER.getHost();
+        tlsPort = SERVER.getMappedPort(9443);
+        nonTlsPort = SERVER.getMappedPort(9444);
+        hostCmd = "-host " + host;
+        tlsPortCmd = "-port " + tlsPort;
+        nonTlsPortCmd = "-port " + nonTlsPort;
+        cmdHandler = new CommandLineHandler(new OrderController(tlsPort));
+    }
+
+    @Test
+    void test() {
+        String[] args = new String[]{"--backup", hostCmd, tlsPortCmd, "-f " + LOCAL_DIR + FILE + ":" + REMOTE_DIR,};
+        System.out.println(Arrays.toString(args));
+        ServingStatus servingStatus = cmdHandler.parse(args);
         assertEquals(OK, servingStatus);
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {9444, 9443})
-    void testPull(int port) {
-        testPush(port);
-        String[] args = new String[]{"--fetch", "-h localhost", "-p " + port,
-                "-f /tmp/output/test.txt"};
-        ServingStatus servingStatus = new CommandLineHandler().parse(args);
+    @Test
+    void testRemove() {
+        test();
+        System.out.println("DONE");
+        String[] args = new String[]{"--remove", "-f " + REMOTE_DIR + FILE, hostCmd, tlsPortCmd};
+        ServingStatus servingStatus = cmdHandler.parse(args);
         assertEquals(OK, servingStatus);
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {9444, 9443})
-    void testFile(int port) {
-        testPush(port);
-        String[] args = new String[]{"--list", "-h localhost", "-p " + port, "-f /tmp/output"};
-        ServingStatus servingStatus = new CommandLineHandler().parse(args);
+    @Test
+    void testPull() {
+        test();
+        String[] args = new String[]{"--fetch", "-f " + REMOTE_DIR + FILE, hostCmd, tlsPortCmd};
+        ServingStatus servingStatus = cmdHandler.parse(args);
         assertEquals(OK, servingStatus);
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {9444, 9443})
-    void testRemove(int port) {
-        testPush(port);
-        String[] args = new String[]{"--remove", "-h localhost", "-p " + port,
-                "-f /tmp/output/test.txt"};
-        ServingStatus servingStatus = new CommandLineHandler().parse(args);
+    @Test
+    void testStatus() {
+        test();
+        String[] args = new String[]{"--verify", hostCmd, tlsPortCmd};
+        ServingStatus servingStatus = cmdHandler.parse(args);
         assertEquals(OK, servingStatus);
-
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {9444, 9443})
-    void testChecksum(int port) {
-        testPush(port);
-        String[] args = new String[]{"--verify", "-h localhost", "-p " + port};
-        ServingStatus servingStatus = new CommandLineHandler().parse(args);
+    @Test
+    void testFile() {
+        test();
+        String[] args = new String[]{"--list", "-f " + REMOTE_DIR, hostCmd, tlsPortCmd};
+        ServingStatus servingStatus = cmdHandler.parse(args);
         assertEquals(OK, servingStatus);
     }
 

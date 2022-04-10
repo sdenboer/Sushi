@@ -39,7 +39,7 @@ class CommandLineHandlerTest {
     String port = "9443";
 
     @BeforeEach
-    void init() {
+    void setUp() {
         when(serving.getServingStatus()).thenReturn(ServingStatus.OK);
         when(orderController.handleOrder(orderArgumentCaptor.capture())).thenReturn(serving);
         commandLineHandler = new CommandLineHandler(orderController);
@@ -49,7 +49,6 @@ class CommandLineHandlerTest {
     @ValueSource(strings = {"--backup", "-b"})
     void parseBackup(String command) {
         String resourcePath = "src/test/resources/home/files/test.txt";
-        assertTrue(new File(resourcePath).exists());
         String[] args = new String[]{command, "-h " + host, "-p " + port, "-f " + resourcePath + ":/tmp/output"};
         commandLineHandler.parse(args);
         assertEquals(OrderMethod.PUSH, orderArgumentCaptor.getValue().getOrderMethod());
