@@ -43,23 +43,22 @@ class IntegrationTest {
         host = SERVER.getHost();
         tlsPort = SERVER.getMappedPort(9443);
         nonTlsPort = SERVER.getMappedPort(9444);
-        hostCmd = "-host " + host;
-        tlsPortCmd = "-port " + tlsPort;
-        nonTlsPortCmd = "-port " + nonTlsPort;
+        hostCmd = "-h " + host;
+        tlsPortCmd = "-p " + tlsPort;
+        nonTlsPortCmd = "-p " + nonTlsPort;
         cmdHandler = new CommandLineHandler(new OrderController(tlsPort));
     }
 
     @Test
-    void test() {
+    void testPush() {
         String[] args = new String[]{"--backup", hostCmd, tlsPortCmd, "-f " + LOCAL_DIR + FILE + ":" + REMOTE_DIR,};
-        System.out.println(Arrays.toString(args));
         ServingStatus servingStatus = cmdHandler.parse(args);
         assertEquals(OK, servingStatus);
     }
 
     @Test
     void testRemove() {
-        test();
+        testPush();
         System.out.println("DONE");
         String[] args = new String[]{"--remove", "-f " + REMOTE_DIR + FILE, hostCmd, tlsPortCmd};
         ServingStatus servingStatus = cmdHandler.parse(args);
@@ -68,7 +67,7 @@ class IntegrationTest {
 
     @Test
     void testPull() {
-        test();
+        testPush();
         String[] args = new String[]{"--fetch", "-f " + REMOTE_DIR + FILE, hostCmd, tlsPortCmd};
         ServingStatus servingStatus = cmdHandler.parse(args);
         assertEquals(OK, servingStatus);
@@ -76,7 +75,7 @@ class IntegrationTest {
 
     @Test
     void testStatus() {
-        test();
+        testPush();
         String[] args = new String[]{"--verify", hostCmd, tlsPortCmd};
         ServingStatus servingStatus = cmdHandler.parse(args);
         assertEquals(OK, servingStatus);
@@ -84,7 +83,7 @@ class IntegrationTest {
 
     @Test
     void testFile() {
-        test();
+        testPush();
         String[] args = new String[]{"--list", "-f " + REMOTE_DIR, hostCmd, tlsPortCmd};
         ServingStatus servingStatus = cmdHandler.parse(args);
         assertEquals(OK, servingStatus);
