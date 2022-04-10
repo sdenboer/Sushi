@@ -8,7 +8,6 @@ import com.sushi.client.status.StatusOrderService;
 import com.sushi.components.configuration.SSLConfiguration;
 import com.sushi.components.message.order.Order;
 import com.sushi.components.message.serving.Serving;
-import lombok.NoArgsConstructor;
 import tlschannel.ClientTlsChannel;
 import tlschannel.TlsChannel;
 

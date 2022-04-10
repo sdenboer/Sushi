@@ -10,8 +10,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import java.util.Arrays;
-
 import static com.sushi.components.message.serving.ServingStatus.OK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
