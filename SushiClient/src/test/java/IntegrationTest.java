@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.images.PullPolicy;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -23,7 +24,7 @@ class IntegrationTest {
 
     @Container
     private final static GenericContainer SERVER = new GenericContainer<>(DockerImageName.parse("sdenboer/sushi-server"))
-            .withExposedPorts(9443, 9444);
+            .withExposedPorts(9443, 9444).withImagePullPolicy(PullPolicy.alwaysPull());
 
 
     private String host;
