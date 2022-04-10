@@ -6,6 +6,7 @@ import com.sushi.components.message.order.OrderMethod;
 import com.sushi.components.message.serving.Serving;
 import com.sushi.components.message.serving.ServingStatus;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -14,14 +15,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 //Also tests OrderOptionFactory.class
 @ExtendWith(MockitoExtension.class)
+@Disabled
 class CommandLineHandlerTest {
 
     @Mock
