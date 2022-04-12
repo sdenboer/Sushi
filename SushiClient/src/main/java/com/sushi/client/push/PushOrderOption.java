@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 import static com.sushi.client.cmd.CommandLineOptions.*;
+import static com.sushi.components.utils.Constants.FILE_DIR;
 
 public class PushOrderOption implements OrderOption {
 
@@ -40,6 +41,9 @@ public class PushOrderOption implements OrderOption {
 
         String localFile = split[0];
         Path localPath = Paths.get(localFile);
+        if (!Files.exists(localPath)) {
+            localPath = Paths.get(FILE_DIR, localFile);
+        }
         long size = 0L;
 
         try {
